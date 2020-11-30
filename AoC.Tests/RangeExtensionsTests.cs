@@ -1,9 +1,9 @@
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace Common.Tests
+namespace AoC.Tests
 {
-    public class RangeExtensionsTests
+    public class CollectionExtensionsTests
     {
         [Test]
         public void ToEnumerable_Test()

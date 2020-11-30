@@ -3,7 +3,7 @@ using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace Common.Tests
+namespace AoC.Tests
 {
     public class StringExtensionsTests
     {

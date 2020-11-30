@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace Common
+namespace AoC
 {
     public static class StringExtensions
     {
@@ -13,12 +13,7 @@ namespace Common
         /// </summary>
         public static string[] ReadAllLines(this string s)
         {
-            if (s == null!)
-            {
-                throw new ArgumentNullException(nameof(s));
-            }
-
-            return ReadAllLinesEnumerable(s).ToArray();
+            return ReadAllLinesEnumerable(s ?? throw new ArgumentNullException(nameof(s))).ToArray();
 
             static IEnumerable<string> ReadAllLinesEnumerable(string s)
             {
@@ -36,14 +31,7 @@ namespace Common
         /// <summary>
         /// Normalizes the line endings in the specified string, so that all the line endings match the current environment's line endings.
         /// </summary>
-        public static string NormalizeLineEndings(this string s)
-        {
-            if (s == null!)
-            {
-                throw new ArgumentNullException(nameof(s));
-            }
-
-            return LineEndingsRegex.Replace(s, Environment.NewLine);
-        }
+        public static string NormalizeLineEndings(this string s) =>
+            LineEndingsRegex.Replace(s ?? throw new ArgumentNullException(nameof(s)), Environment.NewLine);
     }
 }

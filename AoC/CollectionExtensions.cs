@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Common
+namespace AoC
 {
-    public static class RangeExtensions
+    public static class CollectionExtensions
     {
         /// <summary>
         /// Returns the indexes in specified Range, from the inclusive start index of the Range to the exclusive end index of the Range.
@@ -21,5 +21,10 @@ namespace Common
                 yield return i;
             }
         }
+
+        /// <summary>
+        /// Converts the specified enumerable/collection to a read only array.
+        /// </summary>
+        public static IReadOnlyList<TSource> ToReadOnlyArray<TSource>(this IEnumerable<TSource> source) => Array.AsReadOnly(source.ToArray());
     }
 }
