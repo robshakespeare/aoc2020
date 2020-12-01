@@ -6,12 +6,18 @@ using Crayon;
 
 namespace AoC
 {
-    public class SolverBase : SolverBase<long?, long?>
+    public interface ISolver
     {
+        int DayNumber { get; }
 
+        void Run();
     }
 
-    public class SolverBase<TOutputPart1, TOutputPart2>
+    public class SolverBase : SolverBase<long?, long?>
+    {
+    }
+
+    public class SolverBase<TOutputPart1, TOutputPart2> : ISolver
     {
         private readonly InputLoader _inputLoader;
 
@@ -25,8 +31,6 @@ namespace AoC
             {
                 Console.OutputEncoding = Encoding.UTF8;
                 Console.WriteLine($"Day {DayNumber}".Yellow());
-
-                _inputLoader.GetPuzzleInputs();
 
                 SolvePart1();
                 SolvePart2();
@@ -54,10 +58,10 @@ namespace AoC
         }
 
         [return: MaybeNull]
-        public TOutputPart1 SolvePart1() => SolvePart1(_inputLoader.GetPuzzleInputs().part1);
+        public TOutputPart1 SolvePart1() => SolvePart1(_inputLoader.PuzzleInputPart1);
 
         [return: MaybeNull]
-        public TOutputPart2 SolvePart2() => SolvePart2(_inputLoader.GetPuzzleInputs().part2);
+        public TOutputPart2 SolvePart2() => SolvePart2(_inputLoader.PuzzleInputPart2);
 
         [return: MaybeNull]
         public TOutputPart1 SolvePart1(string input) => SolvePartTimed(1, input, SolvePart1Impl);

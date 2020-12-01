@@ -10,7 +10,9 @@ namespace AoC
         private readonly Lazy<string> _part1;
         private readonly Lazy<string> _part2;
 
-        public (string part1, string part2) GetPuzzleInputs() => (_part1.Value, _part2.Value);
+        public string PuzzleInputPart1 => _part1.Value;
+
+        public string PuzzleInputPart2 => _part2.Value;
 
         public InputLoader(int dayNumber)
         {
