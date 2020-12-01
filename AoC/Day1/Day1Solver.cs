@@ -19,12 +19,12 @@ namespace AoC.Day1
 
         protected override long? SolvePart2Impl(string input)
         {
-            var inputNumbers = input.ReadAllLinesAsLongs().ToArray();
+            var inputNumbers = input.ReadAllLinesAsLongs().OrderBy(x => x).ToArray();
 
             var resultTriple = inputNumbers
                 .SelectMany((a, i) => inputNumbers
                     .SelectMany((b, j) => inputNumbers
-                        .Select((c, k) => new { a = (a, i), b = (b, j), c = (c, k) }))
+                        .Select((c, k) => new {a = (a, i), b = (b, j), c = (c, k)}))
                     .Where(x => x.a.i != x.b.j && x.a.i != x.c.k))
                 .First(x => x.a.a + x.b.b + x.c.c == 2020);
 
