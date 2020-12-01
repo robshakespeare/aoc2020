@@ -24,7 +24,7 @@ namespace AoC
             }
         }
 
-        public static void Initialize(bool includeConsole = true, Action<LoggerConfiguration>? customise = null)
+        public static void Initialize(bool includeConsole = false, Action<LoggerConfiguration>? customise = null)
         {
             var logFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".logs", "aoc2020");
             Directory.CreateDirectory(logFolderPath);

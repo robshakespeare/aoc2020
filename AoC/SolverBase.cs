@@ -13,49 +13,69 @@ namespace AoC
 
     public class SolverBase<TOutputPart1, TOutputPart2>
     {
+        private readonly InputLoader _inputLoader;
+
         public int DayNumber { get; }
 
-        public SolverBase()
-        {
-            DayNumber = this.GetDayNumber();
-        }
+        public SolverBase() => _inputLoader = new InputLoader(DayNumber = this.GetDayNumber());
 
         public void Run()
         {
-            Console.OutputEncoding = Encoding.UTF8;
-            Console.WriteLine($"Day {DayNumber}".Yellow());
+            try
+            {
+                Console.OutputEncoding = Encoding.UTF8;
+                Console.WriteLine($"Day {DayNumber}".Yellow());
 
-            // rs-todo: resume here:
-            ////if (!Input.IsValueCreated)
-            ////{
-            ////    var input = Input.Value;
-            ////    Trace.WriteLine("Ensured input was loaded. Input type is " + input?.GetType());
-            ////}
+                _inputLoader.GetPuzzleInputs();
 
-            ////SolvePart1();
-            ////SolvePart2();
+                SolvePart1();
+                SolvePart2();
+            }
+            catch (Exception e)
+            {
+                FileLogging.Logger.Error(e, "Solver failed");
+                throw;
+            }
         }
 
-        private static TOutput SolvePartTimed<TOutput>(int partNum, Func<TOutput> solve)
+        [return: MaybeNull]
+        private delegate TResult SolverFunc<in T, out TResult>(T arg);
+
+        [return: MaybeNull]
+        private static TOutput SolvePartTimed<TOutput>(int partNum, string input, SolverFunc<string, TOutput> solve)
         {
+            input = input.NormalizeAndTrimEnd();
+
             using var timer = new TimingBlock($"Part {partNum}");
-            var result = solve();
+            var result = solve(input);
             timer.Stop();
-            Console.Write($"Part {partNum}: {result?.ToString().Green()}");
+            Console.WriteLine($"Part {partNum}: {result?.ToString().Green()}");
             return result;
         }
 
         [return: MaybeNull]
-        public virtual TOutputPart1 SolvePart1(string input)
+        public TOutputPart1 SolvePart1() => SolvePart1(_inputLoader.GetPuzzleInputs().part1);
+
+        [return: MaybeNull]
+        public TOutputPart2 SolvePart2() => SolvePart2(_inputLoader.GetPuzzleInputs().part2);
+
+        [return: MaybeNull]
+        public TOutputPart1 SolvePart1(string input) => SolvePartTimed(1, input, SolvePart1Impl);
+
+        [return: MaybeNull]
+        public TOutputPart2 SolvePart2(string input) => SolvePartTimed(2, input, SolvePart2Impl);
+
+        [return: MaybeNull]
+        protected virtual TOutputPart1 SolvePart1Impl(string input)
         {
-            Console.WriteLine("Part 1 not yet implemented");
+            Console.WriteLine("Part 1 not yet implemented".BrightMagenta());
             return default;
         }
 
         [return: MaybeNull]
-        public virtual TOutputPart2 SolvePart2(string input)
+        protected virtual TOutputPart2 SolvePart2Impl(string input)
         {
-            Console.WriteLine("Part 2 not yet implemented");
+            Console.WriteLine("Part 2 not yet implemented".BrightMagenta());
             return default;
         }
     }
