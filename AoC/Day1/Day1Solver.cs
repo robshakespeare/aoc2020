@@ -6,7 +6,7 @@ namespace AoC.Day1
     {
         protected override long? SolvePart1Impl(string input)
         {
-            var inputNumbers = input.ReadAllLines().Select(int.Parse).ToArray();
+            var inputNumbers = input.ReadAllLinesAsLongs().ToArray();
 
             var resultPair = inputNumbers
                 .SelectMany((a, i) => inputNumbers
@@ -19,7 +19,7 @@ namespace AoC.Day1
 
         protected override long? SolvePart2Impl(string input)
         {
-            var inputNumbers = input.ReadAllLines().Select(int.Parse).ToArray();
+            var inputNumbers = input.ReadAllLinesAsLongs().ToArray();
 
             var resultTriple = inputNumbers
                 .SelectMany((a, i) => inputNumbers

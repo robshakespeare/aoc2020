@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace AoC
@@ -19,6 +20,8 @@ namespace AoC
                 yield return line;
             }
         }
+
+        public static IEnumerable<long> ReadAllLinesAsLongs(this string s) => s.ReadAllLines().Select(long.Parse);
 
         private static readonly Regex LineEndingsRegex = new Regex(@"\r\n|\n|\r", RegexOptions.Compiled);
 
