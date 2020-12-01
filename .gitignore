@@ -361,6 +361,12 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
+# Cake Build Addins
+/tools/Addins/*
+
+# Ignore SpecFlow generated code-behind files for feature files (*.feature.cs)
+/*Tests/**/*.feature.cs
+
 
 #######
 # The whole JetBrains IDEs folder 

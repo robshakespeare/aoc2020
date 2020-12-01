@@ -1,12 +1,12 @@
-using AoC.Day0;
+using AoC.Day2;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace AoC.Tests.Day0
+namespace AoC.Tests.Day2
 {
-    public class Day0Tests
+    public class Day2SolverTests
     {
-        private readonly Day0Solver _sut = new Day0Solver();
+        private readonly Day2Solver _sut = new Day2Solver();
 
         [Test]
         public void Part1ReTest()
@@ -15,7 +15,7 @@ namespace AoC.Tests.Day0
             var part1Result = _sut.SolvePart1();
 
             // ASSERT
-            part1Result.Should().Be(37);
+            part1Result.Should().Be(null);
         }
 
         [Test]
@@ -25,7 +25,7 @@ namespace AoC.Tests.Day0
             var part2Result = _sut.SolvePart2();
 
             // ASSERT
-            part2Result.Should().Be(112);
+            part2Result.Should().Be(null);
         }
     }
 }
