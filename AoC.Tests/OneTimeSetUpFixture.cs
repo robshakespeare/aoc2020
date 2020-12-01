@@ -1,0 +1,46 @@
+using System;
+using System.IO;
+using System.Text;
+using System.Text.RegularExpressions;
+using NUnit.Framework;
+
+namespace AoC.Tests
+{
+    [SetUpFixture]
+    public static class OneTimeSetUpFixture
+    {
+        private static AnsiEscapeCodeCleanerTextWriter? _textWriter;
+
+        /// <summary>
+        /// Ran only once, before all tests, but after the test discovery phase.
+        /// </summary>
+        [OneTimeSetUp]
+        public static void RunOnceBeforeAllTests()
+        {
+            _textWriter = new AnsiEscapeCodeCleanerTextWriter();
+            Console.SetOut(_textWriter);
+        }
+
+        /// <summary>
+        /// Ran only once, after all tests.
+        /// </summary>
+        [OneTimeTearDown]
+        public static void RunOnceAfterAllTests()
+        {
+            _textWriter?.Dispose();
+        }
+
+        public sealed class AnsiEscapeCodeCleanerTextWriter : TextWriter
+        {
+            private static readonly Regex AnsiEscapeCodeRegex = new Regex("\x001B.+?m", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
+            public AnsiEscapeCodeCleanerTextWriter() => NewLine = "\n";
+
+            public override Encoding Encoding { get; } = Encoding.Default;
+
+            public override void Write(string? value) => base.Write(value == null ? null : AnsiEscapeCodeRegex.Replace(value, ""));
+
+            public override void Write(char value) => TestContext.Progress.Write(value);
+        }
+    }
+}

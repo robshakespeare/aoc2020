@@ -21,7 +21,7 @@ namespace AoC
         {
             Stop();
 
-            Console.WriteLine($"[{_name}] time taken (seconds): {_stopwatch.Elapsed.TotalSeconds:0.000}".Dim());
+            Console.WriteLine($"[{_name}] time taken (seconds): {_stopwatch.Elapsed.TotalSeconds:0.000}".BrightBlack());
             Console.WriteLine();
         }
     }
