@@ -14,10 +14,12 @@ namespace AoC.Day2
     {
         public bool IsValid(PasswordLine passwordLine)
         {
-            var requiredCharCount = passwordLine.Password.Count(c => c == passwordLine.RequiredChar);
+            var (lowerBound, upperBound, requiredChar, password) = passwordLine;
+
+            var requiredCharCount = password.Count(c => c == requiredChar);
 
             // Lower and Upper bound are both inclusive.
-            return requiredCharCount >= passwordLine.LowerBound && requiredCharCount <= passwordLine.UpperBound;
+            return requiredCharCount >= lowerBound && requiredCharCount <= upperBound;
         }
     }
 
@@ -25,13 +27,15 @@ namespace AoC.Day2
     {
         public bool IsValid(PasswordLine passwordLine)
         {
+            var (lowerBound, upperBound, requiredChar, password) = passwordLine;
+
             // Bounds are the positions, and are one-based indexes.
-            var index1 = passwordLine.LowerBound - 1;
-            var index2 = passwordLine.UpperBound - 1;
+            var index1 = lowerBound - 1;
+            var index2 = upperBound - 1;
 
-            var chars = new[] { passwordLine.Password[index1], passwordLine.Password[index2] };
+            var chars = new[] { password[index1], password[index2] };
 
-            return chars.Count(c => c == passwordLine.RequiredChar) == 1;
+            return chars.Count(c => c == requiredChar) == 1;
         }
     }
 }

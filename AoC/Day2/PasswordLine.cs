@@ -4,17 +4,13 @@ using System.Text.RegularExpressions;
 
 namespace AoC.Day2
 {
-    public class PasswordLine
+    public record PasswordLine(
+        int LowerBound,
+        int UpperBound,
+        char RequiredChar,
+        string Password)
     {
-        public int LowerBound { get; set; }
-
-        public int UpperBound { get; set; }
-
-        public char RequiredChar { get; set; }
-
-        public string Password { get; set; } = "";
-
-        private static readonly Regex ParserRegex = new Regex(
+        private static readonly Regex ParserRegex = new(
             @"(?<LowerBound>\d+)-(?<UpperBound>\d+) (?<RequiredChar>\w): (?<Password>.+)",
             RegexOptions.Compiled);
 
@@ -22,18 +18,13 @@ namespace AoC.Day2
         {
             var match = ParserRegex.Match(line);
 
-            if (!match.Success)
-            {
-                throw new InvalidOperationException("Invalid password line:" + line);
-            }
-
-            return new PasswordLine
-            {
-                LowerBound = int.Parse(match.Groups["LowerBound"].Value),
-                UpperBound = int.Parse(match.Groups["UpperBound"].Value),
-                RequiredChar = match.Groups["RequiredChar"].Value.Single(),
-                Password = match.Groups["Password"].Value
-            };
+            return !match.Success
+                ? throw new InvalidOperationException("Invalid password line:" + line)
+                : new PasswordLine(
+                    int.Parse(match.Groups["LowerBound"].Value),
+                    int.Parse(match.Groups["UpperBound"].Value),
+                    match.Groups["RequiredChar"].Value.Single(),
+                    match.Groups["Password"].Value);
         }
     }
 }
