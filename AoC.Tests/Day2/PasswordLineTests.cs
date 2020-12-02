@@ -55,13 +55,18 @@ namespace AoC.Tests.Day2
             [TestCase("1- a: abcde")]
             [TestCase("-1 a: abcde")]
             [TestCase("- a: abcde")]
+            [TestCase("-1-3 a: abcde")]
+            [TestCase("1.1-3 a: abcde")]
+            [TestCase("1-3  a: abcde")]
+            [TestCase("1-3a:abcde")]
             public void ThrowsForInvalidInputs(string inputLine)
             {
                 Action action = () => PasswordLine.Parse(inputLine);
 
                 // ACT & ASSERT
                 action.Should().Throw<InvalidOperationException>()
-                    .WithMessage("Invalid password line: " + inputLine);
+                    .WithMessage("Invalid password line: " + inputLine)
+                    .WithInnerException<Sprache.ParseException>();
             }
         }
     }
