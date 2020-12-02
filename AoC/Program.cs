@@ -5,12 +5,7 @@ namespace AoC
 {
     public static class Program
     {
-        public static void Main()
-        {
-            Console.WriteLine(Test2.HelloFromDay0Solver);
-            //Test1.SayHello();
-            RunDay(3);
-        }
+        public static void Main() => RunDay(3);
 
         private static void RunDay(int dayNumber)
         {
