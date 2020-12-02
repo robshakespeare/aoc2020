@@ -14,6 +14,9 @@ namespace AoC.Tests.Day2
             [TestCase("1-2 c: d", 1, 2, 'c', "d")]
             [TestCase("1-3 1: 123", 1, 3, '1', "123")]
             [TestCase("1-3 #: £$%", 1, 3, '#', "£$%")]
+            [TestCase("1-3  a: abcde", 1, 3, 'a', "abcde")]
+            [TestCase("1-3 a:  abcde", 1, 3, 'a', "abcde")]
+            [TestCase("1-3   a:   abcde", 1, 3, 'a', "abcde")]
             public void ParsesValidInputs(
                 string inputLine,
                 int expectedLowerBound,
@@ -57,7 +60,6 @@ namespace AoC.Tests.Day2
             [TestCase("- a: abcde")]
             [TestCase("-1-3 a: abcde")]
             [TestCase("1.1-3 a: abcde")]
-            [TestCase("1-3  a: abcde")]
             [TestCase("1-3a:abcde")]
             public void ThrowsForInvalidInputs(string inputLine)
             {
@@ -65,8 +67,7 @@ namespace AoC.Tests.Day2
 
                 // ACT & ASSERT
                 action.Should().Throw<InvalidOperationException>()
-                    .WithMessage("Invalid password line: " + inputLine)
-                    .WithInnerException<Sprache.ParseException>();
+                    .WithMessage("Invalid password line: " + inputLine);
             }
         }
     }
