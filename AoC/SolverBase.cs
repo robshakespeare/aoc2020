@@ -13,17 +13,17 @@ namespace AoC
         void Run();
     }
 
-    public class SolverBase : SolverBase<long?, long?>
+    public abstract class SolverBase : SolverBase<long?, long?>
     {
     }
 
-    public class SolverBase<TOutputPart1, TOutputPart2> : ISolver
+    public abstract class SolverBase<TOutputPart1, TOutputPart2> : ISolver
     {
         private readonly InputLoader _inputLoader;
 
         public int DayNumber { get; }
 
-        public SolverBase() => _inputLoader = new InputLoader(DayNumber = this.GetDayNumber());
+        protected SolverBase() => _inputLoader = new InputLoader(DayNumber = this.GetDayNumber());
 
         public void Run()
         {
@@ -86,7 +86,7 @@ namespace AoC
 
     public static class SolverBaseExtensions
     {
-        private static readonly Regex DayNumRegex = new Regex(@"Day(?<dayNum>\d+)", RegexOptions.Compiled);
+        private static readonly Regex DayNumRegex = new(@"Day(?<dayNum>\d+)", RegexOptions.Compiled);
 
         public static int GetDayNumber<TOutputPart1, TOutputPart2>(this SolverBase<TOutputPart1, TOutputPart2> solver)
         {
