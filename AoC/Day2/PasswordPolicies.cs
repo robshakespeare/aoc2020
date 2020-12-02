@@ -26,12 +26,10 @@ namespace AoC.Day2
         public bool IsValid(PasswordLine line)
         {
             // Bounds are the positions, and are one-based indexes.
-            var index1 = line.LowerBound - 1;
-            var index2 = line.UpperBound - 1;
+            var isAt1 = line.Password[line.LowerBound - 1] == line.RequiredChar;
+            var isAt2 = line.Password[line.UpperBound - 1] == line.RequiredChar;
 
-            var chars = new[] { line.Password[index1], line.Password[index2] };
-
-            return chars.Count(c => c == line.RequiredChar) == 1;
+            return isAt1 ^ isAt2;
         }
     }
 }
