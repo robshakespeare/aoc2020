@@ -11,15 +11,15 @@ namespace AoC.Day2
         string Password)
     {
         private static readonly Regex ParserRegex = new(
-            @"(?<LowerBound>\d+)-(?<UpperBound>\d+) (?<RequiredChar>\w): (?<Password>.+)",
+            @"^(?<LowerBound>\d+)-(?<UpperBound>\d+) (?<RequiredChar>.): (?<Password>.+)$",
             RegexOptions.Compiled);
 
         public static PasswordLine Parse(string line)
         {
-            var match = ParserRegex.Match(line);
+            var match = ParserRegex.Match(line ?? throw new ArgumentNullException(nameof(line)));
 
             return !match.Success
-                ? throw new InvalidOperationException("Invalid password line:" + line)
+                ? throw new InvalidOperationException("Invalid password line: " + line)
                 : new PasswordLine(
                     int.Parse(match.Groups["LowerBound"].Value),
                     int.Parse(match.Groups["UpperBound"].Value),
