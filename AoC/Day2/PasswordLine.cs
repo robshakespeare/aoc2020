@@ -31,7 +31,7 @@ namespace AoC.Day2
             {
                 LowerBound = int.Parse(match.Groups["LowerBound"].Value),
                 UpperBound = int.Parse(match.Groups["UpperBound"].Value),
-                RequiredChar = match.Groups["RequiredChar"].Value.First(),
+                RequiredChar = match.Groups["RequiredChar"].Value.Single(),
                 Password = match.Groups["Password"].Value
             };
         }
