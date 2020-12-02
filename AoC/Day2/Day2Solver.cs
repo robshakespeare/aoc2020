@@ -6,16 +6,16 @@ namespace AoC.Day2
     {
         protected override long? SolvePart1Impl(string input)
         {
-            var lines = input.ReadAllLines().Select(PasswordLinePolicy1.Parse);
-
-            return lines.Count(line => line.IsValid);
+            IPasswordPolicy policy = new PasswordPolicy1();
+            var lines = input.ReadAllLines().Select(PasswordLine.Parse);
+            return policy.GetValidLines(lines).Count();
         }
 
         protected override long? SolvePart2Impl(string input)
         {
-            var lines = input.ReadAllLines().Select(PasswordLinePolicy2.Parse);
-
-            return lines.Count(line => line.IsValid);
+            IPasswordPolicy policy = new PasswordPolicy2();
+            var lines = input.ReadAllLines().Select(PasswordLine.Parse);
+            return policy.GetValidLines(lines).Count();
         }
     }
 }
