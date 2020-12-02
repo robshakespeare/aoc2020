@@ -30,7 +30,7 @@ namespace AoC.Tests
             _textWriter?.Dispose();
         }
 
-        public sealed class AnsiEscapeCodeCleanerTextWriter : TextWriter
+        private sealed class AnsiEscapeCodeCleanerTextWriter : TextWriter
         {
             private static readonly Regex AnsiEscapeCodeRegex = new Regex("\x001B.+?m", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
