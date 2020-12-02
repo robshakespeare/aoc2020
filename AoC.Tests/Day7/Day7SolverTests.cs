@@ -6,7 +6,7 @@ namespace AoC.Tests.Day7
 {
     public class Day7SolverTests
     {
-        private readonly Day7Solver _sut = new Day7Solver();
+        private readonly Day7Solver _sut = new();
 
         [Test]
         public void Part1ReTest()
