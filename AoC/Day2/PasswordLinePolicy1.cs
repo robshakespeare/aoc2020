@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace AoC.Day2
 {
-    public class PasswordLine
+    public class PasswordLinePolicy1
     {
         /// <summary>
         /// Lower bound, inclusive.
@@ -33,7 +33,7 @@ namespace AoC.Day2
             @"(?<LowerBound>\d+)-(?<UpperBound>\d+) (?<RequiredChar>\w): (?<Password>.+)",
             RegexOptions.Compiled);
 
-        public static PasswordLine Parse(string line)
+        public static PasswordLinePolicy1 Parse(string line)
         {
             var match = ParserRegex.Match(line);
 
@@ -42,7 +42,7 @@ namespace AoC.Day2
                 throw new InvalidOperationException("Invalid password line:" + line);
             }
 
-            return new PasswordLine
+            return new PasswordLinePolicy1
             {
                 LowerBound = int.Parse(match.Groups["LowerBound"].Value),
                 UpperBound = int.Parse(match.Groups["UpperBound"].Value),

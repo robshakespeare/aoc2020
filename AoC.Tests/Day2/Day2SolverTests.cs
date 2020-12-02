@@ -31,13 +31,25 @@ namespace AoC.Tests.Day2
         }
 
         [Test]
+        public void Part2Example()
+        {
+            // ACT
+            var part1Result = _sut.SolvePart2(@"1-3 a: abcde
+1-3 b: cdefg
+2-9 c: ccccccccc");
+
+            // ASSERT
+            part1Result.Should().Be(1);
+        }
+
+        [Test]
         public void Part2ReTest()
         {
             // ACT
             var part2Result = _sut.SolvePart2();
 
             // ASSERT
-            part2Result.Should().Be(null);
+            part2Result.Should().Be(272);
         }
     }
 }
