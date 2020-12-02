@@ -5,37 +5,33 @@ namespace AoC.Day2
 {
     public interface IPasswordPolicy
     {
-        bool IsValid(PasswordLine passwordLine);
+        bool IsValid(PasswordLine line);
 
-        IEnumerable<PasswordLine> GetValidLines(IEnumerable<PasswordLine> passwordLines) => passwordLines.Where(IsValid);
+        IEnumerable<PasswordLine> GetValidLines(IEnumerable<PasswordLine> lines) => lines.Where(IsValid);
     }
 
     public class PasswordPolicy1 : IPasswordPolicy
     {
-        public bool IsValid(PasswordLine passwordLine)
+        public bool IsValid(PasswordLine line)
         {
-            var (lowerBound, upperBound, requiredChar, password) = passwordLine;
-
-            var requiredCharCount = password.Count(c => c == requiredChar);
+            var requiredCharCount = line.Password.Count(c => c == line.RequiredChar);
 
             // Lower and Upper bound are both inclusive.
-            return requiredCharCount >= lowerBound && requiredCharCount <= upperBound;
+            return requiredCharCount >= line.LowerBound && requiredCharCount <= line.UpperBound;
         }
     }
 
     public class PasswordPolicy2 : IPasswordPolicy
     {
-        public bool IsValid(PasswordLine passwordLine)
+        public bool IsValid(PasswordLine line)
         {
-            var (lowerBound, upperBound, requiredChar, password) = passwordLine;
-
             // Bounds are the positions, and are one-based indexes.
-            var index1 = lowerBound - 1;
-            var index2 = upperBound - 1;
+            var index1 = line.LowerBound - 1;
+            var index2 = line.UpperBound - 1;
 
-            var chars = new[] { password[index1], password[index2] };
+            var chars = new[] { line.Password[index1], line.Password[index2] };
 
-            return chars.Count(c => c == requiredChar) == 1;
+            return chars.Count(c => c == line.RequiredChar) == 1;
         }
     }
 }
