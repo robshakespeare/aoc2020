@@ -35,7 +35,27 @@ namespace AoC.Tests.Day3
             var part1Result = _sut.SolvePart1();
 
             // ASSERT
-            part1Result.Should().Be(null);
+            part1Result.Should().Be(289);
+        }
+
+        [Test]
+        public void Part2Example()
+        {
+            // ACT
+            var part1Result = _sut.SolvePart2(@"..##.......
+#...#...#..
+.#....#..#.
+..#.#...#.#
+.#...##..#.
+..#.##.....
+.#.#.#....#
+.#........#
+#.##...#...
+#...##....#
+.#..#...#.#");
+
+            // ASSERT
+            part1Result.Should().Be(336);
         }
 
         [Test]
@@ -45,7 +65,7 @@ namespace AoC.Tests.Day3
             var part2Result = _sut.SolvePart2();
 
             // ASSERT
-            part2Result.Should().Be(null);
+            part2Result.Should().Be(5522401584);
         }
     }
 }

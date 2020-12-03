@@ -8,32 +8,24 @@ namespace AoC.Day3
     {
         protected override long? SolvePart1Impl(string input)
         {
-            var direction = new Vector2Int(3, 1);
             var grid = new Grid(input);
-            return CountTreesEncountered(grid, direction);
-        }
-
-        private static long? CountTreesEncountered(Grid grid, Vector2Int direction)
-        {
-            var position = direction;
-            var trees = new List<Vector2Int>();
-
-            while (position.Y < grid.NumLines)
-            {
-                if (grid.IsTree(position))
-                {
-                    trees.Add(position);
-                }
-
-                position += direction;
-            }
-
-            return trees.Count;
+            var direction = new Vector2Int(3, 1);
+            return grid.CountTreesEncountered(direction);
         }
 
         protected override long? SolvePart2Impl(string input)
         {
-            return base.SolvePart2Impl(input);
+            var grid = new Grid(input);
+            return new[]
+                {
+                    new Vector2Int(1, 1),
+                    new Vector2Int(3, 1),
+                    new Vector2Int(5, 1),
+                    new Vector2Int(7, 1),
+                    new Vector2Int(1, 2)
+                }
+                .Select(grid.CountTreesEncountered)
+                .Aggregate(1L, (accumulate, current) => accumulate * current);
         }
 
         public record Grid(string PuzzleInput)
@@ -41,6 +33,24 @@ namespace AoC.Day3
             private readonly GridLine[] _lines = PuzzleInput.ReadAllLines().Select(line => new GridLine(line)).ToArray();
 
             public int NumLines => _lines.Length;
+
+            public long CountTreesEncountered(Vector2Int direction)
+            {
+                var position = direction;
+                var trees = new List<Vector2Int>();
+
+                while (position.Y < NumLines)
+                {
+                    if (IsTree(position))
+                    {
+                        trees.Add(position);
+                    }
+
+                    position += direction;
+                }
+
+                return trees.Count;
+            }
 
             public bool IsTree(Vector2Int position)
             {
