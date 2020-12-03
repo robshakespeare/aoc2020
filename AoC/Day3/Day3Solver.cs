@@ -16,14 +16,15 @@ namespace AoC.Day3
         protected override long? SolvePart2Impl(string input)
         {
             var grid = new Grid(input);
-            return new[]
-                {
-                    new Vector2Int(1, 1),
-                    new Vector2Int(3, 1),
-                    new Vector2Int(5, 1),
-                    new Vector2Int(7, 1),
-                    new Vector2Int(1, 2)
-                }
+            var directions = new[]
+            {
+                new Vector2Int(1, 1),
+                new Vector2Int(3, 1),
+                new Vector2Int(5, 1),
+                new Vector2Int(7, 1),
+                new Vector2Int(1, 2)
+            };
+            return directions
                 .Select(grid.CountTreesEncountered)
                 .Aggregate(1L, (accumulate, current) => accumulate * current);
         }
@@ -52,23 +53,15 @@ namespace AoC.Day3
                 return trees.Count;
             }
 
-            public bool IsTree(Vector2Int position)
-            {
-                if (position.Y >= NumLines)
-                {
-                    throw new InvalidOperationException($"Position {position} is BELOW bottom of grid.");
-                }
-
-                return _lines[position.Y].IsTree(position);
-            }
+            public bool IsTree(Vector2Int position) =>
+                position.Y >= NumLines
+                    ? throw new InvalidOperationException($"Position {position} is BELOW bottom of grid.")
+                    : _lines[position.Y].IsTree(position);
         }
 
         public record GridLine(string Line)
         {
-            public bool IsTree(Vector2Int position)
-            {
-                return Line[position.X % Line.Length] == '#';
-            }
+            public bool IsTree(Vector2Int position) => Line[position.X % Line.Length] == '#';
         }
     }
 }
