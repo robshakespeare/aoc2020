@@ -23,7 +23,7 @@ namespace AoC
 
         public static IEnumerable<long> ReadAllLinesAsLongs(this string s) => s.ReadAllLines().Select(long.Parse);
 
-        private static readonly Regex LineEndingsRegex = new Regex(@"\r\n|\n|\r", RegexOptions.Compiled);
+        private static readonly Regex LineEndingsRegex = new(@"\r\n|\n|\r", RegexOptions.Compiled);
 
         /// <summary>
         /// Normalizes the line endings in the specified string, so that all the line endings match the current environment's line endings.
