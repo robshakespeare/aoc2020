@@ -4,30 +4,31 @@ using System.Text.RegularExpressions;
 
 namespace AoC.Day4
 {
-    public record Passport(
-        string BirthYear,
-        string IssueYear,
-        string ExpirationYear,
-        string Height,
-        string HairColor,
-        string EyeColor,
-        string PassportId,
-        string CountryId)
+    public class Passport
     {
-        public Passport(Dictionary<string, string> dataItems) : this(
-            BirthYear: GetValue(dataItems, "byr"),
-            IssueYear: GetValue(dataItems, "iyr"),
-            ExpirationYear: GetValue(dataItems, "eyr"),
-            Height: GetValue(dataItems, "hgt"),
-            HairColor: GetValue(dataItems, "hcl"),
-            EyeColor: GetValue(dataItems, "ecl"),
-            PassportId: GetValue(dataItems, "pid"),
-            CountryId: GetValue(dataItems, "cid"))
-        {
-            DataItems = dataItems;
-        }
+        public string BirthYear { get; }
+        public string IssueYear { get; }
+        public string ExpirationYear { get; }
+        public string Height { get; }
+        public string HairColor { get; }
+        public string EyeColor { get; }
+        public string PassportId { get; }
+        public string CountryId { get; }
 
-        private static string GetValue(Dictionary<string, string> dataItems, string key) => dataItems.TryGetValue(key, out var value) ? value : "";
+        public Passport(Dictionary<string, string> dataItems)
+        {
+            string GetValue(string key) => dataItems.TryGetValue(key, out var value) ? value : "";
+
+            DataItems = dataItems;
+            BirthYear = GetValue("byr");
+            IssueYear = GetValue("iyr");
+            ExpirationYear = GetValue("eyr");
+            Height = GetValue("hgt");
+            HairColor = GetValue("hcl");
+            EyeColor = GetValue("ecl");
+            PassportId = GetValue("pid");
+            CountryId = GetValue("cid");
+        }
 
         public Dictionary<string, string> DataItems { get; }
 

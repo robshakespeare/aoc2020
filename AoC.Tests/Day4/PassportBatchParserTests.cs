@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using AoC.Day4;
 using FluentAssertions;
@@ -22,7 +21,7 @@ namespace AoC.Tests.Day4
                 var expected = NewPassport(
                     ("eyr", "2024"), ("pid", "662406624"), ("hcl", "#cfa07d"), ("byr", "1947"), ("iyr", "2015"), ("ecl", "amb"), ("hgt", "150cm"));
 
-                result.DataItems.Should().BeEquivalentTo(expected.DataItems);
+                result.Should().BeEquivalentTo(expected);
             }
 
             [Test]
@@ -38,7 +37,7 @@ hgt:150cm").Single();
                 var expected = NewPassport(
                     ("eyr", "2024"), ("pid", "662406624"), ("hcl", "#cfa07d"), ("byr", "1947"), ("iyr", "2015"), ("ecl", "amb"), ("hgt", "150cm"));
 
-                result.DataItems.Should().BeEquivalentTo(expected.DataItems);
+                result.Should().BeEquivalentTo(expected);
             }
 
             [Test]
@@ -56,10 +55,10 @@ and:this";
                 var result = PassportBatchParser.ParseBatch(input).ToArray();
 
                 // ASSERT
-                result.Select(x => x.DataItems).Should().BeEquivalentTo(
-                    NewPassport(("test", "test1")).DataItems,
-                    NewPassport(("test", "test2"), ("hello", "world"), ("3", "three")).DataItems,
-                    NewPassport(("something", "value"), ("and", "this")).DataItems);
+                result.Should().BeEquivalentTo(
+                    NewPassport(("test", "test1")),
+                    NewPassport(("test", "test2"), ("hello", "world"), ("3", "three")),
+                    NewPassport(("something", "value"), ("and", "this")));
 
                 result.Should().OnlyContain(x => x.DataItems.Count > 0);
             }
