@@ -1,41 +1,24 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Sprache;
+using System.Text.RegularExpressions;
 
 namespace AoC.Day4
 {
     public static class PassportBatchParser
     {
-        private static readonly Parser<string> DataItemDelimiter =
-            Parse.Char(' ').Once().Text()
-                .Or(Parse.LineTerminator);
+        private static readonly Regex DataItemsRegex = new(@"(?<key>\w+):(?<value>#?\w+)", RegexOptions.Compiled);
 
-        private static readonly Parser<string> DataItem =
-            Parse.AnyChar
-                .Except(Parse.Char(':'))
-                .Except(DataItemDelimiter)
-                .AtLeastOnce()
-                .Text();
-
-        private static readonly Parser<(string key, string value)> KeyValuePair =
-            from key in DataItem
-            from sep in Parse.Char(':')
-            from value in DataItem
-            select (key, value);
-
-        private static readonly Parser<Passport> Passport =
-            from dataItems in KeyValuePair.DelimitedBy(DataItemDelimiter)
-            select new Passport(dataItems.ToDictionary(kvp => kvp.key, kvp => kvp.value));
-
-        private static readonly Parser<string> PassportDelimiter =
-            from t1 in Parse.LineTerminator
-            from t2 in Parse.LineTerminator
-            select t1 + t2;
-
-        private static readonly Parser<IEnumerable<Passport>> Passports =
-            from passports in Passport.DelimitedBy(PassportDelimiter)
-            select passports;
-
-        public static IEnumerable<Passport> ParseBatch(string batch) => Passports.Parse(batch);
+        public static IEnumerable<Passport> ParseBatch(string batch) =>
+            batch.NormalizeLineEndings()
+                .Split($"{Environment.NewLine}{Environment.NewLine}")
+                .Select(passportText => new Passport(
+                    DataItemsRegex.Matches(passportText)
+                        .Select(match => new
+                        {
+                            key = match.Groups["key"].Value,
+                            value = match.Groups["value"].Value
+                        })
+                        .ToDictionary(kvp => kvp.key, kvp => kvp.value)));
     }
 }
