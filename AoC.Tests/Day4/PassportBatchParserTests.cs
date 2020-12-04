@@ -8,6 +8,8 @@ namespace AoC.Tests.Day4
 {
     public class PassportBatchParserTests
     {
+        private static Passport NewPassport(params (string key, string value)[] dataItems) => new(dataItems.ToDictionary(kvp => kvp.key, kvp => kvp.value));
+
         public class TheParseBatchMethod
         {
             [Test]
@@ -17,10 +19,10 @@ namespace AoC.Tests.Day4
                 var result = PassportBatchParser.ParseBatch("eyr:2024 pid:662406624 hcl:#cfa07d byr:1947 iyr:2015 ecl:amb hgt:150cm").Single();
 
                 // ASSERT
-                var expected = new Passport(
+                var expected = NewPassport(
                     ("eyr", "2024"), ("pid", "662406624"), ("hcl", "#cfa07d"), ("byr", "1947"), ("iyr", "2015"), ("ecl", "amb"), ("hgt", "150cm"));
 
-                result.Should().BeEquivalentTo(expected);
+                result.DataItems.Should().BeEquivalentTo(expected.DataItems);
             }
 
             [Test]
@@ -33,10 +35,10 @@ iyr:2015 ecl:amb
 hgt:150cm").Single();
 
                 // ASSERT
-                var expected = new Passport(
+                var expected = NewPassport(
                     ("eyr", "2024"), ("pid", "662406624"), ("hcl", "#cfa07d"), ("byr", "1947"), ("iyr", "2015"), ("ecl", "amb"), ("hgt", "150cm"));
 
-                result.Should().BeEquivalentTo(expected);
+                result.DataItems.Should().BeEquivalentTo(expected.DataItems);
             }
 
             [Test]
@@ -51,13 +53,15 @@ something:value
 and:this";
 
                 // ACT
-                var result = PassportBatchParser.ParseBatch(input);
+                var result = PassportBatchParser.ParseBatch(input).ToArray();
 
                 // ASSERT
-                result.Should().BeEquivalentTo(
-                    new Passport(("test", "test1")),
-                    new Passport(("test", "test2"), ("hello", "world"), ("3", "three")),
-                    new Passport(("something", "value"), ("and", "this")));
+                result.Select(x => x.DataItems).Should().BeEquivalentTo(
+                    NewPassport(("test", "test1")).DataItems,
+                    NewPassport(("test", "test2"), ("hello", "world"), ("3", "three")).DataItems,
+                    NewPassport(("something", "value"), ("and", "this")).DataItems);
+
+                result.Should().OnlyContain(x => x.DataItems.Count > 0);
             }
         }
     }

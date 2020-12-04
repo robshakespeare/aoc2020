@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Sprache;
 
@@ -24,17 +25,17 @@ namespace AoC.Day4
 
         private static readonly Parser<Passport> Passport =
             from dataItems in KeyValuePair.DelimitedBy(DataItemDelimiter)
-            select new Passport(dataItems);
+            select new Passport(dataItems.ToDictionary(kvp => kvp.key, kvp => kvp.value));
 
         private static readonly Parser<string> PassportDelimiter =
             from t1 in Parse.LineTerminator
             from t2 in Parse.LineTerminator
             select t1 + t2;
 
-        private static readonly Parser<Passport[]> Passports =
+        private static readonly Parser<IEnumerable<Passport>> Passports =
             from passports in Passport.DelimitedBy(PassportDelimiter)
-            select passports.ToArray();
+            select passports;
 
-        public static Passport[] ParseBatch(string batch) => Passports.Parse(batch);
+        public static IEnumerable<Passport> ParseBatch(string batch) => Passports.Parse(batch);
     }
 }
