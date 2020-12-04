@@ -87,7 +87,7 @@ namespace AoC.Day4
 
         #region Parsing
 
-        private static readonly Regex ParseDataItemsRegex = new(@"(?<key>\w+):(?<value>#?\w+)", RegexOptions.Compiled);
+        private static readonly Regex ParseDataItemsRegex = new(@"(?<key>\S+):(?<value>\S+)", RegexOptions.Compiled);
 
         public static Passport Parse(string passport) =>
             new(ParseDataItemsRegex.Matches(passport).Select(match => (match.Groups["key"].Value, match.Groups["value"].Value)));
