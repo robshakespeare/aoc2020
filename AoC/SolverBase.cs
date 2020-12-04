@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
 using Crayon;
 
@@ -32,7 +31,6 @@ namespace AoC
         {
             try
             {
-                Console.OutputEncoding = Encoding.UTF8;
                 Console.WriteLine($"Day {DayNumber}".Yellow());
 
                 SolvePart1();

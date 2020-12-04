@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using Crayon;
 
 namespace AoC
@@ -7,7 +8,9 @@ namespace AoC
     {
         public static void Main()
         {
-            Console.WriteLine("Advent of Code 2020!");
+            Console.Clear();
+            Console.OutputEncoding = Encoding.Unicode;
+            Console.WriteLine("🎄 Advent of Code 2020!");
 
             var solverFactory = SolverFactory.CreateFactory<Program>();
 
