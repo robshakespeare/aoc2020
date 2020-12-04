@@ -1,21 +1,38 @@
 using System;
-using System.Linq;
+using Crayon;
 
 namespace AoC
 {
-    public static class Program
+    public class Program
     {
-        public static void Main() => RunDay(5);
-
-        private static void RunDay(int dayNumber)
+        public static void Main()
         {
-            var solverType = typeof(Program).Assembly.GetTypes()
-                .Where(t => t.IsClass && t.GetInterfaces().Any(it => it == typeof(ISolver)))
-                .Single(t => t.FullName?.Contains($"Day{dayNumber}") == true);
+            Console.WriteLine("Advent of Code 2020!");
 
-            var solver = (ISolver)Activator.CreateInstance(solverType)!;
+            var solverFactory = SolverFactory.CreateFactory<Program>();
 
-            solver.Run();
+            bool exit;
+            do
+            {
+                Console.WriteLine("Type day number or blank to exit".Green());
+                var dayNumber = Console.ReadLine() ?? "";
+
+                exit = dayNumber == "" || dayNumber == "exit";
+
+                if (!exit)
+                {
+                    var solver = solverFactory.CreateSolver(dayNumber);
+                    if (solver != null)
+                    {
+                        Console.Clear();
+                        solver.Run();
+                    }
+                    else
+                    {
+                        Console.WriteLine($"No solver for day '{dayNumber.Blue()}'.");
+                    }
+                }
+            } while (!exit);
         }
     }
 }

@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using Crayon;
@@ -23,7 +26,7 @@ namespace AoC
 
         public int DayNumber { get; }
 
-        protected SolverBase() => _inputLoader = new InputLoader(DayNumber = this.GetDayNumber());
+        protected SolverBase() => _inputLoader = new InputLoader(DayNumber = SolverFactory.GetDayNumber(this));
 
         public void Run()
         {
@@ -84,13 +87,34 @@ namespace AoC
         }
     }
 
-    public static class SolverBaseExtensions
+    public class SolverFactory
     {
+        private readonly Dictionary<string, Type> _solvers;
+
+        private SolverFactory(Assembly scanAssembly)
+        {
+            _solvers = scanAssembly.GetTypes()
+                .Where(t => t.IsClass && !t.IsAbstract && t.GetInterfaces().Any(it => it == typeof(ISolver)))
+                .Select(t => new
+                {
+                    match = DayNumRegex.Match(t.FullName ?? ""),
+                    type = t
+                })
+                .Where(x => x.match.Success)
+                .ToDictionary(x => x.match.Groups["dayNum"].Value, x => x.type);
+        }
+
+        public ISolver? CreateSolver(string? dayNumber) => _solvers.TryGetValue(dayNumber ?? "", out var solverType)
+            ? (ISolver?) Activator.CreateInstance(solverType)
+            : null;
+
+        public static SolverFactory CreateFactory<TStartup>() => new(typeof(TStartup).Assembly);
+
         private static readonly Regex DayNumRegex = new(@"Day(?<dayNum>\d+)", RegexOptions.Compiled);
 
-        public static int GetDayNumber<TOutputPart1, TOutputPart2>(this SolverBase<TOutputPart1, TOutputPart2> solver)
+        private static int GetDayNumber(Type solverType)
         {
-            var fullName = solver.GetType().FullName;
+            var fullName = solverType.FullName;
             Match match;
 
             if (fullName != null &&
@@ -102,5 +126,7 @@ namespace AoC
 
             throw new InvalidOperationException("Unable to get day number from type name: " + fullName);
         }
+
+        public static int GetDayNumber<TOutputPart1, TOutputPart2>(SolverBase<TOutputPart1, TOutputPart2> solver) => GetDayNumber(solver.GetType());
     }
 }

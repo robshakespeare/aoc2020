@@ -62,7 +62,7 @@ namespace AoC.Day4
 
         private static readonly Regex ValidHeight = new(@"^(?<number>\d+)(?<unit>cm|in)$", RegexOptions.Compiled);
 
-        public bool IsHeightValid
+        private bool IsHeightValid
         {
             get
             {
