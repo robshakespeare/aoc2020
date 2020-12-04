@@ -12,24 +12,25 @@ namespace AoC
             var solverFactory = SolverFactory.CreateFactory<Program>();
 
             bool exit;
+            var defaultDay = DateTime.Now.Day.ToString();
             do
             {
-                Console.WriteLine("Type day number or blank to exit".Green());
+                Console.WriteLine($"Type day number or blank for {defaultDay} or 'x' to exit".Green());
                 var dayNumber = Console.ReadLine() ?? "";
+                dayNumber = string.IsNullOrWhiteSpace(dayNumber) ? defaultDay : dayNumber;
 
-                exit = dayNumber == "" || dayNumber == "exit";
-
+                exit = dayNumber == "x" || dayNumber == "exit";
                 if (!exit)
                 {
+                    Console.Clear();
                     var solver = solverFactory.CreateSolver(dayNumber);
                     if (solver != null)
                     {
-                        Console.Clear();
                         solver.Run();
                     }
                     else
                     {
-                        Console.WriteLine($"No solver for day '{dayNumber.Blue()}'.");
+                        Console.WriteLine($"No solver for day '{dayNumber.BrightCyan()}'.".Red());
                     }
                 }
             } while (!exit);
