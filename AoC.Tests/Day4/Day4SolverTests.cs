@@ -47,7 +47,7 @@ iyr:2011 ecl:brn hgt:59in");
             var part2Result = _sut.SolvePart2();
 
             // ASSERT
-            part2Result.Should().Be(null);
+            part2Result.Should().Be(158);
         }
     }
 }

@@ -5,7 +5,7 @@ namespace AoC
 {
     public static class Program
     {
-        public static void Main() => RunDay(4);
+        public static void Main() => RunDay(5);
 
         private static void RunDay(int dayNumber)
         {
