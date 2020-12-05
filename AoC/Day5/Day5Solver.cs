@@ -9,7 +9,19 @@ namespace AoC.Day5
 
         protected override long? SolvePart2Impl(string input)
         {
-            return base.SolvePart2Impl(input);
+            Seat? prevSeat = null;
+            foreach (var seat in input.ReadAllLines().Select(Seat.Parse).OrderBy(seat => seat.Id))
+            {
+                if (prevSeat != null && !prevSeat.GetNextSeat().Equals(seat))
+                {
+                    var yourSeat = prevSeat.GetNextSeat();
+                    Console.WriteLine($"Your seat is {yourSeat}");
+                    return yourSeat.Id;
+                }
+
+                prevSeat = seat;
+            }
+            return null;
         }
     }
 
@@ -34,5 +46,11 @@ namespace AoC.Day5
 
             return range.start;
         }
+
+        private const int NumColumns = 8;
+
+        public Seat GetNextSeat() => Column + 1 == NumColumns
+            ? new(Row + 1, 0)
+            : new(Row, Column + 1);
     }
 }
