@@ -10,7 +10,7 @@ namespace AoC
         {
             Console.Clear();
             Console.OutputEncoding = Encoding.Unicode;
-            Console.WriteLine("🎄 Advent of Code 2020!");
+            Console.WriteLine("🎄 Advent of Code 2020 🎅");
 
             var solverFactory = SolverFactory.CreateFactory<Program>();
 

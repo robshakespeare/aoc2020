@@ -9,17 +9,11 @@ namespace AoC.Day5
 
         protected override long? SolvePart2Impl(string input)
         {
-            Seat? prevSeat = null;
+            int? prevSeatId = null;
             foreach (var seat in input.ReadAllLines().Select(Seat.Parse).OrderBy(seat => seat.Id))
             {
-                if (prevSeat != null && !prevSeat.GetNextSeat().Equals(seat))
-                {
-                    var yourSeat = prevSeat.GetNextSeat();
-                    Console.WriteLine($"Your seat is {yourSeat}");
-                    return yourSeat.Id;
-                }
-
-                prevSeat = seat;
+                if (prevSeatId != null && prevSeatId + 1 != seat.Id) return prevSeatId + 1;
+                prevSeatId = seat.Id;
             }
             return null;
         }
@@ -43,14 +37,7 @@ namespace AoC.Day5
                 else if (chr == upper) range = (mid + 1, range.end);
                 else throw new InvalidOperationException($"Unexpected char {chr}");
             }
-
             return range.start;
         }
-
-        private const int NumColumns = 8;
-
-        public Seat GetNextSeat() => Column + 1 == NumColumns
-            ? new(Row + 1, 0)
-            : new(Row, Column + 1);
     }
 }
