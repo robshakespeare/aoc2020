@@ -43,13 +43,37 @@ b");
         }
 
         [Test]
+        public void Part2Example()
+        {
+            // ACT
+            var part2Result = _sut.SolvePart2(@"abc
+
+a
+b
+c
+
+ab
+ac
+
+a
+a
+a
+a
+
+b");
+
+            // ASSERT
+            part2Result.Should().Be(6);
+        }
+
+        [Test]
         public void Part2ReTest()
         {
             // ACT
             var part2Result = _sut.SolvePart2();
 
             // ASSERT
-            part2Result.Should().Be(null);
+            part2Result.Should().Be(3382);
         }
     }
 }
