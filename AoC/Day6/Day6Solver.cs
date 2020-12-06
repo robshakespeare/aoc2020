@@ -6,6 +6,8 @@ namespace AoC.Day6
 {
     public class Day6Solver : SolverBase
     {
+        public override string DayName => "Custom Customs";
+
         protected override long? SolvePart1Impl(string input) => input
             .Split($"{NewLine}{NewLine}")
             .Select(group => group.Where(char.IsLetter).Distinct())

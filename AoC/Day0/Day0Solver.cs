@@ -6,6 +6,8 @@ namespace AoC.Day0
 {
     public class Day0Solver : SolverBase
     {
+        public override string DayName => "Test Day";
+
         protected override long? SolvePart1Impl(string input)
         {
             var vectors = input

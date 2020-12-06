@@ -25,13 +25,15 @@ namespace AoC
 
         public int DayNumber { get; }
 
+        public virtual string DayName => "";
+
         protected SolverBase() => _inputLoader = new InputLoader(DayNumber = SolverFactory.GetDayNumber(this));
 
         public void Run()
         {
             try
             {
-                Console.WriteLine($"Day {DayNumber}".Yellow());
+                Console.WriteLine($"Day {DayNumber}{(DayName is null or "" ? "" : ": " + DayName)}".Yellow());
 
                 SolvePart1();
                 SolvePart2();

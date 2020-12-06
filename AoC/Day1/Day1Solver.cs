@@ -4,6 +4,8 @@ namespace AoC.Day1
 {
     public class Day1Solver : SolverBase
     {
+        public override string DayName => "Report Repair";
+
         protected override long? SolvePart1Impl(string input)
         {
             var inputNumbers = input.ReadLinesAsLongs().ToArray();

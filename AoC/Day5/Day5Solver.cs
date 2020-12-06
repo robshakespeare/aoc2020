@@ -5,6 +5,8 @@ namespace AoC.Day5
 {
     public class Day5Solver : SolverBase
     {
+        public override string DayName => "Binary Boarding";
+
         protected override long? SolvePart1Impl(string input) => input.ReadLines().Select(Seat.Parse).Max(seat => seat.Id);
 
         protected override long? SolvePart2Impl(string input)

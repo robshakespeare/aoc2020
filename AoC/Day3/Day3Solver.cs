@@ -6,6 +6,8 @@ namespace AoC.Day3
 {
     public class Day3Solver : SolverBase
     {
+        public override string DayName => "Toboggan Trajectory";
+
         protected override long? SolvePart1Impl(string input)
         {
             var grid = new Grid(input);

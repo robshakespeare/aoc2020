@@ -4,6 +4,8 @@ namespace AoC.Day2
 {
     public class Day2Solver : SolverBase
     {
+        public override string DayName => "Password Philosophy";
+
         protected override long? SolvePart1Impl(string input) => Solve(input, new PasswordPolicy1());
 
         protected override long? SolvePart2Impl(string input) => Solve(input, new PasswordPolicy2());
