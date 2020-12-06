@@ -5,12 +5,12 @@ namespace AoC.Day5
 {
     public class Day5Solver : SolverBase
     {
-        protected override long? SolvePart1Impl(string input) => input.ReadAllLines().Select(Seat.Parse).Max(seat => seat.Id);
+        protected override long? SolvePart1Impl(string input) => input.ReadLines().Select(Seat.Parse).Max(seat => seat.Id);
 
         protected override long? SolvePart2Impl(string input)
         {
             int? prevSeatId = null;
-            foreach (var seat in input.ReadAllLines().Select(Seat.Parse).OrderBy(seat => seat.Id))
+            foreach (var seat in input.ReadLines().Select(Seat.Parse).OrderBy(seat => seat.Id))
             {
                 if (prevSeatId != null && prevSeatId + 1 != seat.Id) return prevSeatId + 1;
                 prevSeatId = seat.Id;

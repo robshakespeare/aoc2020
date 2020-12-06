@@ -15,7 +15,7 @@ namespace AoC.Day6
             .Split($"{NewLine}{NewLine}")
             .Select(group =>
             {
-                var groupPeople = group.ReadAllLines().ToArray();
+                var groupPeople = group.ReadLines().ToArray();
                 var groupAnswers = new Dictionary<char, int>();
 
                 foreach (var personAnswer in groupPeople.SelectMany(personAnswers => personAnswers))

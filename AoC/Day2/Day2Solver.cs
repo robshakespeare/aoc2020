@@ -10,7 +10,7 @@ namespace AoC.Day2
 
         private static long? Solve(string input, IPasswordPolicy policy)
         {
-            var lines = input.ReadAllLines().Select(PasswordLine.Parse);
+            var lines = input.ReadLines().Select(PasswordLine.Parse);
             return policy.GetValidLines(lines).Count();
         }
     }

@@ -8,9 +8,15 @@ namespace AoC
     {
         public static void Main()
         {
-            Console.Clear();
             Console.OutputEncoding = Encoding.Unicode;
-            Console.WriteLine("🎄 Advent of Code 2020 🎅");
+
+            static void PrintTitle()
+            {
+                Console.Clear();
+                Console.WriteLine("🎄 Advent of Code 2020 🎅");
+            }
+
+            PrintTitle();
 
             var solverFactory = SolverFactory.CreateFactory<Program>();
 
@@ -25,8 +31,8 @@ namespace AoC
                 exit = dayNumber == "x" || dayNumber == "exit";
                 if (!exit)
                 {
-                    Console.Clear();
-                    var solver = solverFactory.CreateSolver(dayNumber);
+                    PrintTitle();
+                    var solver = solverFactory.TryCreateSolver(dayNumber);
                     if (solver != null)
                     {
                         solver.Run();

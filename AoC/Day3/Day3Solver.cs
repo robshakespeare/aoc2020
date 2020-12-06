@@ -31,7 +31,7 @@ namespace AoC.Day3
 
         public record Grid(string PuzzleInput)
         {
-            private readonly GridLine[] _lines = PuzzleInput.ReadAllLines().Select(line => new GridLine(line)).ToArray();
+            private readonly GridLine[] _lines = PuzzleInput.ReadLines().Select(line => new GridLine(line)).ToArray();
 
             public int NumLines => _lines.Length;
 

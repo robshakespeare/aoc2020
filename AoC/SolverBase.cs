@@ -102,7 +102,7 @@ namespace AoC
                 .ToDictionary(x => x.match.Groups["dayNum"].Value, x => x.type);
         }
 
-        public ISolver? CreateSolver(string? dayNumber) => _solvers.TryGetValue(dayNumber ?? "", out var solverType)
+        public ISolver? TryCreateSolver(string? dayNumber) => _solvers.TryGetValue(dayNumber ?? "", out var solverType)
             ? (ISolver?) Activator.CreateInstance(solverType)
             : null;
 

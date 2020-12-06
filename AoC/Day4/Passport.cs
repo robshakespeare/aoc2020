@@ -1,7 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using static System.Environment;
 
 namespace AoC.Day4
 {
@@ -92,8 +92,7 @@ namespace AoC.Day4
         public static Passport Parse(string passport) =>
             new(ParseDataItemsRegex.Matches(passport).Select(match => (match.Groups["key"].Value, match.Groups["value"].Value)));
 
-        public static IEnumerable<Passport> ParseBatch(string batch) =>
-            batch.NormalizeLineEndings().Split($"{Environment.NewLine}{Environment.NewLine}").Select(Parse);
+        public static IEnumerable<Passport> ParseBatch(string batch) => batch.NormalizeLineEndings().Split($"{NewLine}{NewLine}").Select(Parse);
 
         #endregion
     }

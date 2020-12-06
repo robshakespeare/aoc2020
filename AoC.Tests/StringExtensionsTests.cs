@@ -76,10 +76,10 @@ namespace AoC.Tests
         }
 
         [Test]
-        public void NormalizeAndTrimEnd_And_ReadAllLines_DoesParseEachLineOfStringIntoArrayElements_And_DoesNormalizeLineEndings()
+        public void NormalizeAndTrimEnd_And_ReadLines_DoesParseEachLineOfStringIntoArrayElements_And_DoesNormalizeLineEndings()
         {
             // ACT
-            var result = "hello\nworld\r\n\r\nthis\ris\r\na\ntest".NormalizeAndTrimEnd().ReadAllLines();
+            var result = "hello\nworld\r\n\r\nthis\ris\r\na\ntest".NormalizeAndTrimEnd().ReadLines();
 
             // ASSERT
             result.Should().BeEquivalentTo(
@@ -93,10 +93,10 @@ namespace AoC.Tests
         }
 
         [Test]
-        public void NormalizeAndTrimEnd_And_ReadAllLines_DoesTrimTrailingLineEndings()
+        public void NormalizeAndTrimEnd_And_ReadLines_DoesTrimTrailingLineEndings()
         {
             // ACT
-            var result = "hello\r\n\r\n\n\n\r\nworld\r\n\n\n\r\n".NormalizeAndTrimEnd().ReadAllLines();
+            var result = "hello\r\n\r\n\n\n\r\nworld\r\n\n\n\r\n".NormalizeAndTrimEnd().ReadLines();
 
             // ASSERT
             result.Should().BeEquivalentTo(
@@ -109,10 +109,10 @@ namespace AoC.Tests
         }
 
         [Test]
-        public void NormalizeAndTrimEnd_And_ReadAllLines_DoesTrimTrailingLineEndings_AndResultInAnEmptyCollectionIfInputIsJustNewLines()
+        public void NormalizeAndTrimEnd_And_ReadLines_DoesTrimTrailingLineEndings_AndResultInAnEmptyCollectionIfInputIsJustNewLines()
         {
             // ACT
-            var result = "\r\n\r\n\r\n\n\n\r\n".NormalizeAndTrimEnd().ReadAllLines();
+            var result = "\r\n\r\n\r\n\n\n\r\n".NormalizeAndTrimEnd().ReadLines();
 
             // ASSERT
             result.Should().BeEmpty();
@@ -129,10 +129,10 @@ namespace AoC.Tests
         }
 
         [Test]
-        public void NormalizeAndTrimEnd_And_ReadAllLines_WhenInputNull_ReturnsEmptyString()
+        public void NormalizeAndTrimEnd_And_ReadLines_WhenInputNull_ReturnsEmptyString()
         {
             // ACT
-            var result = ((string?)null).NormalizeAndTrimEnd().ReadAllLines();
+            var result = ((string?)null).NormalizeAndTrimEnd().ReadLines();
 
             // ASSERT
             result.Should().BeEmpty();

@@ -9,7 +9,7 @@ namespace AoC.Day0
         protected override long? SolvePart1Impl(string input)
         {
             var vectors = input
-                .ReadAllLines()
+                .ReadLines()
                 .Select(line => line.Split(","))
                 .Select(parts => new Vector2(float.Parse(parts[0]), float.Parse(parts[1])))
                 .ToArray();
@@ -20,7 +20,7 @@ namespace AoC.Day0
         protected override long? SolvePart2Impl(string input)
         {
             var vectors = input
-                .ReadAllLines()
+                .ReadLines()
                 .Select(line => line.Split(","))
                 .Select(parts => new Vector2(float.Parse(parts[0]), float.Parse(parts[1])))
                 .ToArray();

@@ -10,7 +10,7 @@ namespace AoC.Tests
         {
             var sut = SolverFactory.CreateFactory<Program>();
 
-            var solver = sut.CreateSolver("0");
+            var solver = sut.TryCreateSolver("0");
 
             solver!.Should().NotBeNull();
             solver!.DayNumber.Should().Be(0);
