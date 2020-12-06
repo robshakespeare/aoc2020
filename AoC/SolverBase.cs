@@ -12,6 +12,8 @@ namespace AoC
     {
         int DayNumber { get; }
 
+        string DayName { get; }
+
         void Run();
     }
 
@@ -48,7 +50,7 @@ namespace AoC
         [return: MaybeNull]
         private static TOutput SolvePartTimed<TOutput>(int partNum, string input, Func<string, TOutput?> solve)
         {
-            input = input.NormalizeLineEndings().TrimEnd(); // Normalize line endings, and remove all trailing white-space (including trailing of line endings)
+            input = input.NormalizeLineEndings().TrimEnd(); // Normalize line endings, and remove all trailing white-space (including trailing line endings)
 
             using var timer = new TimingBlock($"Part {partNum}");
             var result = solve(input);
