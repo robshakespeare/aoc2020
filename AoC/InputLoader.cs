@@ -32,7 +32,7 @@ namespace AoC
         private static string LoadInput(string filePath)
         {
             using var _ = new TimingBlock("Load " + Path.GetFileNameWithoutExtension(filePath));
-            var input = File.ReadAllText(filePath) ?? "";
+            var input = File.ReadAllText(filePath);
 
             if (string.IsNullOrWhiteSpace(input))
             {

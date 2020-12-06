@@ -13,6 +13,12 @@ Task("CreateDay")
             return;
         }
 
+        if (DirectoryExists($"./AoC/Day{day}"))
+        {
+            Information($"Skipping day {day}, it already exists.");
+            return;
+        }
+
         Information($"Creating files for day {day}...");
 
         CreateDirectory(workingDir);
@@ -36,6 +42,16 @@ Task("CreateDay")
         DeleteDirectory(workingDir, new DeleteDirectorySettings { Recursive = true, Force = true });
 
         Information("Created files for day " + day);
+    });
+
+Task("CreateAllDays")
+    .Does(() =>
+    {
+        for(var dayCounter = 1; dayCounter <= 25; dayCounter++)
+        {
+            day = dayCounter.ToString();
+            RunTarget("CreateDay");
+        }
     });
 
 RunTarget(target);

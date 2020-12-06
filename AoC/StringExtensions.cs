@@ -11,9 +11,9 @@ namespace AoC
         /// <summary>
         /// Parses and returns each line in the input string. 
         /// </summary>
-        public static IEnumerable<string> ReadLines(this string s)
+        public static IEnumerable<string> ReadLines(this string? s)
         {
-            using var sr = new StringReader(s ?? throw new ArgumentNullException(nameof(s)));
+            using var sr = new StringReader(s?.TrimEnd() ?? "");
             string? line;
             while ((line = sr.ReadLine()) != null)
             {
@@ -24,7 +24,7 @@ namespace AoC
         /// <summary>
         /// Parses and returns each line in the input string as an Int64.
         /// </summary>
-        public static IEnumerable<long> ReadLinesAsLongs(this string s) => s.ReadLines().Select(long.Parse);
+        public static IEnumerable<long> ReadLinesAsLongs(this string? s) => s.ReadLines().Select(long.Parse);
 
         private static readonly Regex LineEndingsRegex = new(@"\r\n|\n|\r", RegexOptions.Compiled);
 
@@ -32,10 +32,5 @@ namespace AoC
         /// Normalizes the line endings in the specified string, so that all the line endings match the current environment's line endings.
         /// </summary>
         public static string NormalizeLineEndings(this string? s) => LineEndingsRegex.Replace(s ?? "", Environment.NewLine);
-
-        /// <summary>
-        /// Normalizes the line endings in the specified string, and trims any trailing line endings.
-        /// </summary>
-        public static string NormalizeAndTrimEnd(this string? s) => s.NormalizeLineEndings().TrimEnd(Environment.NewLine.ToCharArray());
     }
 }

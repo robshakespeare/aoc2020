@@ -46,12 +46,9 @@ namespace AoC
         }
 
         [return: MaybeNull]
-        private delegate TResult SolverFunc<in T, out TResult>(T arg);
-
-        [return: MaybeNull]
-        private static TOutput SolvePartTimed<TOutput>(int partNum, string input, SolverFunc<string, TOutput> solve)
+        private static TOutput SolvePartTimed<TOutput>(int partNum, string input, Func<string, TOutput?> solve)
         {
-            input = input.NormalizeAndTrimEnd();
+            input = input.NormalizeLineEndings().TrimEnd(); // Normalize line endings, and remove all trailing white-space (including trailing of line endings)
 
             using var timer = new TimingBlock($"Part {partNum}");
             var result = solve(input);

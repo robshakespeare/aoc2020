@@ -76,10 +76,20 @@ namespace AoC.Tests
         }
 
         [Test]
-        public void NormalizeAndTrimEnd_And_ReadLines_DoesParseEachLineOfStringIntoArrayElements_And_DoesNormalizeLineEndings()
+        public void NormalizeLineEndings_WhenInputNull_ReturnsEmptyString()
         {
             // ACT
-            var result = "hello\nworld\r\n\r\nthis\ris\r\na\ntest".NormalizeAndTrimEnd().ReadLines();
+            var result = ((string?)null).NormalizeLineEndings();
+
+            // ASSERT
+            result.Should().BeEmpty();
+        }
+
+        [Test]
+        public void ReadLines_DoesParseEachLineOfStringIntoArrayElements_And_DoesNormalizeLineEndings()
+        {
+            // ACT
+            var result = "hello\nworld\r\n\r\nthis\ris\r\na\ntest".ReadLines();
 
             // ASSERT
             result.Should().BeEquivalentTo(
@@ -93,10 +103,10 @@ namespace AoC.Tests
         }
 
         [Test]
-        public void NormalizeAndTrimEnd_And_ReadLines_DoesTrimTrailingLineEndings()
+        public void ReadLines_DoesTrimTrailingLineEndings()
         {
             // ACT
-            var result = "hello\r\n\r\n\n\n\r\nworld\r\n\n\n\r\n".NormalizeAndTrimEnd().ReadLines();
+            var result = "hello\r\n\r\n\n\n\r\nworld\r\n\n\n\r\n".ReadLines();
 
             // ASSERT
             result.Should().BeEquivalentTo(
@@ -109,30 +119,20 @@ namespace AoC.Tests
         }
 
         [Test]
-        public void NormalizeAndTrimEnd_And_ReadLines_DoesTrimTrailingLineEndings_AndResultInAnEmptyCollectionIfInputIsJustNewLines()
+        public void ReadLines_DoesTrimTrailingLineEndings_AndResultInAnEmptyCollectionIfInputIsJustNewLines()
         {
             // ACT
-            var result = "\r\n\r\n\r\n\n\n\r\n".NormalizeAndTrimEnd().ReadLines();
+            var result = "\r\n\r\n\r\n\n\n\r\n".ReadLines();
 
             // ASSERT
             result.Should().BeEmpty();
         }
 
         [Test]
-        public void NormalizeAndTrimEnd_WhenInputNull_ReturnsEmptyString()
+        public void ReadLines_WhenInputNull_ReturnsEmptyCollection()
         {
             // ACT
-            var result = ((string?)null).NormalizeAndTrimEnd();
-
-            // ASSERT
-            result.Should().BeEmpty();
-        }
-
-        [Test]
-        public void NormalizeAndTrimEnd_And_ReadLines_WhenInputNull_ReturnsEmptyString()
-        {
-            // ACT
-            var result = ((string?)null).NormalizeAndTrimEnd().ReadLines();
+            var result = ((string?)null).ReadLines().ToArray();
 
             // ASSERT
             result.Should().BeEmpty();
