@@ -9,10 +9,7 @@ namespace AoC.Day7
     {
         protected override long? SolvePart1Impl(string input) => BagRules.Parse(input).CountBagColorsCanContain("shiny gold");
 
-        protected override long? SolvePart2Impl(string input)
-        {
-            return base.SolvePart2Impl(input);
-        }
+        protected override long? SolvePart2Impl(string input) => BagRules.Parse(input).CountBagsRequiredInside("shiny gold");
     }
 
     public class BagRules
@@ -36,6 +33,20 @@ namespace AoC.Day7
         private bool CanContain(BagRule bagRule, string bagColor) =>
             bagRule.CanDirectlyContain(bagColor) ||
             bagRule.CanContainColorQuantity.Any(x => CanContain(_bagRulesDictionary[x.containingBagColor], bagColor));
+
+        public long CountBagsRequiredInside(string bagColor)
+        {
+            var bagRule = _bagRulesDictionary[bagColor];
+            long count = 0;
+
+            foreach (var (containingBagColor, quantity) in bagRule.CanContainColorQuantity)
+            {
+                count += quantity;
+                count += quantity * CountBagsRequiredInside(containingBagColor);
+            }
+
+            return count;
+        }
 
         public static BagRules Parse(string input) => new(input.ReadLines().Select(BagRule.Parse).ToArray());
     }
