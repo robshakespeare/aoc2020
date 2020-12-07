@@ -1,4 +1,4 @@
-name: CI Build & Test
+name: CI
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  build-and-test:
 
     runs-on: ubuntu-latest
 
@@ -17,7 +17,7 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 5.0.100
-    - name: Install dependencies
+    - name: Restore
       run: dotnet restore
     - name: Build
       run: dotnet build --configuration Release --no-restore

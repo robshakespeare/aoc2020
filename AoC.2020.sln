@@ -13,6 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Template\AoC\DayXXX\DayXXXSolver.cs = Template\AoC\DayXXX\DayXXXSolver.cs
 		Template\AoC.Tests\DayXXX\DayXXXSolverTests.cs = Template\AoC.Tests\DayXXX\DayXXXSolverTests.cs
 		.config\dotnet-tools.json = .config\dotnet-tools.json
+		.github\workflows\github-CI.yml = .github\workflows\github-CI.yml
 		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection
