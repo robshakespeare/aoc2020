@@ -35,10 +35,8 @@ namespace AoC
         {
             try
             {
-                Console.WriteLine($"Day {DayNumber}{(DayName is null or "" ? "" : ": " + DayName)}".Yellow());
-
                 SolvePart1();
-                SolvePart2();
+                SolvePart2(title: false);
             }
             catch (Exception e)
             {
@@ -48,28 +46,35 @@ namespace AoC
         }
 
         [return: MaybeNull]
-        private static TOutput SolvePartTimed<TOutput>(int partNum, string input, Func<string, TOutput?> solve)
+        private TOutput SolvePartTimed<TOutput>(int partNum, Func<string> input, Func<string, TOutput?> solve, bool title)
         {
-            input = input.NormalizeLineEndings().TrimEnd(); // Normalize line endings, and remove all trailing white-space (including trailing line endings)
+            if (title)
+            {
+                Console.WriteLine($"Day {DayNumber}{(DayName is null or "" ? "" : ": " + DayName)}".Yellow());
+                Console.WriteLine();
+            }
+
+            var puzzleInput = input()
+                .NormalizeLineEndings().TrimEnd(); // Normalize line endings, and remove all trailing white-space (including trailing line endings)
 
             using var timer = new TimingBlock($"Part {partNum}");
-            var result = solve(input);
+            var result = solve(puzzleInput);
             timer.Stop();
             Console.WriteLine($"Part {partNum}: {result?.ToString().Green()}");
             return result;
         }
 
         [return: MaybeNull]
-        public TOutputPart1 SolvePart1() => SolvePart1(_inputLoader.PuzzleInputPart1);
+        public TOutputPart1 SolvePart1(bool title = true) => SolvePart1(_inputLoader.PuzzleInputPart1, title);
 
         [return: MaybeNull]
-        public TOutputPart2 SolvePart2() => SolvePart2(_inputLoader.PuzzleInputPart2);
+        public TOutputPart2 SolvePart2(bool title = true) => SolvePart2(_inputLoader.PuzzleInputPart2, title);
 
         [return: MaybeNull]
-        public TOutputPart1 SolvePart1(string input) => SolvePartTimed(1, input, SolvePart1Impl);
+        public TOutputPart1 SolvePart1(string input, bool title = false) => SolvePartTimed(1, () => input, SolvePart1Impl, title);
 
         [return: MaybeNull]
-        public TOutputPart2 SolvePart2(string input) => SolvePartTimed(2, input, SolvePart2Impl);
+        public TOutputPart2 SolvePart2(string input, bool title = false) => SolvePartTimed(2, () => input, SolvePart2Impl, title);
 
         [return: MaybeNull]
         protected virtual TOutputPart1 SolvePart1Impl(string input)

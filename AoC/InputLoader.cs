@@ -21,9 +21,14 @@ namespace AoC
             _part2 = new Lazy<string>(() =>
             {
                 var part2FilePath = GetInputFilePath("input-part-2.txt");
-                return File.Exists(part2FilePath)
-                    ? LoadInput(part2FilePath)
-                    : _part1.Value;
+
+                if (!File.Exists(part2FilePath))
+                {
+                    return _part1.Value;
+                }
+
+                Console.WriteLine("Part 2 has separate input file".Blue());
+                return LoadInput(part2FilePath);
             });
         }
 
@@ -31,7 +36,6 @@ namespace AoC
 
         private static string LoadInput(string filePath)
         {
-            using var _ = new TimingBlock("Load " + Path.GetFileNameWithoutExtension(filePath));
             var input = File.ReadAllText(filePath);
 
             if (string.IsNullOrWhiteSpace(input))
