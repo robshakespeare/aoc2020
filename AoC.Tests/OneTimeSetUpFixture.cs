@@ -38,7 +38,13 @@ namespace AoC.Tests
 
             public override Encoding Encoding { get; } = Encoding.Default;
 
-            public override void Write(string? value) => base.Write(value == null ? null : AnsiEscapeCodeRegex.Replace(value, ""));
+            public override void Write(string? value)
+            {
+                if (value != null)
+                {
+                    TestContext.Progress.Write(AnsiEscapeCodeRegex.Replace(value, ""));
+                }
+            }
 
             public override void Write(char value) => TestContext.Progress.Write(value);
         }
