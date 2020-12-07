@@ -31,32 +31,11 @@ namespace AoC.Day7
         /// <summary>
         /// Counts the number of bag colors that can eventually contain at least one specified color of bag.
         /// </summary>
-        public long CountBagColorsCanContain(string bagColor)
-        {
-            var validContainingBagColors = new HashSet<string>();
+        public long CountBagColorsCanContain(string bagColor) => _bagRules.Count(bagRule => CanContain(bagRule, bagColor));
 
-            foreach (var bagRule in _bagRules)
-            {
-                if (CanContain(bagRule, bagColor))
-                {
-                    validContainingBagColors.Add(bagRule.BagColor);
-                }
-            }
-
-            return validContainingBagColors.Count;
-        }
-
-        private bool CanContain(BagRule bagRule, string bagColor)
-        {
-            if (bagRule.CanDirectlyContain(bagColor))
-            {
-                return true;
-            }
-
-            // or, if any of the child bags can contain the `bagColor`
-            return bagRule.CanContainColorQuantity
-                .Any(x => CanContain(_bagRulesDictionary[x.containingBagColor], bagColor));
-        }
+        private bool CanContain(BagRule bagRule, string bagColor) =>
+            bagRule.CanDirectlyContain(bagColor) ||
+            bagRule.CanContainColorQuantity.Any(x => CanContain(_bagRulesDictionary[x.containingBagColor], bagColor));
 
         public static BagRules Parse(string input) => new(input.ReadLines().Select(BagRule.Parse).ToArray());
     }
