@@ -23,7 +23,7 @@ namespace AoC.Day8
 
         protected override long? SolvePart2Impl(string input)
         {
-            var originalInstructions = BootCodeComputer.Parse(input).Instructions.ToReadOnlyArray();
+            var originalInstructions = BootCodeComputer.Parse(input).GetInstructions();
 
             for (var instructionIndex = 0; instructionIndex < originalInstructions.Count; instructionIndex++)
             {

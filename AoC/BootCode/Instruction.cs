@@ -6,7 +6,6 @@ namespace AoC.BootCode
         string Operation,
         long Argument)
     {
-
         public static Instruction ParseLine(string line)
         {
             var parts = line.Split(' ');

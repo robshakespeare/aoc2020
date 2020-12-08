@@ -18,12 +18,23 @@ namespace AoC.BootCode
             Accumulator = 0;
         }
 
-        public long Accumulator { get; private set; }
-
-        public IEnumerable<Instruction> Instructions => _instructions;
+        /// <summary>
+        /// Parses the specified Boot Code program, and creates a computer for it in its initial state.
+        /// </summary>
+        public static BootCodeComputer Parse(string inputProgram) => new(inputProgram.ReadLines().Select(Instruction.ParseLine));
 
         /// <summary>
-        /// Evaluates the computer until it halts, returns the value of the Accumulator.
+        /// Current value of the `Accumulator` register.
+        /// </summary>
+        public long Accumulator { get; private set; }
+
+        /// <summary>
+        /// Returns a read only version of this computer's instructions.
+        /// </summary>
+        public IReadOnlyList<Instruction> GetInstructions() => _instructions.ToReadOnlyArray();
+
+        /// <summary>
+        /// Evaluates the computer until it halts, and then returns the value of the Accumulator.
         /// </summary>
         public long Evaluate()
         {
@@ -73,8 +84,5 @@ namespace AoC.BootCode
         private static long? EvalJumpInstruction(Instruction instruction, long currentInstructionPointer) => currentInstructionPointer + instruction.Argument;
 
         private static long? EvalNoOpInstruction() => null;
-
-        public static BootCodeComputer Parse(string inputProgram) =>
-            new(inputProgram.ReadLines().Select(Instruction.ParseLine));
     }
 }
