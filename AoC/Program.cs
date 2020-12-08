@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Crayon;
 
@@ -6,7 +8,7 @@ namespace AoC
 {
     public class Program
     {
-        public static void Main()
+        public static void Main(string[] args)
         {
             Console.OutputEncoding = Encoding.Unicode;
 
@@ -21,11 +23,12 @@ namespace AoC
             var solverFactory = SolverFactory.CreateFactory<Program>();
 
             bool exit;
-            var defaultDay = DateTime.Now.Day.ToString();
+            var defaultDay = Math.Min(DateTime.Now.Day, 25).ToString();
+            var cliDays = new Queue<string>(args.Any() ? args : new[] {""});
             do
             {
                 Console.WriteLine($"Type day number or blank for {defaultDay} or 'x' to exit".Green());
-                var dayNumber = Console.ReadLine() ?? "";
+                var dayNumber = cliDays.TryDequeue(out var cliDay) ? cliDay : Console.ReadLine() ?? "";
                 dayNumber = string.IsNullOrWhiteSpace(dayNumber) ? defaultDay : dayNumber;
 
                 exit = dayNumber == "x" || dayNumber == "exit";
