@@ -37,14 +37,20 @@ namespace AoC.BootCode
         /// </summary>
         public bool EvaluateNextInstruction()
         {
+            if (_nextInstructionPointer == _instructions.Length)
+            {
+                return false;
+            }
+
             if (_visitedInstructions.Contains(_nextInstructionPointer))
             {
                 throw new InvalidOperationException("Infinite loop detected");
             }
+
             var gotoInstructionPointer = EvalInstruction(_instructions[_nextInstructionPointer], _nextInstructionPointer);
             _visitedInstructions.Add(_nextInstructionPointer);
             _nextInstructionPointer = gotoInstructionPointer ?? _nextInstructionPointer + 1;
-            return !_visitedInstructions.Contains(_nextInstructionPointer);
+            return true;
         }
 
         private long? EvalInstruction(Instruction instruction, long currentInstructionPointer) =>

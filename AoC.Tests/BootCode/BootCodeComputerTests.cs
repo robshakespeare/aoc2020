@@ -1,3 +1,4 @@
+using System;
 using AoC.BootCode;
 using FluentAssertions;
 using NUnit.Framework;
@@ -18,11 +19,15 @@ acc -99
 acc +1
 jmp -4
 acc +6");
+
+            Action act = () => sut.Evaluate();
+
             // ACT
-            var result = sut.Evaluate();
+            act.Should()
+                .Throw<InvalidOperationException>()
+                .WithMessage("Infinite loop detected");
 
             // ASSERT
-            result.Should().Be(5);
             sut.Accumulator.Should().Be(5);
         }
     }
