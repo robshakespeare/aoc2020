@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using AoC.BootCode;
 using FluentAssertions;
 using NUnit.Framework;
@@ -28,6 +29,20 @@ acc +6");
                 .WithMessage("Infinite loop detected");
 
             sut.Accumulator.Should().Be(5);
+        }
+
+        [Test]
+        public void Day8Part2WithCorruptionFixedTest()
+        {
+            var inputPath = Path.Combine("BootCode", "Day8-input-corruption-fixed.txt");
+            var sut = BootCodeComputer.Parse(File.ReadAllText(inputPath));
+
+            // ACT
+            var result = sut.Evaluate();
+
+            // ASSERT
+            result.Should().Be(1125);
+            sut.Accumulator.Should().Be(1125);
         }
     }
 }

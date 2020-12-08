@@ -39,7 +39,7 @@ namespace AoC.Day8
                     {
                         var bootCodeComputer = new BootCodeComputer(instructions);
                         var result = bootCodeComputer.Evaluate();
-                        Console.WriteLine($"Changed {instruction.Operation} to {newOp} at index {instructionIndex} and got successful result of {result}");
+                        Console.WriteLine($"Changed {instruction.Operation} to {newOp} at line {instructionIndex + 1} and got successful result of {result}");
                         return result;
                     }
                     catch (InvalidOperationException e) when (e.Message == "Infinite loop detected")

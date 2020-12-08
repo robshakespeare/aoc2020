@@ -18,4 +18,10 @@
     <ProjectReference Include="..\AoC\AoC.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="*\*.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
