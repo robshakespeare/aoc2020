@@ -27,7 +27,7 @@ namespace AoC
 
         public int DayNumber { get; }
 
-        public virtual string DayName => "";
+        public abstract string DayName { get; }
 
         protected SolverBase() => _inputLoader = new InputLoader(DayNumber = SolverFactory.GetDayNumber(this));
 

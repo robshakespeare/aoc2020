@@ -6,6 +6,8 @@ namespace AoC.Day8
 {
     public class Day8Solver : SolverBase
     {
+        public override string DayName => "Handheld Halting";
+
         protected override long? SolvePart1Impl(string input)
         {
             var bootCodeComputer = BootCodeComputer.Parse(input);
