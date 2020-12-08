@@ -24,7 +24,7 @@ namespace AoC.Day7
 
         private static readonly Regex ParseBag = new("^(?<bagColor>.+) bags contain (?<contents>.+)", RegexOptions.Compiled);
 
-        private static readonly Regex ParseBagContents = new(@"((?<quantity>\d+) (?<containingBagColor>.+?) bag)+", RegexOptions.Compiled);
+        private static readonly Regex ParseBagContents = new(@"((?<quantity>\d+) (?<containingBagColor>.+?) bag)", RegexOptions.Compiled);
 
         public static BagRule Parse(string line)
         {
