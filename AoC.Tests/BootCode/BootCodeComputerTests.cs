@@ -22,12 +22,11 @@ acc +6");
 
             Action act = () => sut.Evaluate();
 
-            // ACT
+            // ACT & ASSERT
             act.Should()
                 .Throw<InvalidOperationException>()
                 .WithMessage("Infinite loop detected");
 
-            // ASSERT
             sut.Accumulator.Should().Be(5);
         }
     }

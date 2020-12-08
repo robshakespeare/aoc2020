@@ -20,6 +20,8 @@ namespace AoC.BootCode
 
         public long Accumulator { get; private set; }
 
+        public IEnumerable<Instruction> Instructions => _instructions;
+
         /// <summary>
         /// Evaluates the computer until it halts, returns the value of the Accumulator.
         /// </summary>
