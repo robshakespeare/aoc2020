@@ -15,7 +15,7 @@ namespace AoC.Tests.Day8
             var part1Result = _sut.SolvePart1();
 
             // ASSERT
-            part1Result.Should().Be(null);
+            part1Result.Should().Be(1137);
         }
 
         [Test]
