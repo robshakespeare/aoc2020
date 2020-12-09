@@ -7,15 +7,12 @@ namespace AoC.BootCode
     public class BootCodeComputer
     {
         private readonly Instruction[] _instructions;
-        private readonly HashSet<long> _visitedInstructions = new();
-
-        private long _nextInstructionPointer;
+        private readonly ProgramState _state;
 
         public BootCodeComputer(IEnumerable<Instruction> instructions)
         {
             _instructions = instructions.ToArray();
-            _nextInstructionPointer = 0;
-            Accumulator = 0;
+            _state = new ProgramState();
         }
 
         /// <summary>
@@ -26,7 +23,7 @@ namespace AoC.BootCode
         /// <summary>
         /// Current value of the `Accumulator` register.
         /// </summary>
-        public long Accumulator { get; private set; }
+        public long Accumulator => _state.Accumulator;
 
         /// <summary>
         /// Returns a read only version of this computer's instructions.
@@ -50,19 +47,20 @@ namespace AoC.BootCode
         /// </summary>
         public bool EvaluateNextInstruction()
         {
-            if (_nextInstructionPointer == _instructions.Length)
+            var currentInstructionPointer = _state.NextInstructionPointer;
+            if (currentInstructionPointer == _instructions.Length)
             {
                 return false;
             }
 
-            if (_visitedInstructions.Contains(_nextInstructionPointer))
+            if (_state.VisitedInstructions.Contains(currentInstructionPointer))
             {
                 throw new InvalidOperationException("Infinite loop detected");
             }
 
-            var gotoInstructionPointer = EvalInstruction(_instructions[_nextInstructionPointer], _nextInstructionPointer);
-            _visitedInstructions.Add(_nextInstructionPointer);
-            _nextInstructionPointer = gotoInstructionPointer ?? _nextInstructionPointer + 1;
+            var gotoInstructionPointer = EvalInstruction(_instructions[currentInstructionPointer], currentInstructionPointer);
+            _state.VisitedInstructions.Add(currentInstructionPointer);
+            _state.NextInstructionPointer = gotoInstructionPointer ?? currentInstructionPointer + 1;
             return true;
         }
 
@@ -77,7 +75,7 @@ namespace AoC.BootCode
 
         private long? EvalAccumulateInstruction(Instruction instruction)
         {
-            Accumulator += instruction.Argument;
+            _state.Accumulator += instruction.Argument;
             return null;
         }
 
