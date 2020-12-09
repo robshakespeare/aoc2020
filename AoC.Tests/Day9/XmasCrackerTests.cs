@@ -33,7 +33,7 @@ namespace AoC.Tests.Day9
             var sut = XmasCracker.Parse(input, 5);
 
             // ACT
-            var result = sut.GetWeakness();
+            var result = sut.GetFirstNumAfterPreambleWhichIsNotSumOfTwoOfPreviousBlock();
 
             // ASSERT
             result.Should().Be(127);
