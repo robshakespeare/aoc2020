@@ -22,53 +22,21 @@ namespace AoC.Day9
 
         private bool IsSumOfTwoOfPreviousBlockOfNumbers(int currentIndex, long currentNumber)
         {
-            HashSet<long> GetSums()
-            {
-                var lastBlockOfNumbers = _numbers[(currentIndex - _preambleSize)..currentIndex];
-                var previousNumbers = new HashSet<long>();
-                var previousSums = new HashSet<long>();
-
-                foreach (var num in lastBlockOfNumbers)
-                {
-                    foreach (var previousNumber in previousNumbers)
-                    {
-                        previousSums.Add(previousNumber + num);
-                    }
-
-                    previousNumbers.Add(num);
-                }
-
-                return previousSums;
-            }
-
-            return GetSums().Contains(currentNumber);
+            var lastBlockOfNumbers = _numbers[(currentIndex - _preambleSize)..currentIndex];
+            return lastBlockOfNumbers
+                .SelectMany((a, i) => lastBlockOfNumbers
+                    .Select((b, j) => (a, i, b, j))
+                    .Where(x => x.i != x.j))
+                .Any(x => x.a + x.b == currentNumber);
         }
 
         /// <summary>
         /// Returns the first number in the list (after the preamble) which is not the sum of two of the preamble block size of numbers before it.
         /// </summary>
-        public long GetFirstInvalidNumber()
-        {
-            long? prev = null;
-            foreach (var (num, index) in _numbers.Select((num, index) => (num, index)))
-            {
-                var isSameAsLast = prev == num;
-                if (isSameAsLast)
-                {
-                    throw new InvalidOperationException($"Duplicate num {num} detected at index {index}");
-                }
-
-                var isValid = index < _preambleSize || IsSumOfTwoOfPreviousBlockOfNumbers(index, num);
-                if (!isValid)
-                {
-                    return num;
-                }
-
-                prev = num;
-            }
-
-            throw new InvalidOperationException($"Failed to {nameof(GetFirstInvalidNumber)}");
-        }
+        public long GetFirstInvalidNumber() =>
+            _numbers.Select((num, index) => (num, index))
+                .Skip(_preambleSize)
+                .First(x => !IsSumOfTwoOfPreviousBlockOfNumbers(x.index, x.num)).num;
 
         /// <summary>
         /// Finds the encryption weakness, by adding together the smallest and largest number in the first
@@ -84,7 +52,7 @@ namespace AoC.Day9
                 var prev = _numbers[index - 1];
 
                 // Update any existing contiguous sets, if any match, then return
-                foreach (var contiguousSet in contiguousSets.ToArray())
+                foreach (var contiguousSet in contiguousSets)
                 {
                     contiguousSet.Update(num);
                     if (contiguousSet.Total == invalidNum)
