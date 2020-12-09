@@ -18,6 +18,8 @@ namespace AoC.Day9
             _preambleSize = preambleSize;
         }
 
+        public static XmasCracker Parse(string input, int preambleSize) => new(input.ReadLinesAsLongs(), preambleSize);
+
         private bool IsSumOfTwoOfPreviousBlockOfNumbers(int currentIndex, long currentNumber)
         {
             HashSet<long> GetSums()
@@ -28,13 +30,11 @@ namespace AoC.Day9
 
                 foreach (var num in lastBlockOfNumbers)
                 {
-                    // Update previous sums
                     foreach (var previousNumber in previousNumbers)
                     {
                         previousSums.Add(previousNumber + num);
                     }
 
-                    // Update previous numbers
                     previousNumbers.Add(num);
                 }
 
@@ -44,10 +44,12 @@ namespace AoC.Day9
             return GetSums().Contains(currentNumber);
         }
 
-        public long GetFirstNumAfterPreambleWhichIsNotSumOfTwoOfPreviousBlock()
+        /// <summary>
+        /// Returns the first number in the list (after the preamble) which is not the sum of two of the preamble block size of numbers before it.
+        /// </summary>
+        public long GetFirstInvalidNumber()
         {
             long? prev = null;
-
             foreach (var (num, index) in _numbers.Select((num, index) => (num, index)))
             {
                 var isSameAsLast = prev == num;
@@ -65,9 +67,42 @@ namespace AoC.Day9
                 prev = num;
             }
 
-            throw new InvalidOperationException("Failed to get weakness");
+            throw new InvalidOperationException($"Failed to {nameof(GetFirstInvalidNumber)}");
         }
 
-        public static XmasCracker Parse(string input, int preambleSize) => new(input.ReadLinesAsLongs(), preambleSize);
+        /// <summary>
+        /// Finds the encryption weakness, by adding together the smallest and largest number in the first
+        /// contiguous set of at least two numbers which sum to the invalid number, found in part 1.
+        /// </summary>
+        public long GetEncryptionWeakness()
+        {
+            var invalidNum = GetFirstInvalidNumber();
+
+            var contiguousSets = new List<ContiguousSet>();
+            foreach (var (num, index) in _numbers.Select((num, index) => (num, index)).Skip(1))
+            {
+                var prev = _numbers[index - 1];
+
+                // Update any existing contiguous sets, if any match, then return
+                foreach (var contiguousSet in contiguousSets.ToArray())
+                {
+                    contiguousSet.Update(num);
+                    if (contiguousSet.Total == invalidNum)
+                    {
+                        return contiguousSet.RangeSize;
+                    }
+                }
+
+                // Add the new contiguous set, if that matches, then return
+                var newContiguousSet = new ContiguousSet(prev, num);
+                if (newContiguousSet.Total == invalidNum)
+                {
+                    return newContiguousSet.RangeSize;
+                }
+                contiguousSets.Add(newContiguousSet);
+            }
+
+            throw new InvalidOperationException($"Failed to {nameof(GetEncryptionWeakness)}");
+        }
     }
 }

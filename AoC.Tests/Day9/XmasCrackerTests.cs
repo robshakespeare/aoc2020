@@ -33,10 +33,43 @@ namespace AoC.Tests.Day9
             var sut = XmasCracker.Parse(input, 5);
 
             // ACT
-            var result = sut.GetFirstNumAfterPreambleWhichIsNotSumOfTwoOfPreviousBlock();
+            var result = sut.GetFirstInvalidNumber();
 
             // ASSERT
             result.Should().Be(127);
+        }
+
+        [Test]
+        public void Part2Example()
+        {
+            const string? input = @"35
+20
+15
+25
+47
+40
+62
+55
+65
+95
+102
+117
+150
+182
+127
+219
+299
+277
+309
+576";
+
+            var sut = XmasCracker.Parse(input, 5);
+
+            // ACT
+            var result = sut.GetEncryptionWeakness();
+
+            // ASSERT
+            result.Should().Be(62);
         }
     }
 }
