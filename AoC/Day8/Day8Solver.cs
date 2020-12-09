@@ -10,14 +10,14 @@ namespace AoC.Day8
 
         protected override long? SolvePart1Impl(string input)
         {
-            var bootCodeComputer = BootCodeComputer.Parse(input);
+            var bootCodeProgram = BootCodeProgram.Parse(input);
             try
             {
-                bootCodeComputer.Evaluate();
+                bootCodeProgram.Evaluate();
             }
             catch (InvalidOperationException e) when (e.Message == "Infinite loop detected")
             {
-                return bootCodeComputer.Accumulator;
+                return bootCodeProgram.Accumulator;
             }
 
             throw new InvalidOperationException("Expected Day 8 Part 1's puzzle input to produce an Infinite loop error, but got none.");
@@ -25,7 +25,7 @@ namespace AoC.Day8
 
         protected override long? SolvePart2Impl(string input)
         {
-            var originalInstructions = BootCodeComputer.Parse(input).GetInstructions();
+            var originalInstructions = BootCodeProgram.Parse(input).GetInstructions();
 
             for (var instructionIndex = 0; instructionIndex < originalInstructions.Count; instructionIndex++)
             {
@@ -39,8 +39,8 @@ namespace AoC.Day8
 
                     try
                     {
-                        var bootCodeComputer = new BootCodeComputer(instructions);
-                        var result = bootCodeComputer.Evaluate();
+                        var bootCodeProgram = new BootCodeProgram(instructions);
+                        var result = bootCodeProgram.Evaluate();
                         Console.WriteLine($"Changed {instruction.Operation} to {newOp} at line {instructionIndex + 1} and got successful result of {result}");
                         return result;
                     }

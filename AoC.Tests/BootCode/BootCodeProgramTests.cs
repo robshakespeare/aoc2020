@@ -6,12 +6,12 @@ using NUnit.Framework;
 
 namespace AoC.Tests.BootCode
 {
-    public class BootCodeComputerTests
+    public class BootCodeProgramTests
     {
         [Test]
         public void Day8Part1ExampleTest()
         {
-            var sut = BootCodeComputer.Parse(@"nop +0
+            var sut = BootCodeProgram.Parse(@"nop +0
 acc +1
 jmp +4
 acc +3
@@ -35,7 +35,7 @@ acc +6");
         public void Day8Part2WithCorruptionFixedTest()
         {
             var inputPath = Path.Combine("BootCode", "Day8-input-corruption-fixed.txt");
-            var sut = BootCodeComputer.Parse(File.ReadAllText(inputPath));
+            var sut = BootCodeProgram.Parse(File.ReadAllText(inputPath));
 
             // ACT
             var result = sut.Evaluate();

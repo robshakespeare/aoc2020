@@ -4,21 +4,21 @@ using System.Linq;
 
 namespace AoC.BootCode
 {
-    public class BootCodeComputer
+    public class BootCodeProgram
     {
         private readonly Instruction[] _instructions;
         private readonly ProgramState _state;
 
-        public BootCodeComputer(IEnumerable<Instruction> instructions)
+        public BootCodeProgram(IEnumerable<Instruction> instructions)
         {
             _instructions = instructions.ToArray();
             _state = new ProgramState();
         }
 
         /// <summary>
-        /// Parses the specified Boot Code program, and creates a computer for it in its initial state.
+        /// Parses the specified source code in to a BootCodeProgram in its initial state.
         /// </summary>
-        public static BootCodeComputer Parse(string inputProgram) => new(inputProgram.ReadLines().Select(Instruction.ParseLine));
+        public static BootCodeProgram Parse(string inputProgram) => new(inputProgram.ReadLines().Select(Instruction.ParseLine));
 
         /// <summary>
         /// Current value of the `Accumulator` register.
@@ -26,12 +26,12 @@ namespace AoC.BootCode
         public long Accumulator => _state.Accumulator;
 
         /// <summary>
-        /// Returns a read only version of this computer's instructions.
+        /// Returns a read only version of this program's instructions.
         /// </summary>
         public IReadOnlyList<Instruction> GetInstructions() => _instructions.ToReadOnlyArray();
 
         /// <summary>
-        /// Evaluates the computer until it halts, and then returns the value of the Accumulator.
+        /// Evaluates the program until it halts, and then returns the value of the Accumulator.
         /// </summary>
         public long Evaluate()
         {
@@ -42,8 +42,8 @@ namespace AoC.BootCode
         }
 
         /// <summary>
-        /// Evaluates the next instruction in the computer.
-        /// Returns true if the computer should continue to be evaluated, otherwise if the computer has now halted returns false.
+        /// Evaluates the next instruction in the program.
+        /// Returns true if the program should continue to be evaluated, otherwise if the program has now halted returns false.
         /// </summary>
         public bool EvaluateNextInstruction()
         {
