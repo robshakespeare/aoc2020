@@ -20,6 +20,15 @@ namespace AoC.Day10
         private IEnumerable<int> GetNextPossibleJoltages(int currentJolts) =>
             Enumerable.Range(currentJolts + 1, 3).Where(joltage => _joltageRatings.Contains(joltage));
 
+        private int[] GetNextPossibleValidJoltages(int currentJolts)
+        {
+            var nextPossibleJoltages = GetNextPossibleJoltages(currentJolts);
+
+            return nextPossibleJoltages
+                .Where(nextPossibleJoltage => nextPossibleJoltage == _maxJoltageRating || GetNextPossibleJoltages(nextPossibleJoltage).Any())
+                .ToArray();
+        }
+
         public (int numOf1JoltDiffs, int numOf2JoltDiffs, int numOf3JoltDiffs) CountJoltageDifferences()
         {
             var prevJolts = 0;
@@ -45,7 +54,10 @@ namespace AoC.Day10
 
         public long GetPart1Answer()
         {
-            var (numOf1JoltDiffs, _, numOf3JoltDiffs) = CountJoltageDifferences();
+            var (numOf1JoltDiffs, numOf2JoltDiffs, numOf3JoltDiffs) = CountJoltageDifferences();
+
+            Console.WriteLine(new { _maxJoltageRating, numOf1JoltDiffs, numOf2JoltDiffs, numOf3JoltDiffs });
+
             return numOf1JoltDiffs * numOf3JoltDiffs;
         }
 
@@ -58,7 +70,7 @@ namespace AoC.Day10
             {
                 var oldJolts = jolts;
 
-                var nextPossibleJoltages = GetNextPossibleJoltages(jolts).ToArray();
+                var nextPossibleJoltages = GetNextPossibleValidJoltages(jolts);
                 var countOfNextPossibleJoltages = nextPossibleJoltages.Length;
                 if (countOfNextPossibleJoltages == 0)
                 {
