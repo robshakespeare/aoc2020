@@ -51,22 +51,37 @@ namespace AoC.Day10
 
         public long CountDistinctArrangements()
         {
-            var distinctArrangements = 0L;
-            CountDistinctArrangements(0, ref distinctArrangements);
-            return distinctArrangements;
-        }
-
-        private void CountDistinctArrangements(int currentJolts, ref long distinctArrangements)
-        {
-            if (currentJolts == _maxJoltageRating)
+            var jolts = 0;
+            var done = false;
+            var arrangements = 1;
+            do
             {
-                distinctArrangements++;
+                var nextPossibleJoltages = GetNextPossibleJoltages(jolts).ToArray();
+                var countOfNextPossibleJoltages = nextPossibleJoltages.Length;
+                if (countOfNextPossibleJoltages == 0)
+                {
+                    done = true;
+                }
+                else
+                {
+                    var perms = countOfNextPossibleJoltages switch
+                    {
+                        3 => 4,
+                        2 => 2,
+                        1 => 1,
+                        _ => throw new InvalidOperationException($"Invalid {new { countOfNextPossibleJoltages }}")
+                    };
+                    arrangements *= perms;
+                    jolts = nextPossibleJoltages.Max();
+                }
+            } while (!done);
+
+            if (jolts != _maxJoltageRating)
+            {
+                throw new InvalidOperationException($"Reached {jolts} which does not match max jolts of {_maxJoltageRating}");
             }
 
-            foreach (var nextJoltage in GetNextPossibleJoltages(currentJolts))
-            {
-                CountDistinctArrangements(nextJoltage, ref distinctArrangements);
-            }
+            return arrangements;
         }
 
         public static JoltageChecker Parse(string input) => new(input.ReadLines().Select(int.Parse));
