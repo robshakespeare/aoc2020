@@ -20,15 +20,6 @@ namespace AoC.Day10
         private IEnumerable<int> GetNextPossibleJoltages(int currentJolts) =>
             Enumerable.Range(currentJolts + 1, 3).Where(joltage => _joltageRatings.Contains(joltage));
 
-        private int[] GetNextPossibleValidJoltages(int currentJolts)
-        {
-            var nextPossibleJoltages = GetNextPossibleJoltages(currentJolts);
-
-            return nextPossibleJoltages
-                .Where(nextPossibleJoltage => nextPossibleJoltage == _maxJoltageRating || GetNextPossibleJoltages(nextPossibleJoltage).Any())
-                .ToArray();
-        }
-
         public (int numOf1JoltDiffs, int numOf2JoltDiffs, int numOf3JoltDiffs) CountJoltageDifferences()
         {
             var prevJolts = 0;
@@ -54,52 +45,28 @@ namespace AoC.Day10
 
         public long GetPart1Answer()
         {
-            var (numOf1JoltDiffs, numOf2JoltDiffs, numOf3JoltDiffs) = CountJoltageDifferences();
-
-            Console.WriteLine(new { _maxJoltageRating, numOf1JoltDiffs, numOf2JoltDiffs, numOf3JoltDiffs });
-
+            var (numOf1JoltDiffs, _, numOf3JoltDiffs) = CountJoltageDifferences();
             return numOf1JoltDiffs * numOf3JoltDiffs;
         }
 
         public long CountDistinctArrangements()
         {
-            var jolts = 0;
-            var done = false;
-            var arrangements = 1L;
-            do
+            var distinctArrangements = 0L;
+            CountDistinctArrangements(0, ref distinctArrangements);
+            return distinctArrangements;
+        }
+
+        private void CountDistinctArrangements(int currentJolts, ref long distinctArrangements)
+        {
+            if (currentJolts == _maxJoltageRating)
             {
-                var oldJolts = jolts;
-
-                var nextPossibleJoltages = GetNextPossibleValidJoltages(jolts);
-                var countOfNextPossibleJoltages = nextPossibleJoltages.Length;
-                if (countOfNextPossibleJoltages == 0)
-                {
-                    done = true;
-                }
-                else
-                {
-                    var perms = countOfNextPossibleJoltages switch
-                    {
-                        3 => 4,
-                        2 => 2,
-                        1 => 1,
-                        _ => throw new InvalidOperationException($"Invalid {new { countOfNextPossibleJoltages }}")
-                    };
-                    arrangements *= perms;
-                    jolts = nextPossibleJoltages.Max();
-                }
-
-                Console.WriteLine(new { oldJolts, jolts, arrangements, done });
-            } while (!done);
-
-            if (jolts != _maxJoltageRating)
-            {
-                throw new InvalidOperationException($"Reached {jolts} which does not match max jolts of {_maxJoltageRating}");
+                distinctArrangements++;
             }
 
-            Console.WriteLine(new { jolts, arrangements, done });
-
-            return arrangements;
+            foreach (var nextJoltage in GetNextPossibleJoltages(currentJolts))
+            {
+                CountDistinctArrangements(nextJoltage, ref distinctArrangements);
+            }
         }
 
         public static JoltageChecker Parse(string input) => new(input.ReadLines().Select(int.Parse));

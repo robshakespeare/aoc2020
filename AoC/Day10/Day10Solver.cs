@@ -6,6 +6,6 @@ namespace AoC.Day10
 
         protected override long? SolvePart1Impl(string input) => JoltageChecker.Parse(input).GetPart1Answer();
 
-        protected override long? SolvePart2Impl(string input) => JoltageChecker.Parse(input).CountDistinctArrangementsBruteForce();
+        protected override long? SolvePart2Impl(string input) => JoltageChecker2.CountDistinctArrangements(input);
     }
 }

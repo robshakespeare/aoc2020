@@ -43,7 +43,6 @@ namespace AoC.Tests
                 if (value != null)
                 {
                     TestContext.Progress.Write(AnsiEscapeCodeRegex.Replace(value, ""));
-                    FileLogging.Logger.Information(AnsiEscapeCodeRegex.Replace(value, "")); // rs-todo: only temp
                 }
             }
 
