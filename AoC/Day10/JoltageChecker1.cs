@@ -4,21 +4,19 @@ using System.Linq;
 
 namespace AoC.Day10
 {
-    public class JoltageChecker
+    public class JoltageChecker1
     {
         private readonly IReadOnlySet<int> _joltageRatings;
         private readonly int _maxJoltageRating;
 
-        public JoltageChecker(IEnumerable<int> joltageRatings)
+        public JoltageChecker1(IEnumerable<int> joltageRatings)
         {
             _joltageRatings = new HashSet<int>(joltageRatings);
             _maxJoltageRating = _joltageRatings.Max();
         }
 
-        private int GetNextPossibleJoltage(int currentJolts) => GetNextPossibleJoltages(currentJolts).FirstOrDefault();
-
-        private IEnumerable<int> GetNextPossibleJoltages(int currentJolts) =>
-            Enumerable.Range(currentJolts + 1, 3).Where(joltage => _joltageRatings.Contains(joltage));
+        private int GetNextPossibleJoltage(int currentJolts) =>
+            Enumerable.Range(currentJolts + 1, 3).FirstOrDefault(joltage => _joltageRatings.Contains(joltage));
 
         public (int numOf1JoltDiffs, int numOf2JoltDiffs, int numOf3JoltDiffs) CountJoltageDifferences()
         {
@@ -45,30 +43,11 @@ namespace AoC.Day10
 
         public long GetPart1Answer()
         {
-            var (numOf1JoltDiffs, _, numOf3JoltDiffs) = CountJoltageDifferences();
+            var (numOf1JoltDiffs, numOf2JoltDiffs, numOf3JoltDiffs) = CountJoltageDifferences();
+            Console.WriteLine(new { _maxJoltageRating, numOf1JoltDiffs, numOf2JoltDiffs, numOf3JoltDiffs });
             return numOf1JoltDiffs * numOf3JoltDiffs;
         }
 
-        public long CountDistinctArrangements()
-        {
-            var distinctArrangements = 0L;
-            CountDistinctArrangements(0, ref distinctArrangements);
-            return distinctArrangements;
-        }
-
-        private void CountDistinctArrangements(int currentJolts, ref long distinctArrangements)
-        {
-            if (currentJolts == _maxJoltageRating)
-            {
-                distinctArrangements++;
-            }
-
-            foreach (var nextJoltage in GetNextPossibleJoltages(currentJolts))
-            {
-                CountDistinctArrangements(nextJoltage, ref distinctArrangements);
-            }
-        }
-
-        public static JoltageChecker Parse(string input) => new(input.ReadLines().Select(int.Parse));
+        public static JoltageChecker1 Parse(string input) => new(input.ReadLines().Select(int.Parse));
     }
 }

@@ -22,11 +22,9 @@ namespace AoC.Tests.Day10
 4";
 
             // ACT
-            var bruteForceAnswer = JoltageChecker.Parse(input).CountDistinctArrangements();
             var part2Result = JoltageChecker2.CountDistinctArrangements(input);
 
             // ASSERT
-            bruteForceAnswer.Should().Be(8);
             part2Result.Should().Be(8);
         }
 
@@ -48,11 +46,9 @@ namespace AoC.Tests.Day10
 21";
 
             // ACT
-            var bruteForceAnswer = JoltageChecker.Parse(input).CountDistinctArrangements();
             var part2Result = JoltageChecker2.CountDistinctArrangements(input);
 
             // ASSERT
-            bruteForceAnswer.Should().Be(16);
             part2Result.Should().Be(16);
         }
 
@@ -76,11 +72,9 @@ namespace AoC.Tests.Day10
 25";
 
             // ACT
-            var bruteForceAnswer = JoltageChecker.Parse(input).CountDistinctArrangements();
             var part2Result = JoltageChecker2.CountDistinctArrangements(input);
 
             // ASSERT
-            bruteForceAnswer.Should().Be(32);
             part2Result.Should().Be(32);
         }
 
@@ -119,11 +113,9 @@ namespace AoC.Tests.Day10
 10
 3";
             // ACT
-            var bruteForceAnswer = JoltageChecker.Parse(input).CountDistinctArrangements();
             var part2Result = JoltageChecker2.CountDistinctArrangements(input);
 
             // ASSERT
-            bruteForceAnswer.Should().Be(19208);
             part2Result.Should().Be(19208);
         }
     }
