@@ -15,8 +15,10 @@ namespace AoC.Day10
             _maxJoltageRating = _joltageRatings.Max();
         }
 
-        private int GetNextPossibleJoltage(int currentJolts) =>
-            Enumerable.Range(currentJolts + 1, 3).FirstOrDefault(joltage => _joltageRatings.Contains(joltage));
+        private int GetNextPossibleJoltage(int currentJolts) => GetNextPossibleJoltages(currentJolts).FirstOrDefault();
+
+        private IEnumerable<int> GetNextPossibleJoltages(int currentJolts) =>
+            Enumerable.Range(currentJolts + 1, 3).Where(joltage => _joltageRatings.Contains(joltage));
 
         public (int numOf1JoltDiffs, int numOf2JoltDiffs, int numOf3JoltDiffs) CountJoltageDifferences()
         {
@@ -45,6 +47,26 @@ namespace AoC.Day10
         {
             var (numOf1JoltDiffs, _, numOf3JoltDiffs) = CountJoltageDifferences();
             return numOf1JoltDiffs * numOf3JoltDiffs;
+        }
+
+        public long CountDistinctArrangements()
+        {
+            var distinctArrangements = 0L;
+            CountDistinctArrangements(0, ref distinctArrangements);
+            return distinctArrangements;
+        }
+
+        private void CountDistinctArrangements(int currentJolts, ref long distinctArrangements)
+        {
+            if (currentJolts == _maxJoltageRating)
+            {
+                distinctArrangements++;
+            }
+
+            foreach (var nextJoltage in GetNextPossibleJoltages(currentJolts))
+            {
+                CountDistinctArrangements(nextJoltage, ref distinctArrangements);
+            }
         }
 
         public static JoltageChecker Parse(string input) => new(input.ReadLines().Select(int.Parse));
