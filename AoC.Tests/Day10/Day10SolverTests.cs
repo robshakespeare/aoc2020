@@ -1,3 +1,4 @@
+using System;
 using AoC.Day10;
 using FluentAssertions;
 using NUnit.Framework;
@@ -141,6 +142,8 @@ namespace AoC.Tests.Day10
         [Test]
         public void Part2ReTest()
         {
+            throw new InvalidOperationException("rs-todo");
+
             // ACT
             var part2Result = _sut.SolvePart2();
 

@@ -62,9 +62,15 @@ namespace AoC.Day10
             {
                 distinctArrangements++;
                 //Console.WriteLine($"distinctArrangements is now {distinctArrangements} - path: {path}");
+                return;
             }
 
             var nextPossibleJoltages = GetNextPossibleJoltages(currentJolts).ToArray();
+
+            if (nextPossibleJoltages.Length == 0 && currentJolts != _maxJoltageRating)
+            {
+                throw new InvalidOperationException("Invalid path detected: " + path);
+            }
 
             if (nextPossibleJoltages.Length == 0 && currentJolts != _maxJoltageRating)
             {
