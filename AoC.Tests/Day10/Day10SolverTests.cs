@@ -9,13 +9,73 @@ namespace AoC.Tests.Day10
         private readonly Day10Solver _sut = new();
 
         [Test]
+        public void Part1Example1()
+        {
+            // ACT
+            var part1Result = _sut.SolvePart1(@"16
+10
+15
+5
+1
+11
+7
+19
+6
+12
+4");
+
+            // ASSERT
+            part1Result.Should().Be(7 * 5);
+        }
+
+        [Test]
+        public void Part1Example2()
+        {
+            // ACT
+            var part1Result = _sut.SolvePart1(@"28
+33
+18
+42
+31
+14
+46
+20
+48
+47
+24
+23
+49
+45
+19
+38
+39
+11
+1
+32
+25
+35
+8
+17
+7
+9
+4
+2
+34
+10
+3");
+
+            // ASSERT
+            part1Result.Should().Be(22 * 10);
+        }
+
+        [Test]
         public void Part1ReTest()
         {
             // ACT
             var part1Result = _sut.SolvePart1();
 
             // ASSERT
-            part1Result.Should().Be(null);
+            part1Result.Should().Be(2210);
         }
 
         [Test]
