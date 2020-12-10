@@ -43,8 +43,7 @@ namespace AoC.Day10
 
         public long GetPart1Answer()
         {
-            var (numOf1JoltDiffs, numOf2JoltDiffs, numOf3JoltDiffs) = CountJoltageDifferences();
-            Console.WriteLine(new { _maxJoltageRating, numOf1JoltDiffs, numOf2JoltDiffs, numOf3JoltDiffs });
+            var (numOf1JoltDiffs, _, numOf3JoltDiffs) = CountJoltageDifferences();
             return numOf1JoltDiffs * numOf3JoltDiffs;
         }
 

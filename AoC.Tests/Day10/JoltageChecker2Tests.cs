@@ -118,5 +118,24 @@ namespace AoC.Tests.Day10
             // ASSERT
             part2Result.Should().Be(19208);
         }
+
+        [TestCase(1, 1)]
+        [TestCase(2, 2)]
+        [TestCase(3, 4)]
+        [TestCase(4, 7)]
+        [TestCase(5, 13)]
+        [TestCase(6, 24)]
+        [TestCase(7, 44)]
+        [TestCase(8, 81)]
+        [TestCase(9, 149)]
+        [TestCase(10, 274)]
+        public void CountDistinctArrangementsInGroup(int groupLength, long expectedResult)
+        {
+            // ACT
+            var result = JoltageChecker2.CountDistinctArrangementsInGroup(groupLength);
+
+            // ASSERT
+            result.Should().Be(expectedResult);
+        }
     }
 }

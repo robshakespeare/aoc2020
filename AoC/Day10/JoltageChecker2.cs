@@ -44,6 +44,6 @@ namespace AoC.Day10
         }
 
         private static IEnumerable<int> GetNextPossibleJoltages(int currentJolts, int[] group) =>
-            Enumerable.Range(currentJolts + 1, 3).Where(@group.Contains);
+            Enumerable.Range(currentJolts + 1, 3).Where(group.Contains);
     }
 }
