@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using Crayon;
 using Serilog;
 
 namespace AoC
@@ -9,28 +10,22 @@ namespace AoC
     /// </summary>
     public static class FileLogging
     {
-        private static ILogger? _logger;
+        private static readonly Lazy<ILogger> LazyLogger = new(() => CreateLogger());
 
-        public static ILogger Logger
-        {
-            get
-            {
-                if (_logger == null)
-                {
-                    Initialize();
-                }
+        public static ILogger Logger { get; } = LazyLogger.Value;
 
-                return _logger!;
-            }
-        }
-
-        public static void Initialize(bool includeConsole = false, Action<LoggerConfiguration>? customise = null)
+        public static ILogger CreateLogger(
+            string logFileName = "aoc",
+            bool includeConsole = false,
+            RollingInterval rollingInterval = RollingInterval.Infinite,
+            Action<LoggerConfiguration>? customise = null)
         {
             var logFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".logs", "aoc2020");
             Directory.CreateDirectory(logFolderPath);
+            var logFilePath = Path.ChangeExtension(Path.Combine(logFolderPath, logFileName), ".txt");
 
             var loggerConfiguration = new LoggerConfiguration()
-                .WriteTo.File(Path.Combine(logFolderPath, "aoc.txt"), rollingInterval: RollingInterval.Day, rollOnFileSizeLimit: true);
+                .WriteTo.File(logFilePath, rollingInterval: rollingInterval, rollOnFileSizeLimit: true);
 
             if (includeConsole)
             {
@@ -39,7 +34,9 @@ namespace AoC
 
             customise?.Invoke(loggerConfiguration);
 
-            _logger = loggerConfiguration.CreateLogger();
+            var logger = loggerConfiguration.CreateLogger();
+            Console.WriteLine($"(Setup logging to file {logFilePath})".BrightBlack());
+            return logger;
         }
     }
 }
