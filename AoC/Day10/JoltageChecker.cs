@@ -53,9 +53,11 @@ namespace AoC.Day10
         {
             var jolts = 0;
             var done = false;
-            var arrangements = 1;
+            var arrangements = 1L;
             do
             {
+                var oldJolts = jolts;
+
                 var nextPossibleJoltages = GetNextPossibleJoltages(jolts).ToArray();
                 var countOfNextPossibleJoltages = nextPossibleJoltages.Length;
                 if (countOfNextPossibleJoltages == 0)
@@ -74,12 +76,16 @@ namespace AoC.Day10
                     arrangements *= perms;
                     jolts = nextPossibleJoltages.Max();
                 }
+
+                Console.WriteLine(new { oldJolts, jolts, arrangements, done });
             } while (!done);
 
             if (jolts != _maxJoltageRating)
             {
                 throw new InvalidOperationException($"Reached {jolts} which does not match max jolts of {_maxJoltageRating}");
             }
+
+            Console.WriteLine(new { jolts, arrangements, done });
 
             return arrangements;
         }

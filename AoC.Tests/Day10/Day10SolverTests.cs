@@ -100,6 +100,28 @@ namespace AoC.Tests.Day10
         }
 
         [Test]
+        public void Part2ExampleMe1()
+        {
+            // ACT
+            var part1Result = _sut.SolvePart2(@"16
+10
+15
+5
+1
+11
+7
+19
+6
+12
+4
+20
+21");
+
+            // ASSERT
+            part1Result.Should().Be(16);
+        }
+
+        [Test]
         public void Part2Example2()
         {
             // ACT
