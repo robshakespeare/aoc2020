@@ -52,20 +52,28 @@ namespace AoC.Day10
         public long CountDistinctArrangements()
         {
             var distinctArrangements = 0L;
-            CountDistinctArrangements(0, ref distinctArrangements);
+            CountDistinctArrangements(0, ref distinctArrangements, "(0)");
             return distinctArrangements;
         }
 
-        private void CountDistinctArrangements(int currentJolts, ref long distinctArrangements)
+        private void CountDistinctArrangements(int currentJolts, ref long distinctArrangements, string path)
         {
             if (currentJolts == _maxJoltageRating)
             {
                 distinctArrangements++;
+                //Console.WriteLine($"distinctArrangements is now {distinctArrangements} - path: {path}");
             }
 
-            foreach (var nextJoltage in GetNextPossibleJoltages(currentJolts))
+            var nextPossibleJoltages = GetNextPossibleJoltages(currentJolts).ToArray();
+
+            if (nextPossibleJoltages.Length == 0 && currentJolts != _maxJoltageRating)
             {
-                CountDistinctArrangements(nextJoltage, ref distinctArrangements);
+                Console.WriteLine($"** NOTE: reached no more possible jolts, but did not reach end {new { currentJolts, _maxJoltageRating }}");
+            }
+
+            foreach (var nextJoltage in nextPossibleJoltages)
+            {
+                CountDistinctArrangements(nextJoltage, ref distinctArrangements, path + ", " + nextJoltage);
             }
         }
 
