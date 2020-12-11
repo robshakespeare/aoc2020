@@ -11,6 +11,7 @@ namespace AoC.Day11
         private const char Floor = '.';
         private const char Empty = 'L';
         private const char Occupied = '#';
+        private const char OutOfBounds = 'X';
 
         private readonly IReadOnlyList<string> _lines;
         private readonly int _occupancyThreshold;
@@ -88,53 +89,12 @@ namespace AoC.Day11
             return adjacentPositions.Select(GetSeat).Count(seat => seat == Occupied);
         }
 
-        private static readonly HashSet<double> VisibilityAngles = new(new[]
-        {
-            MathUtils.AngleBetween(Vector2.UnitY, new Vector2(-1, -1)),
-            MathUtils.AngleBetween(Vector2.UnitY, new Vector2(0, -1)),
-            MathUtils.AngleBetween(Vector2.UnitY, new Vector2(1, -1)),
-
-            MathUtils.AngleBetween(Vector2.UnitY, new Vector2(-1, 0)),
-            MathUtils.AngleBetween(Vector2.UnitY, new Vector2(1, 0)),
-
-            MathUtils.AngleBetween(Vector2.UnitY, new Vector2(-1, 1)),
-            MathUtils.AngleBetween(Vector2.UnitY, new Vector2(0, 1)),
-            MathUtils.AngleBetween(Vector2.UnitY, new Vector2(1, 1))
-        });
-
-        public int CountVisibleOccupied(int ix, int iy)
-        {
-            var center = new Vector2(ix, iy);
-
-            var allOtherSeats = _lines.SelectMany((line, y) => line.Select((seat, x) => seat != Floor ? new {seat, position = new Vector2(x, y)} : null))
-                .Where(x => x != null && !x.position.Equals(center))
-                .Select(seat => seat!);
-
-            return allOtherSeats
-                .Select(x =>
-                {
-                    var viewVector = x.position - center;
-                    return new
-                    {
-                        angle = MathUtils.AngleBetween(Vector2.UnitY, viewVector),
-                        viewVector,
-                        distance = viewVector.Length(),
-                        x.seat,
-                        x.position
-                    };
-                })
-                .Where(x => VisibilityAngles.Contains(x.angle))
-                .GroupBy(x => x.angle)
-                .Select(grp => grp.OrderBy(x => x.distance).First())
-                .Count(x => x.seat == Occupied);
-        }
-
         private char GetSeat(Vector2 position)
         {
             var y = (int)Math.Round(position.Y);
             if (y < 0 || y >= _lines.Count)
             {
-                return Floor;
+                return OutOfBounds;
             }
 
             var line = _lines[y];
@@ -142,10 +102,51 @@ namespace AoC.Day11
             var x = (int)Math.Round(position.X);
             if (x < 0 || x >= line.Length)
             {
-                return Floor;
+                return OutOfBounds;
             }
 
             return line[x];
+        }
+
+        private static readonly Vector2[] Directions =
+        {
+            new(-1, -1),
+            new(0, -1),
+            new(1, -1),
+
+            new(-1, 0),
+            new(1, 0),
+
+            new(-1, 1),
+            new(0, 1),
+            new(1, 1)
+        };
+
+        public int CountVisibleOccupied(int ix, int iy)
+        {
+            var center = new Vector2(ix, iy);
+
+            var occupied = 0;
+
+            // for each direction, move along that direction until a seat is reached (empty or occupied) or we go out of bounds
+            // if the seat reached is occupied, then increment count
+            foreach (var direction in Directions)
+            {
+                var position = center;
+                char seat;
+                do
+                {
+                    position += direction;
+                    seat = GetSeat(position);
+                } while (seat == Floor);
+
+                if (seat == Occupied)
+                {
+                    occupied++;
+                }
+            }
+
+            return occupied;
         }
 
         public override string ToString() => Grid;

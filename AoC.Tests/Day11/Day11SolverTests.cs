@@ -19,7 +19,6 @@ namespace AoC.Tests.Day11
         }
 
         [Test]
-        [Ignore("Takes ~300ms, too long")]
         public void Part1ReTest()
         {
             // ACT
@@ -40,7 +39,6 @@ namespace AoC.Tests.Day11
         }
 
         [Test]
-        [Ignore("Takes 9 minutes!, waaaaay too long!! Maybe I'll have time to come back and do this in not such a brute force way!")]
         public void Part2ReTest()
         {
             // ACT
