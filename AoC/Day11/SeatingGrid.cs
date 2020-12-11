@@ -127,11 +127,10 @@ namespace AoC.Day11
         public int CountVisibleOccupied(int ix, int iy)
         {
             var center = new Vector2(ix, iy);
-
             var occupied = 0;
 
-            // for each direction, move along that direction until a seat is reached (empty or occupied) or we go out of bounds
-            // if the seat reached is occupied, then increment count
+            // For each direction, move along that direction until a seat is reached (empty or occupied) or we go out of bounds (dealt with by `GetSeat`
+            // returning `OutOfBounds` rather than `Floor`). If the seat reached is occupied, then increment count.
             foreach (var direction in Directions)
             {
                 var position = center;

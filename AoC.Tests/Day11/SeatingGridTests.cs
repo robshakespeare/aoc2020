@@ -116,43 +116,5 @@ L.LLLLL.LL";
 
             sut.CountVisibleOccupied(3, 3).Should().Be(4);
         }
-
-        // rs-todo: rem below or make good
-        [Test]
-        public void AngleTests()
-        {
-            var x = 1;
-            var y = 1;
-
-            var tests = Enumerable.Range(1, 2000)
-                .Select(i => new Vector2(x * i, y * i))
-                .Select(v => new {v, angle = MathUtils.AngleBetween(Vector2.UnitY, v)});
-
-            foreach (var test in tests)
-            {
-                Console.WriteLine(test);
-            }
-
-            Console.WriteLine();
-
-            var angles = new[]
-            {
-                MathUtils.AngleBetween(Vector2.UnitY, new Vector2(-1, -1)),
-                MathUtils.AngleBetween(Vector2.UnitY, new Vector2(0, -1)),
-                MathUtils.AngleBetween(Vector2.UnitY, new Vector2(1, -1)),
-
-                MathUtils.AngleBetween(Vector2.UnitY, new Vector2(-1, 0)),
-                MathUtils.AngleBetween(Vector2.UnitY, new Vector2(1, 0)),
-
-                MathUtils.AngleBetween(Vector2.UnitY, new Vector2(-1, 1)),
-                MathUtils.AngleBetween(Vector2.UnitY, new Vector2(0, 1)),
-                MathUtils.AngleBetween(Vector2.UnitY, new Vector2(1, 1))
-            };
-
-            foreach (var angle in angles)
-            {
-                Console.WriteLine(angle);
-            }
-        }
     }
 }
