@@ -1,3 +1,6 @@
+using System;
+using System.Linq;
+using System.Numerics;
 using AoC.Day11;
 using FluentAssertions;
 using NUnit.Framework;
@@ -58,6 +61,98 @@ L.LLLLL.LL";
 
             sut1.CountAdjacentOccupied(7, 6).Should().Be(0);
             sut2.CountAdjacentOccupied(7, 6).Should().Be(5);
+        }
+
+        [Test]
+        public void CountVisibleOccupied_Example1()
+        {
+            var sut = new SeatingGrid(@".......#.
+...#.....
+.#.......
+.........
+..#L....#
+....#....
+.........
+#........
+...#.....", default, default);
+
+            sut.CountVisibleOccupied(3, 4).Should().Be(8);
+        }
+
+        [Test]
+        public void CountVisibleOccupied_Example2()
+        {
+            var sut = new SeatingGrid(@".............
+.L.L.#.#.#.#.
+.............", default, default);
+
+            sut.CountVisibleOccupied(1, 1).Should().Be(0);
+        }
+
+        [Test]
+        public void CountVisibleOccupied_Example3()
+        {
+            var sut = new SeatingGrid(@".##.##.
+#.#.#.#
+##...##
+...L...
+##...##
+#.#.#.#
+.##.##.", default, default);
+
+            sut.CountVisibleOccupied(3, 3).Should().Be(0);
+        }
+
+        [Test]
+        public void CountVisibleOccupied_Example4()
+        {
+            var sut = new SeatingGrid(@".##.##.
+###.###
+##...##
+#L.L.#.
+##...##
+#.#.#.#
+.#####.", default, default);
+
+            sut.CountVisibleOccupied(3, 3).Should().Be(4);
+        }
+
+        // rs-todo: rem below or make good
+        [Test]
+        public void AngleTests()
+        {
+            var x = 1;
+            var y = 1;
+
+            var tests = Enumerable.Range(1, 2000)
+                .Select(i => new Vector2(x * i, y * i))
+                .Select(v => new {v, angle = MathUtils.AngleBetween(Vector2.UnitY, v)});
+
+            foreach (var test in tests)
+            {
+                Console.WriteLine(test);
+            }
+
+            Console.WriteLine();
+
+            var angles = new[]
+            {
+                MathUtils.AngleBetween(Vector2.UnitY, new Vector2(-1, -1)),
+                MathUtils.AngleBetween(Vector2.UnitY, new Vector2(0, -1)),
+                MathUtils.AngleBetween(Vector2.UnitY, new Vector2(1, -1)),
+
+                MathUtils.AngleBetween(Vector2.UnitY, new Vector2(-1, 0)),
+                MathUtils.AngleBetween(Vector2.UnitY, new Vector2(1, 0)),
+
+                MathUtils.AngleBetween(Vector2.UnitY, new Vector2(-1, 1)),
+                MathUtils.AngleBetween(Vector2.UnitY, new Vector2(0, 1)),
+                MathUtils.AngleBetween(Vector2.UnitY, new Vector2(1, 1))
+            };
+
+            foreach (var angle in angles)
+            {
+                Console.WriteLine(angle);
+            }
         }
     }
 }

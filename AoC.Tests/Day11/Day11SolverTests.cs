@@ -19,6 +19,7 @@ namespace AoC.Tests.Day11
         }
 
         [Test]
+        [Ignore("Takes ~300ms, too long")]
         public void Part1ReTest()
         {
             // ACT
@@ -26,6 +27,16 @@ namespace AoC.Tests.Day11
 
             // ASSERT
             part1Result.Should().Be(2113);
+        }
+
+        [Test]
+        public void Part2Example1()
+        {
+            // ACT
+            var part2Result = _sut.SolvePart2(SeatingGridTests.Example1);
+
+            // ASSERT
+            part2Result.Should().Be(26);
         }
 
         [Test]

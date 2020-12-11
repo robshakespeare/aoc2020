@@ -4,7 +4,6 @@ namespace AoC.Day11
     {
         public override string DayName => "Seating System";
 
-        // rs-todo: part 1 is slow!
         protected override long? SolvePart1Impl(string input) => RunAndCountOccupiedSeats(input, 4, false);
 
         protected override long? SolvePart2Impl(string input) => RunAndCountOccupiedSeats(input, 5, true);
