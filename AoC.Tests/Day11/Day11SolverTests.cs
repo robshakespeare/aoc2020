@@ -9,13 +9,23 @@ namespace AoC.Tests.Day11
         private readonly Day11Solver _sut = new();
 
         [Test]
+        public void Part1Example()
+        {
+            // ACT
+            var part1Result = _sut.SolvePart1(SeatingGridTests.Example1);
+
+            // ASSERT
+            part1Result.Should().Be(37);
+        }
+
+        [Test]
         public void Part1ReTest()
         {
             // ACT
             var part1Result = _sut.SolvePart1();
 
             // ASSERT
-            part1Result.Should().Be(null);
+            part1Result.Should().Be(2113);
         }
 
         [Test]
