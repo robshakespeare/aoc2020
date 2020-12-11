@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 
 namespace AoC.Day11
@@ -60,40 +61,42 @@ namespace AoC.Day11
 
         public int CountAdjacentOccupied(int x, int y)
         {
-            var center = new Vector2Int(x, y);
+            var center = new Vector2(x, y);
 
             var adjacentPositions = new[]
             {
-                center + new Vector2Int(-1, -1),
-                center + new Vector2Int(0, -1),
-                center + new Vector2Int(1, -1),
+                center + new Vector2(-1, -1),
+                center + new Vector2(0, -1),
+                center + new Vector2(1, -1),
 
-                center + new Vector2Int(-1, 0),
-                center + new Vector2Int(1, 0),
+                center + new Vector2(-1, 0),
+                center + new Vector2(1, 0),
 
-                center + new Vector2Int(-1, 1),
-                center + new Vector2Int(0, 1),
-                center + new Vector2Int(1, 1)
+                center + new Vector2(-1, 1),
+                center + new Vector2(0, 1),
+                center + new Vector2(1, 1)
             };
 
             return adjacentPositions.Select(GetSeat).Count(seat => seat == Occupied);
         }
 
-        private char GetSeat(Vector2Int position)
+        private char GetSeat(Vector2 position)
         {
-            if (position.Y < 0 || position.Y >= _lines.Count)
+            var y = (int)Math.Round(position.Y);
+            if (y < 0 || y >= _lines.Count)
             {
                 return Floor;
             }
 
-            var line = _lines[position.Y];
+            var line = _lines[y];
 
-            if (position.X < 0 || position.X >= line.Length)
+            var x = (int)Math.Round(position.X);
+            if (x < 0 || x >= line.Length)
             {
                 return Floor;
             }
 
-            return line[position.X];
+            return line[x];
         }
 
         public override string ToString() => Grid;
