@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace AoC.Day11
 {
@@ -44,12 +45,9 @@ namespace AoC.Day11
 
         public SeatingGrid GenerateNextGrid()
         {
-            StringBuilder newLine = new();
-            List<string> newLines = new();
-
-            foreach (var (line, y) in _lines.Select((line, y) => (line, y)))
+            var tasks = _lines.Select((line, y) => Task.Run(() =>
             {
-                newLine.Clear();
+                StringBuilder newLine = new();
 
                 foreach (var (seat, x) in line.Select((seat, x) => (seat, x)))
                 {
@@ -62,8 +60,12 @@ namespace AoC.Day11
                     newLine.Append(newSeat);
                 }
 
-                newLines.Add(newLine.ToString());
-            }
+                return new {y, newLine = newLine.ToString()};
+            })).ToArray();
+
+            Task.WhenAll(tasks).Wait();
+
+            var newLines = tasks.OrderBy(t => t.Result.y).Select(t => t.Result.newLine).ToArray();
 
             return new SeatingGrid(newLines, Width, _occupancyThreshold, _visibilityOccupancy);
         }
