@@ -31,15 +31,15 @@ L.LLLLL.LL";
         [Test]
         public void Width_Returns_AsExpected()
         {
-            var sut = new SeatingGrid(Example1);
+            var sut = new SeatingGrid(Example1, default, default);
             sut.Width.Should().Be(10);
         }
 
         [Test]
         public void CountAdjacentOccupied_Tests()
         {
-            var sut1 = new SeatingGrid(Example1);
-            var sut2 = new SeatingGrid(Example1AfterRound1);
+            var sut1 = new SeatingGrid(Example1, default, default);
+            var sut2 = new SeatingGrid(Example1AfterRound1, default, default);
 
             sut1.CountAdjacentOccupied(0, 0).Should().Be(0);
             sut2.CountAdjacentOccupied(0, 0).Should().Be(2);

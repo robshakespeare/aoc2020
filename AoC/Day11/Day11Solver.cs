@@ -5,9 +5,13 @@ namespace AoC.Day11
         public override string DayName => "Seating System";
 
         // rs-todo: part 1 is slow!
-        protected override long? SolvePart1Impl(string input)
+        protected override long? SolvePart1Impl(string input) => RunAndCountOccupiedSeats(input, 4, false);
+
+        protected override long? SolvePart2Impl(string input) => RunAndCountOccupiedSeats(input, 5, true);
+
+        private static long RunAndCountOccupiedSeats(string input, int occupancyThreshold, bool visibilityOccupancy)
         {
-            SeatingGrid newGrid = new(input);
+            SeatingGrid newGrid = new(input, occupancyThreshold, visibilityOccupancy);
             SeatingGrid oldGrid;
             do
             {
@@ -16,11 +20,6 @@ namespace AoC.Day11
             } while (newGrid.Grid != oldGrid.Grid);
 
             return newGrid.CountOccupiedSeats();
-        }
-
-        protected override long? SolvePart2Impl(string input)
-        {
-            return base.SolvePart2Impl(input);
         }
     }
 }

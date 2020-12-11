@@ -13,20 +13,28 @@ namespace AoC.Day11
         private const char Occupied = '#';
 
         private readonly IReadOnlyList<string> _lines;
+        private readonly int _occupancyThreshold;
+        private readonly bool _visibilityOccupancy;
+        private readonly Func<int, int, int> _countOccupancy;
 
         public string Grid { get; }
 
         public int Width { get; }
 
-        public SeatingGrid(string input) : this(
+        public SeatingGrid(string input, int occupancyThreshold, bool visibilityOccupancy) : this(
             input.ReadLines().ToArray(),
-            input.TakeWhile(c => c != '\r' && c != '\n').Count())
+            input.TakeWhile(c => c != '\r' && c != '\n').Count(),
+            occupancyThreshold,
+            visibilityOccupancy)
         {
         }
 
-        private SeatingGrid(IReadOnlyList<string> lines, int width)
+        private SeatingGrid(IReadOnlyList<string> lines, int width, int occupancyThreshold, bool visibilityOccupancy)
         {
             _lines = lines;
+            _occupancyThreshold = occupancyThreshold;
+            _visibilityOccupancy = visibilityOccupancy;
+            _countOccupancy = visibilityOccupancy ? CountVisibleOccupied : CountAdjacentOccupied;
             Grid = string.Join(Environment.NewLine, _lines);
             Width = width;
         }
@@ -46,8 +54,8 @@ namespace AoC.Day11
                 {
                     var newSeat = seat switch
                     {
-                        Empty when CountAdjacentOccupied(x, y) == 0 => Occupied,
-                        Occupied when CountAdjacentOccupied(x, y) >= 4 => Empty,
+                        Empty when _countOccupancy(x, y) == 0 => Occupied,
+                        Occupied when _countOccupancy(x, y) >= _occupancyThreshold => Empty,
                         _ => seat
                     };
                     newLine.Append(newSeat);
@@ -56,7 +64,7 @@ namespace AoC.Day11
                 newLines.Add(newLine.ToString());
             }
 
-            return new SeatingGrid(newLines, Width);
+            return new SeatingGrid(newLines, Width, _occupancyThreshold, _visibilityOccupancy);
         }
 
         public int CountAdjacentOccupied(int x, int y)
@@ -78,6 +86,11 @@ namespace AoC.Day11
             };
 
             return adjacentPositions.Select(GetSeat).Count(seat => seat == Occupied);
+        }
+
+        public int CountVisibleOccupied(int x, int y)
+        {
+            return -1;
         }
 
         private char GetSeat(Vector2 position)
