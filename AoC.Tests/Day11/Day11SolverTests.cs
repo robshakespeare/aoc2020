@@ -40,13 +40,14 @@ namespace AoC.Tests.Day11
         }
 
         [Test]
+        [Ignore("Takes 9 minutes!, waaaaay too long!! Maybe I'll have time to come back and do this in not such a brute force way!")]
         public void Part2ReTest()
         {
             // ACT
             var part2Result = _sut.SolvePart2();
 
             // ASSERT
-            part2Result.Should().Be(0);
+            part2Result.Should().Be(1865);
         }
     }
 }

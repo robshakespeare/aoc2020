@@ -1,3 +1,5 @@
+using System;
+
 namespace AoC.Day11
 {
     public class Day11Solver : SolverBase
@@ -6,7 +8,16 @@ namespace AoC.Day11
 
         protected override long? SolvePart1Impl(string input) => RunAndCountOccupiedSeats(input, 4, false);
 
-        protected override long? SolvePart2Impl(string input) => RunAndCountOccupiedSeats(input, 5, true);
+        protected override long? SolvePart2Impl(string input)
+        {
+            Console.WriteLine("Day 11 Part 1 currently takes a long time (~9minutes!), press Y to continue:");
+            if (Console.ReadKey().KeyChar != 'y')
+            {
+                return -1;
+            }
+
+            return RunAndCountOccupiedSeats(input, 5, true);
+        }
 
         private static long RunAndCountOccupiedSeats(string input, int occupancyThreshold, bool visibilityOccupancy)
         {

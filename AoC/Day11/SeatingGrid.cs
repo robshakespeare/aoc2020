@@ -116,7 +116,7 @@ namespace AoC.Day11
                     var viewVector = x.position - center;
                     return new
                     {
-                        angle = MathUtils.AngleBetween(Vector2.UnitY, viewVector), //.Normal),?
+                        angle = MathUtils.AngleBetween(Vector2.UnitY, viewVector),
                         viewVector,
                         distance = viewVector.Length(),
                         x.seat,
