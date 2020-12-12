@@ -1,3 +1,4 @@
+using System.Numerics;
 using AoC.Day12;
 using FluentAssertions;
 using NUnit.Framework;
@@ -90,6 +91,18 @@ namespace AoC.Tests.Day12
 
                 // ASSERT
                 result.Should().Be(Ship.West);
+            }
+
+            [Test]
+            public void Rotate_Waypoint_Example1_Test()
+            {
+                var input = new Vector2(10, -4);
+
+                // ACT
+                var result = Ship.RotateDirection(input, 90);
+
+                // ASSERT
+                result.Should().Be(new Vector2(4, 10));
             }
         }
     }

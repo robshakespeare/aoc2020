@@ -11,42 +11,47 @@ namespace AoC.Day12
         public static readonly Vector2 South = new(0, 1);
         public static readonly Vector2 West = new(-1, 0);
 
-        public Vector2 Direction { get; private set; } = East;
+        private Vector2 _direction = East;
 
-        public Vector2 Position { get; private set; } = Vector2.Zero;
+        public Vector2 Position { get; protected set; } = Vector2.Zero;
 
         /// <summary>
         /// Processes the navigation instructions and then returns the Manhattan distance between that ship's ending position and starting position.
         /// </summary>
         public int Navigate(string input)
         {
-            foreach (var instruction in input.ReadLines()
-                .Select(line => new { action = line[0], inputValue = int.Parse(line[1..]) }))
+            foreach (var (action, inputValue) in input.ReadLines()
+                .Select(line => (line[0], int.Parse(line[1..]))))
             {
-                Position = instruction.action switch
-                {
-                    'N' => Move(North, instruction.inputValue),
-                    'S' => Move(South, instruction.inputValue),
-                    'E' => Move(East, instruction.inputValue),
-                    'W' => Move(West, instruction.inputValue),
-                    'L' => Turn(-instruction.inputValue),
-                    'R' => Turn(instruction.inputValue),
-                    'F' => MoveForward(instruction.inputValue),
-                    _ => throw new InvalidOperationException("Invalid action " + instruction.action)
-                };
+                ProcessInstruction(action, inputValue);
             }
 
             return Vector2Int.FromVector2(Position).ManhattanDistanceFromZero;
         }
 
-        private Vector2 Move(Vector2 direction, int amount) => Position + direction * amount;
-
-        private Vector2 MoveForward(int amount) => Move(Direction, amount);
-
-        private Vector2 Turn(int degrees)
+        protected virtual void ProcessInstruction(char action, int inputValue)
         {
-            Direction = RotateDirection(Direction, degrees);
-            return Position;
+            Position = action switch
+            {
+                'N' => Move(North, inputValue),
+                'S' => Move(South, inputValue),
+                'E' => Move(East, inputValue),
+                'W' => Move(West, inputValue),
+                'L' => Turn(-inputValue),
+                'R' => Turn(inputValue),
+                'F' => MoveForward(inputValue),
+                _ => throw new InvalidOperationException("Invalid action " + action)
+            } ?? Position;
+        }
+
+        private Vector2? Move(Vector2 direction, int amount) => Position + direction * amount;
+
+        private Vector2? MoveForward(int amount) => Move(_direction, amount);
+
+        private Vector2? Turn(int degrees)
+        {
+            _direction = RotateDirection(_direction, degrees);
+            return null;
         }
 
         private const double DegreesToRadians = Math.PI / 180;

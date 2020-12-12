@@ -33,13 +33,27 @@ F11");
         }
 
         [Test]
+        public void Part2Example()
+        {
+            // ACT
+            var part2Result = _sut.SolvePart2(@"F10
+N3
+F7
+R90
+F11");
+
+            // ASSERT
+            part2Result.Should().Be(286);
+        }
+
+        [Test]
         public void Part2ReTest()
         {
             // ACT
             var part2Result = _sut.SolvePart2();
 
             // ASSERT
-            part2Result.Should().Be(null);
+            part2Result.Should().Be(29895);
         }
     }
 }

@@ -6,9 +6,6 @@ namespace AoC.Day12
 
         protected override long? SolvePart1Impl(string input) => new Ship().Navigate(input);
 
-        protected override long? SolvePart2Impl(string input)
-        {
-            return base.SolvePart2Impl(input);
-        }
+        protected override long? SolvePart2Impl(string input) => new Ship2().Navigate(input);
     }
 }
