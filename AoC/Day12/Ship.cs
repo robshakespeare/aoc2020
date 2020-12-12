@@ -1,16 +1,12 @@
 using System;
 using System.Linq;
 using System.Numerics;
+using static AoC.MathUtils;
 
 namespace AoC.Day12
 {
     public class Ship
     {
-        public static readonly Vector2 North = new(0, -1);
-        public static readonly Vector2 East = new(1, 0);
-        public static readonly Vector2 South = new(0, 1);
-        public static readonly Vector2 West = new(-1, 0);
-
         private Vector2 _direction = East;
 
         public Vector2 Position { get; protected set; } = Vector2.Zero;
@@ -52,17 +48,6 @@ namespace AoC.Day12
         {
             _direction = RotateDirection(_direction, degrees);
             return null;
-        }
-
-        private const double DegreesToRadians = Math.PI / 180;
-
-        public static Vector2 RotateDirection(Vector2 direction, int degrees)
-        {
-            var radians = Convert.ToSingle(degrees * DegreesToRadians);
-
-            var rotationMatrix = Matrix3x2.CreateRotation(radians);
-
-            return Vector2.Transform(direction, rotationMatrix);
         }
     }
 }

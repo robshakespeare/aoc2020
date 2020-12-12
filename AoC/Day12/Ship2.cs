@@ -1,5 +1,6 @@
 using System;
 using System.Numerics;
+using static AoC.MathUtils;
 
 namespace AoC.Day12
 {

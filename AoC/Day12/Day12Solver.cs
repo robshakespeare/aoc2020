@@ -2,7 +2,7 @@ namespace AoC.Day12
 {
     public class Day12Solver : SolverBase
     {
-        public override string DayName => "";
+        public override string DayName => "Rain Risk";
 
         protected override long? SolvePart1Impl(string input) => new Ship().Navigate(input);
 
