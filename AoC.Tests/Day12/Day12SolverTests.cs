@@ -9,13 +9,27 @@ namespace AoC.Tests.Day12
         private readonly Day12Solver _sut = new();
 
         [Test]
+        public void Part1Example()
+        {
+            // ACT
+            var part1Result = _sut.SolvePart1(@"F10
+N3
+F7
+R90
+F11");
+
+            // ASSERT
+            part1Result.Should().Be(25);
+        }
+
+        [Test]
         public void Part1ReTest()
         {
             // ACT
             var part1Result = _sut.SolvePart1();
 
             // ASSERT
-            part1Result.Should().Be(null);
+            part1Result.Should().Be(362);
         }
 
         [Test]

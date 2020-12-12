@@ -4,10 +4,7 @@ namespace AoC.Day12
     {
         public override string DayName => "";
 
-        protected override long? SolvePart1Impl(string input)
-        {
-            return base.SolvePart1Impl(input);
-        }
+        protected override long? SolvePart1Impl(string input) => new Ship().Navigate(input);
 
         protected override long? SolvePart2Impl(string input)
         {
