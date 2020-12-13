@@ -164,9 +164,15 @@ namespace AoC.Day13
 
             //Console.WriteLine(arrow_alignment(7, 13, 1));
 
+            long xyz = firstBus.busId;
+
+            Console.WriteLine($"{xyz} (xyz)");
+
             foreach (var otherBus in otherBuses)
             {
-                Console.WriteLine(arrow_alignment(firstBus.busId, otherBus.busId, otherBus.offset));
+                xyz = arrow_alignment(xyz, otherBus.busId, otherBus.offset);
+
+                Console.WriteLine(xyz);
             }
 
             return -1;
