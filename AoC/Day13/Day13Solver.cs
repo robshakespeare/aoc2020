@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using MoreLinq;
-using Serilog;
 
 namespace AoC.Day13
 {
@@ -31,7 +28,7 @@ namespace AoC.Day13
             return earliestBus.busId * waitTime;
         }
 
-        public static long GetNextAvailableBusDepartTime(int busId, long earliestDepartTime)
+        private static long GetNextAvailableBusDepartTime(int busId, long earliestDepartTime)
         {
             var busFrequency = busId; // Note: busFrequency == busId!
             var intervals = earliestDepartTime / busFrequency + 1;
@@ -39,10 +36,13 @@ namespace AoC.Day13
             return nextAvailableBusDepartTime;
         }
 
-        // rs-todo: is `ExtendedGcd` needed?:
         // https://en.wikipedia.org/wiki/Extended_Euclidean_algorithm#Pseudocode
-        // https://math.stackexchange.com/a/3864593 
-        public static void ExtendedGcd(long a, long b)
+        /// <summary>
+        /// Extended Greatest Common Divisor Algorithm
+        /// oldR == gcd: The greatest common divisor of a and b.
+        /// oldS, oldT == Bézout Coefficients such that s*a + t*b = gcd
+        /// </summary>
+        public static (long oldR, long oldS, long oldT) ExtendedGcd(long a, long b)
         {
             (long old, long cur) r = (a, b);
             (long old, long cur) s = (1, 0);
@@ -56,14 +56,62 @@ namespace AoC.Day13
                 t = (t.cur, t.old - quotient * t.cur);
             }
 
-            Console.WriteLine($"Bézout coefficients: ({s.old}, {t.old})");
-            Console.WriteLine($"greatest common divisor: {r.old}");
-            Console.WriteLine($"quotients by the gcd: ({t.cur}, {s.cur})");
+            // Bézout coefficients: (s.old, t.old)
+            // greatest common divisor: r.old
+            // quotients by the gcd: (t.cur, s.cur)
+
+            return (r.old, s.old, t.old);
         }
 
-        public static long GetMatchingDepartureTimes(string input, long startSearchingAtTimestamp = 1, ILogger? logger = null)
+        /*
+         *  """Combine two phased rotations into a single phased rotation
+
+            Returns: combined_period, combined_phase
+
+            The combined rotation is at its reference point if and only if both a and b
+            are at their reference points.
+            """
+         */
+        public static (long combined_period, long combined_phase) combine_phased_rotations(long a_period, long a_phase, long b_period, long b_phase)
         {
-            var inputLine = input.ReadLines().ToArray().Last();
+            var (gcd, s, t) = ExtendedGcd(a_period, b_period);
+
+            var phase_difference = a_phase - b_phase;
+
+            //pd_mult, pd_remainder = divmod(phase_difference, gcd);
+            var pd_mult = phase_difference / gcd;
+            var pd_remainder = mod(phase_difference, gcd);
+
+            //if (pd_remainder == 0)
+            //{
+            //    throw new InvalidOperationException("Rotation reference points never synchronize.");
+            //}
+
+            var combined_period = a_period / gcd * b_period;
+            var combined_phase = mod((a_phase - s * pd_mult * a_period), combined_period);
+            return (combined_period, combined_phase);
+        }
+
+        public static long arrow_alignment(long red_len, long green_len, long advantage)
+        {
+            // """Where the arrows first align, where green starts shifted by advantage"""
+            var (period, phase) = combine_phased_rotations(red_len, 0, green_len, mod(-advantage, green_len));
+            return mod(-phase, period);
+        }
+
+        private static long mod(long a, long n)
+        {
+            long result = a % n;
+            if ((result < 0 && n > 0) || (result > 0 && n < 0))
+            {
+                result += n;
+            }
+            return result;
+        }
+
+        public static long GetMatchingDepartureTimesBruteForce(string input)
+        {
+            var inputLine = input.ReadLines().Last();
 
             var buses = inputLine.Split(",")
                 .Select((value, index) => new { value, index })
@@ -79,25 +127,11 @@ namespace AoC.Day13
             // Keep enumerating the first buses known times, searching for the first where all bus' next departure delta matches their offset
             var firstBus = buses.First();
             var otherBuses = buses[1..];
-            Console.WriteLine($"firstBus: {firstBus}");
 
-            var startSearchingAtDepartureNumber = startSearchingAtTimestamp / firstBus.busId + 1;
-
-            var stopwatch = Stopwatch.StartNew();
-            const int logEverySeconds = 10;
-            var logEvery = TimeSpan.FromSeconds(logEverySeconds);
-            var lastLogTime = DateTime.UtcNow.AddSeconds(-logEverySeconds * 2);
-
-            var matchingDepartureTime = LongRange(startSearchingAtDepartureNumber)
+            var matchingDepartureTime = Enumerable.Range(1, int.MaxValue)
                 .Select(departureNumber => new { departureNumber, departureTime = firstBus.busId * departureNumber })
                 .First(x =>
                 {
-                    if (DateTime.UtcNow - lastLogTime >= logEvery)
-                    {
-                        logger?.Information($"Elapsed {stopwatch.Elapsed}: {x}");
-                        lastLogTime = DateTime.UtcNow;
-                    }
-
                     return otherBuses.All(otherBus =>
                     {
                         var nextDepartureTime = GetNextAvailableBusDepartTime(otherBus.busId, x.departureTime);
@@ -109,12 +143,33 @@ namespace AoC.Day13
             return matchingDepartureTime.departureTime;
         }
 
-        private static IEnumerable<long> LongRange(long start, long end = long.MaxValue)
+        public static long GetMatchingDepartureTimesEfficient(string input)
         {
-            for (var current = start; current < end; current++)
+            var inputLine = input.ReadLines().Last();
+
+            var buses = inputLine.Split(",")
+                .Select((value, index) => new { value, index })
+                .Where(x => x.value != "x")
+                .Select(x =>
+                {
+                    var busId = int.Parse(x.value);
+                    var offset = x.index;
+                    return new { busId, offset };
+                })
+                .ToArray();
+
+            // Keep enumerating the first buses known times, searching for the first where all bus' next departure delta matches their offset
+            var firstBus = buses.First();
+            var otherBuses = buses[1..];
+
+            //Console.WriteLine(arrow_alignment(7, 13, 1));
+
+            foreach (var otherBus in otherBuses)
             {
-                yield return current;
+                Console.WriteLine(arrow_alignment(firstBus.busId, otherBus.busId, otherBus.offset));
             }
+
+            return -1;
         }
 
         /// <remarks>
@@ -123,7 +178,7 @@ namespace AoC.Day13
         /// </remarks>
         protected override long? SolvePart2Impl(string input)
         {
-            return GetMatchingDepartureTimes(input, 200020301065896, FileLogging.CreateLogger("Day13"));
+            return GetMatchingDepartureTimesEfficient(input);
 
             //var numBlanks = 0
             //foreach (var part in inputLines[1].Split(","))

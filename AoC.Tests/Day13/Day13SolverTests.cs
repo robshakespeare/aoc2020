@@ -31,7 +31,7 @@ namespace AoC.Tests.Day13
         }
 
         [Test]
-        public void ExtendedGcdDTests()
+        public void ExtendedGcdTests()
         {
             Day13Solver.ExtendedGcd(5, 13);
         }
@@ -46,8 +46,8 @@ namespace AoC.Tests.Day13
         public void Part2Examples(string input, long expectedResult)
         {
             // ACT
-            var part2ResultA = Day13Solver.GetMatchingDepartureTimes(input);
-            var part2ResultB = Day13Solver.GetMatchingDepartureTimes(input, startSearchingAtTimestamp: expectedResult - 10);
+            var part2ResultA = Day13Solver.GetMatchingDepartureTimesBruteForce(input);
+            var part2ResultB = Day13Solver.GetMatchingDepartureTimesEfficient(input);
 
             // ASSERT
             part2ResultA.Should().Be(expectedResult);
