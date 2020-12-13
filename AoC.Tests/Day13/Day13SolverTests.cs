@@ -1,3 +1,4 @@
+using System;
 using AoC.Day13;
 using FluentAssertions;
 using NUnit.Framework;
@@ -30,29 +31,34 @@ namespace AoC.Tests.Day13
         }
 
         [Test]
-        public void Part2Example()
+        public void ExtendedGcdDTests()
         {
-            // ACT
-            var part1Result = _sut.SolvePart2(@"939
-7,13,x,x,59,x,31,19");
-
-            // ASSERT
-            part1Result.Should().Be(1068788);
+            Day13Solver.ExtendedGcd(5, 13);
         }
 
-        [Test]
-        public void Part2Example2()
+        [TestCase(@"939
+7,13,x,x,59,x,31,19", 1068781)]
+        [TestCase("17,x,13,19", 3417)]
+        [TestCase("67,7,59,61", 754018)]
+        [TestCase("67,x,7,59,61", 779210)]
+        [TestCase("67,7,x,59,61", 1261476)]
+        [TestCase("1789,37,47,1889", 1202161486)]
+        public void Part2Examples(string input, long expectedResult)
         {
             // ACT
-            var part1Result = _sut.SolvePart2(@"17,x,13,19");
+            var part2ResultA = Day13Solver.GetMatchingDepartureTimes(input);
+            var part2ResultB = Day13Solver.GetMatchingDepartureTimes(input, startSearchingAtTimestamp: expectedResult - 10);
 
             // ASSERT
-            part1Result.Should().Be(1068788);
+            part2ResultA.Should().Be(expectedResult);
+            part2ResultB.Should().Be(expectedResult);
         }
 
         [Test]
         public void Part2ReTest()
         {
+            throw new NotImplementedException("rs-todo: make it run in time!");
+
             // ACT
             var part2Result = _sut.SolvePart2();
 
