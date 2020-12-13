@@ -30,6 +30,27 @@ namespace AoC.Tests.Day13
         }
 
         [Test]
+        public void Part2Example()
+        {
+            // ACT
+            var part1Result = _sut.SolvePart2(@"939
+7,13,x,x,59,x,31,19");
+
+            // ASSERT
+            part1Result.Should().Be(1068788);
+        }
+
+        [Test]
+        public void Part2Example2()
+        {
+            // ACT
+            var part1Result = _sut.SolvePart2(@"17,x,13,19");
+
+            // ASSERT
+            part1Result.Should().Be(1068788);
+        }
+
+        [Test]
         public void Part2ReTest()
         {
             // ACT
