@@ -9,13 +9,24 @@ namespace AoC.Tests.Day13
         private readonly Day13Solver _sut = new();
 
         [Test]
+        public void Part1Example()
+        {
+            // ACT
+            var part1Result = _sut.SolvePart1(@"939
+7,13,x,x,59,x,31,19");
+
+            // ASSERT
+            part1Result.Should().Be(295);
+        }
+
+        [Test]
         public void Part1ReTest()
         {
             // ACT
             var part1Result = _sut.SolvePart1();
 
             // ASSERT
-            part1Result.Should().Be(null);
+            part1Result.Should().Be(4938);
         }
 
         [Test]
