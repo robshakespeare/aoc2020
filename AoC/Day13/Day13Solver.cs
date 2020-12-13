@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Reflection;
 using MoreLinq;
 
 namespace AoC.Day13
@@ -16,11 +15,10 @@ namespace AoC.Day13
             var earliestBus = inputLines[1].Split(",")
                 .Where(x => x != "x")
                 .Select(int.Parse)
-                .Select(busFrequency =>
+                .Select(busId => new
                 {
-                    var intervals = earliestDepartTime / busFrequency + 1;
-                    var nextAvailableBusDepartTime = busFrequency * intervals;
-                    return new { busId = busFrequency, nextAvailableBusDepartTime };
+                    busId,
+                    nextAvailableBusDepartTime = GetNextAvailableBusDepartTime(busId, earliestDepartTime)
                 })
                 .MinBy(x => x.nextAvailableBusDepartTime)
                 .First();
@@ -28,6 +26,14 @@ namespace AoC.Day13
             var waitTime = earliestBus.nextAvailableBusDepartTime - earliestDepartTime;
 
             return earliestBus.busId * waitTime;
+        }
+
+        public static int GetNextAvailableBusDepartTime(int busId, int earliestDepartTime)
+        {
+            var busFrequency = busId; // Note: busFrequency == busId!
+            var intervals = earliestDepartTime / busFrequency + 1;
+            var nextAvailableBusDepartTime = busFrequency * intervals;
+            return nextAvailableBusDepartTime;
         }
 
         protected override long? SolvePart2Impl(string input)
