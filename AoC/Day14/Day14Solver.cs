@@ -14,6 +14,11 @@ namespace AoC.Day14
             @"(mask = (?<mask>[X10]+))|(mem\[(?<address>\d+)\] = (?<value>\d+))",
             RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
+        private static IEnumerable<(string? mask, long address, long value)> ParseInput(string input) =>
+            ParseInputRegex.Matches(input).Select(match => match.Groups["mask"].Success
+                ? (match.Groups["mask"].Value, 0L, 0L)
+                : ((string?)null, long.Parse(match.Groups["address"].Value), long.Parse(match.Groups["value"].Value)));
+
         /// <summary>
         /// Execute the initialization program. What is the sum of all values left in memory after it completes?
         /// </summary>
@@ -22,16 +27,14 @@ namespace AoC.Day14
             Mask? mask = null;
             var memory = new Dictionary<long, long>();
 
-            foreach (Match match in ParseInputRegex.Matches(input))
+            foreach (var (maskStr, address, value) in ParseInput(input))
             {
-                if (match.Groups["mask"].Success)
+                if (maskStr != null)
                 {
-                    mask = new Mask(match.Groups["mask"].Value);
+                    mask = new Mask(maskStr);
                 }
                 else
                 {
-                    var address = long.Parse(match.Groups["address"].Value);
-                    var value = long.Parse(match.Groups["value"].Value);
                     memory[address] = (mask ?? throw new InvalidOperationException("No mask")).ApplyTo(value);
                 }
             }
@@ -41,7 +44,7 @@ namespace AoC.Day14
 
         public class Mask
         {
-            private readonly (char c, int i)[] _mask;
+            private readonly IReadOnlyCollection<(char c, int i)> _mask;
 
             public Mask(string mask) => _mask = mask.Reverse().Select((c, i) => (c, i)).Where(m => m.c != 'X').ToArray();
 
@@ -69,19 +72,15 @@ namespace AoC.Day14
             MaskV2? mask = null;
             var memory = new Dictionary<long, long>();
 
-            foreach (Match match in ParseInputRegex.Matches(input))
+            foreach (var (maskStr, sourceAddress, value) in ParseInput(input))
             {
-                if (match.Groups["mask"].Success)
+                if (maskStr != null)
                 {
-                    mask = new MaskV2(match.Groups["mask"].Value);
+                    mask = new MaskV2(maskStr);
                 }
                 else
                 {
-                    var sourceAddress = long.Parse(match.Groups["address"].Value);
-                    var value = long.Parse(match.Groups["value"].Value);
-
                     var addresses = (mask ?? throw new InvalidOperationException("No mask")).Apply(sourceAddress);
-
                     foreach (var address in addresses)
                     {
                         memory[address] = value;
@@ -94,7 +93,7 @@ namespace AoC.Day14
 
         public class MaskV2
         {
-            private readonly (char c, int i)[] _mask;
+            private readonly IReadOnlyCollection<(char c, int i)> _mask;
 
             public MaskV2(string mask)
             {
