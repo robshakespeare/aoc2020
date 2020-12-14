@@ -38,7 +38,6 @@ namespace AoC.Tests.Day13
         [TestCase("1789,37,47,1889", 1202161486)]
         public void Part2Examples(string input, long expectedResult)
         {
-            Day13Solver.GetMatchingDepartureTimesBruteForce(input).Should().Be(expectedResult);
             Day13Solver.GetMatchingDepartureTimesEfficient(input).Should().Be(expectedResult);
         }
 

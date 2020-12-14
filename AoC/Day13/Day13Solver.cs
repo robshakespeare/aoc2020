@@ -73,39 +73,5 @@ namespace AoC.Day13
         /// i.e. modinv(x,n) == pow(x,n-2,n) for prime n
         /// </summary>
         private static long SolveBigN(long a, int m, int n) => (long) BigInteger.ModPow(a, m - 2, m) * n;
-
-        public static long GetMatchingDepartureTimesBruteForce(string input)
-        {
-            var inputLine = input.ReadLines().Last();
-
-            var buses = inputLine.Split(",")
-                .Select((value, index) => new {value, index})
-                .Where(x => x.value != "x")
-                .Select(x =>
-                {
-                    var busNum = int.Parse(x.value);
-                    var offset = x.index;
-                    return new {busNum, offset};
-                })
-                .ToArray();
-
-            // Keep enumerating the first buses known times, searching for the first where all bus' next departure delta matches their offset
-            var firstBus = buses.First();
-            var otherBuses = buses[1..];
-
-            var matchingDepartureTime = Enumerable.Range(1, int.MaxValue)
-                .Select(departureNumber => new {departureNumber, departureTime = firstBus.busNum * departureNumber})
-                .First(x =>
-                {
-                    return otherBuses.All(otherBus =>
-                    {
-                        var nextDepartureTime = GetNextAvailableBusDepartTime(otherBus.busNum, x.departureTime);
-                        var delta = nextDepartureTime - x.departureTime;
-                        return delta == otherBus.offset;
-                    });
-                });
-
-            return matchingDepartureTime.departureTime;
-        }
     }
 }
