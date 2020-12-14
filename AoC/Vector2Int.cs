@@ -17,11 +17,7 @@ namespace AoC
 
         public static readonly Vector2Int Zero = new();
 
-        public int Length => ManhattanDistanceFromZero;
-
         public int ManhattanDistanceFromZero => ManhattanDistance(this, Zero);
-
-        public Vector2Int Normal => Length == 0 ? Zero : this / Length;
 
         public static int ManhattanDistance(Vector2Int a, Vector2Int b) => Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y);
 
