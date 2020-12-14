@@ -1,51 +1,41 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using AoC;
 using Crayon;
 
-namespace AoC
+Console.OutputEncoding = System.Text.Encoding.Unicode;
+
+static void PrintTitle()
 {
-    public class Program
+    Console.Clear();
+    Console.WriteLine("🎄 Advent of Code 2020 🎅");
+}
+
+PrintTitle();
+
+var solverFactory = SolverFactory.CreateFactory();
+
+bool exit;
+var defaultDay = Math.Min(DateTime.Now.Day, 25).ToString();
+var cliDays = new Queue<string>(args.Length > 0 ? args : new[] { "" });
+do
+{
+    Console.WriteLine($"Type day number or blank for {defaultDay} or 'x' to exit".Green());
+    var dayNumber = cliDays.TryDequeue(out var cliDay) ? cliDay : Console.ReadLine() ?? "";
+    dayNumber = string.IsNullOrWhiteSpace(dayNumber) ? defaultDay : dayNumber;
+
+    exit = dayNumber == "x" || dayNumber == "exit";
+    if (!exit)
     {
-        public static void Main(string[] args)
+        PrintTitle();
+        var solver = solverFactory.TryCreateSolver(dayNumber);
+        if (solver != null)
         {
-            Console.OutputEncoding = Encoding.Unicode;
-
-            static void PrintTitle()
-            {
-                Console.Clear();
-                Console.WriteLine("🎄 Advent of Code 2020 🎅");
-            }
-
-            PrintTitle();
-
-            var solverFactory = SolverFactory.CreateFactory<Program>();
-
-            bool exit;
-            var defaultDay = Math.Min(DateTime.Now.Day, 25).ToString();
-            var cliDays = new Queue<string>(args.Any() ? args : new[] {""});
-            do
-            {
-                Console.WriteLine($"Type day number or blank for {defaultDay} or 'x' to exit".Green());
-                var dayNumber = cliDays.TryDequeue(out var cliDay) ? cliDay : Console.ReadLine() ?? "";
-                dayNumber = string.IsNullOrWhiteSpace(dayNumber) ? defaultDay : dayNumber;
-
-                exit = dayNumber == "x" || dayNumber == "exit";
-                if (!exit)
-                {
-                    PrintTitle();
-                    var solver = solverFactory.TryCreateSolver(dayNumber);
-                    if (solver != null)
-                    {
-                        solver.Run();
-                    }
-                    else
-                    {
-                        Console.WriteLine($"No solver for day '{dayNumber.BrightCyan()}'.".Red());
-                    }
-                }
-            } while (!exit);
+            solver.Run();
+        }
+        else
+        {
+            Console.WriteLine($"No solver for day '{dayNumber.BrightCyan()}'.".Red());
         }
     }
-}
+} while (!exit);

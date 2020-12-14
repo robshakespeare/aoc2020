@@ -32,7 +32,7 @@ namespace AoC
             });
         }
 
-        private string GetInputFilePath(string fileName) => Path.Combine($"Day{_dayNumber}", fileName);
+        private string GetInputFilePath(string fileName) => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"Day{_dayNumber}", fileName);
 
         private static string LoadInput(string filePath)
         {

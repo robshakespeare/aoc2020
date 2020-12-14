@@ -8,7 +8,7 @@ namespace AoC.Tests
         [Test]
         public void CanCreateFactory_And_CreateASolver()
         {
-            var sut = SolverFactory.CreateFactory<Program>();
+            var sut = SolverFactory.CreateFactory();
 
             var solver = sut.TryCreateSolver("0");
 

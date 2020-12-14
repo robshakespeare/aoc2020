@@ -114,6 +114,8 @@ namespace AoC
 
         public static SolverFactory CreateFactory<TStartup>() => new(typeof(TStartup).Assembly);
 
+        public static SolverFactory CreateFactory() => CreateFactory<SolverFactory>();
+
         private static readonly Regex DayNumRegex = new(@"Day(?<dayNum>\d+)", RegexOptions.Compiled);
 
         private static int GetDayNumber(Type solverType)
