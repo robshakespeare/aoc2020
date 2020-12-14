@@ -32,13 +32,26 @@ mem[8] = 0");
         }
 
         [Test]
+        public void Part2Example()
+        {
+            // ACT
+            var part2Result = _sut.SolvePart2(@"mask = 000000000000000000000000000000X1001X
+mem[42] = 100
+mask = 00000000000000000000000000000000X0XX
+mem[26] = 1");
+
+            // ASSERT
+            part2Result.Should().Be(208);
+        }
+
+        [Test]
         public void Part2ReTest()
         {
             // ACT
             var part2Result = _sut.SolvePart2();
 
             // ASSERT
-            part2Result.Should().Be(null);
+            part2Result.Should().Be(2625449018811);
         }
     }
 }
