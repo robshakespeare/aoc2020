@@ -38,14 +38,18 @@ namespace AoC.Tests.Day13
         [TestCase("1789,37,47,1889", 1202161486)]
         public void Part2Examples(string input, long expectedResult)
         {
-            Day13Solver.GetMatchingDepartureTimesEfficient(input).Should().Be(expectedResult);
+            // ACT
+            var part2Result = _sut.SolvePart2(input);
+
+            // ASSERT
+            part2Result.Should().Be(expectedResult);
         }
 
         [Test]
         public void Part2SimpleExample()
         {
             // ACT
-            var part2Result = Day13Solver.GetMatchingDepartureTimesEfficient("17,x,13,19");
+            var part2Result = _sut.SolvePart2("17,x,13,19");
 
             // ASSERT
             part2Result.Should().Be(3417);

@@ -18,10 +18,11 @@ namespace AoC.Day13
             var earliestBus = inputLines[1].Split(",")
                 .Where(x => x != "x")
                 .Select(int.Parse)
-                .Select(busNum => new
+                .Select(busNum =>
                 {
-                    busNum,
-                    nextAvailableBusDepartTime = GetNextAvailableBusDepartTime(busNum, earliestDepartTime)
+                    var intervals = earliestDepartTime / busNum + 1; // Note: busNum == busFrequency
+                    var nextAvailableBusDepartTime = (long) busNum * intervals;
+                    return new {busNum, nextAvailableBusDepartTime};
                 })
                 .MinBy(x => x.nextAvailableBusDepartTime)
                 .First();
@@ -42,9 +43,7 @@ namespace AoC.Day13
         /// <summary>
         /// Returns the earliest timestamp such that all of the listed bus IDs depart at offsets matching their positions in the list.
         /// </summary>
-        protected override long? SolvePart2Impl(string input) => GetMatchingDepartureTimesEfficient(input);
-
-        public static long GetMatchingDepartureTimesEfficient(string input)
+        protected override long? SolvePart2Impl(string input)
         {
             var inputLine = input.ReadLines().Last();
 
