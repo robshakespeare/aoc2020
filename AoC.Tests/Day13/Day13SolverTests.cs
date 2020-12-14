@@ -29,6 +29,28 @@ namespace AoC.Tests.Day13
             part1Result.Should().Be(4938);
         }
 
+        [TestCase(@"939
+7,13,x,x,59,x,31,19", 1068781)]
+        [TestCase("17,x,13,19", 3417)]
+        [TestCase("67,7,59,61", 754018)]
+        [TestCase("67,x,7,59,61", 779210)]
+        [TestCase("67,7,x,59,61", 1261476)]
+        [TestCase("1789,37,47,1889", 1202161486)]
+        public void Part2Examples(string input, long expectedResult)
+        {
+            Day13Solver.GetMatchingDepartureTimesEfficient(input).Should().Be(expectedResult);
+        }
+
+        [Test]
+        public void Part2SimpleExample()
+        {
+            // ACT
+            var part2Result = Day13Solver.GetMatchingDepartureTimesEfficient("17,x,13,19");
+
+            // ASSERT
+            part2Result.Should().Be(3417);
+        }
+
         [Test]
         public void Part2ReTest()
         {
@@ -36,7 +58,7 @@ namespace AoC.Tests.Day13
             var part2Result = _sut.SolvePart2();
 
             // ASSERT
-            part2Result.Should().Be(null);
+            part2Result.Should().Be(230903629977901);
         }
     }
 }
