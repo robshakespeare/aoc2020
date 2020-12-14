@@ -93,7 +93,7 @@ namespace AoC.Day11
 
         private char GetSeat(Vector2 position)
         {
-            var y = (int)Math.Round(position.Y);
+            var y = position.Y.Round();
             if (y < 0 || y >= _lines.Count)
             {
                 return OutOfBounds;
@@ -101,7 +101,7 @@ namespace AoC.Day11
 
             var line = _lines[y];
 
-            var x = (int)Math.Round(position.X);
+            var x = position.X.Round();
             if (x < 0 || x >= line.Length)
             {
                 return OutOfBounds;

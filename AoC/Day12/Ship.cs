@@ -22,7 +22,7 @@ namespace AoC.Day12
                 ProcessInstruction(action, inputValue);
             }
 
-            return Vector2Int.FromVector2(Position).ManhattanDistanceFromZero;
+            return Position.ManhattanDistanceFromZero();
         }
 
         protected virtual void ProcessInstruction(char action, int inputValue)

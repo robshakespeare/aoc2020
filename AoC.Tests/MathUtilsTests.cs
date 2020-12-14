@@ -121,7 +121,7 @@ namespace AoC.Tests
             }
 
             [Test]
-            public void Rotate_Waypoint_Example1_Test()
+            public void Rotate_Waypoint_Day12_Example1_Test()
             {
                 var input = new Vector2(10, -4);
 
@@ -130,6 +130,83 @@ namespace AoC.Tests
 
                 // ASSERT
                 result.Should().Be(new Vector2(4, 10));
+            }
+        }
+
+        public class TheRoundMethod
+        {
+            [TestCase(1.0f, 1)]
+            [TestCase(2.0f, 2)]
+            [TestCase(-1.0f, -1)]
+            [TestCase(3.25f, 3)]
+            [TestCase(3.75f, 4)]
+            [TestCase(3.5f, 4)]
+            [TestCase(4.5f, 5)]
+            [TestCase(1234.00001f, 1234)]
+            [TestCase(1234.49f, 1234)]
+            [TestCase(1234.5f, 1235)]
+            [TestCase(1234.9999f, 1235)]
+            [TestCase(9345678.75f, 9345679)]
+            public void RoundTests(float f, int expectedResult)
+            {
+                f.Round().Should().Be(expectedResult);
+            }
+        }
+
+        public class ManhattanDistanceTests
+        {
+            [TestCase(0, 0, 0, 0, 0)]
+            [TestCase(0, 0, 0, 1, 1)]
+            [TestCase(0, 0, 0, -1, 1)]
+            [TestCase(0, 0, 2, 3, 5)]
+            [TestCase(0, 0, -2, -3, 5)]
+            [TestCase(1, 6, -1, 5, 3)]
+            [TestCase(2, 3, -1, 5, 5)]
+            [TestCase(2, 3, 1, 6, 4)]
+            [TestCase(2, 3, 3, 5, 3)]
+            public void ManhattanDistance_Tests(int x1, int y1, int x2, int y2, int expectedResult)
+            {
+                var vectorA = new Vector2(x1, y1);
+                var vectorB = new Vector2(x2, y2);
+
+                // ACT
+                var result = MathUtils.ManhattanDistance(vectorA, vectorB);
+
+                // ASSERT
+                result.Should().Be(expectedResult);
+            }
+
+            [Test]
+            public void ManhattanDistance_DoesRound_BeforeCalculating()
+            {
+                var vectorA = new Vector2(1.2f, 1.4f);
+                var vectorB = new Vector2(3.5f, 4.5f);
+
+                // ACT
+                var result = MathUtils.ManhattanDistance(vectorA, vectorB);
+
+                // ASSERT
+                result.Should().Be((4 - 1) + (5 - 1));
+            }
+
+            [TestCase(0, 0, 0)]
+            [TestCase(0, 1, 1)]
+            [TestCase(0, -1, 1)]
+            [TestCase(2, 3, 5)]
+            [TestCase(-2, -3, 5)]
+            [TestCase(10, 16, 26)]
+            [TestCase(-10, 16, 26)]
+            [TestCase(10, -16, 26)]
+            [TestCase(-10, -16, 26)]
+            public void ManhattanDistanceFromZero_Tests(int x, int y, int expectedResult)
+            {
+                var vector = new Vector2(x, y);
+
+                // ACT
+                var result = vector.ManhattanDistanceFromZero();
+
+                // ASSERT
+                result.Should().Be(expectedResult);
             }
         }
     }

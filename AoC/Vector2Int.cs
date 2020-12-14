@@ -1,5 +1,4 @@
 using System;
-using System.Numerics;
 
 namespace AoC
 {
@@ -24,8 +23,6 @@ namespace AoC
         public static Vector2Int operator +(Vector2Int a, Vector2Int b) => new(a.X + b.X, a.Y + b.Y);
 
         public static Vector2Int operator /(Vector2Int a, int b) => new(a.X / b, a.Y / b);
-
-        public static Vector2Int FromVector2(Vector2 vector) => new((int) Math.Round(vector.X), (int) Math.Round(vector.Y));
 
         public override string ToString() => $"{X},{Y}";
     }

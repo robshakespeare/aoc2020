@@ -43,7 +43,7 @@ namespace AoC
         /// Rotates the specified direction vector, around the zero vector (0,0) center point, by the specified number of degrees.
         /// </summary>
         /// <remarks>
-        /// Note: tis method expects direction vector to be centered around the zero vector (0,0).
+        /// Note: This method expects the direction vector to be centered around the zero vector (0,0).
         /// It could probably be extended, using the Matrix3x2 CreateRotation(float radians, Vector2 centerPoint) method,
         /// to cater for rotation around a non-zero center point.
         /// </remarks>
@@ -55,5 +55,24 @@ namespace AoC
 
             return Vector2.Transform(direction, rotationMatrix);
         }
+
+        /// <summary>
+        /// Rounds the floating-point value to the nearest integer value, and rounds midpoint values away from zero.
+        /// </summary>
+        public static int Round(this float f) => (int) MathF.Round(f, MidpointRounding.AwayFromZero);
+
+        /// <summary>
+        /// Returns the Manhattan Distance between two cartesian coordinates.
+        /// The cartesian coordinates are expected to be on a integer grid,
+        /// and will be rounded to the nearest integer before calculating the the Manhattan Distance calculation.
+        /// </summary>
+        public static int ManhattanDistance(Vector2 a, Vector2 b) => Math.Abs(a.X.Round() - b.X.Round()) + Math.Abs(a.Y.Round() - b.Y.Round());
+
+        /// <summary>
+        /// Returns the Manhattan Distance between the specified cartesian coordinates and the zero vector (0,0).
+        /// The cartesian coordinates are expected to be on a integer grid,
+        /// and will be rounded to the nearest integer before calculating the the Manhattan Distance calculation.
+        /// </summary>
+        public static int ManhattanDistanceFromZero(this Vector2 vector) => ManhattanDistance(vector, Vector2.Zero);
     }
 }
