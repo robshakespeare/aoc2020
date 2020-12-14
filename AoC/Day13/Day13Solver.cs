@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Numerics;
 using MoreLinq;
 
 namespace AoC.Day13
@@ -7,6 +8,9 @@ namespace AoC.Day13
     {
         public override string DayName => "Shuttle Search";
 
+        /// <summary>
+        /// Returns the the ID of the earliest bus you can take to the airport multiplied by the number of minutes you'll need to wait for that bus.
+        /// </summary>
         protected override long? SolvePart1Impl(string input)
         {
             var inputLines = input.ReadLines().ToArray();
@@ -35,14 +39,17 @@ namespace AoC.Day13
             return nextAvailableBusDepartTime;
         }
 
-        protected override long? SolvePart2Impl(string input) => GetMatchingDepartureTimesEfficient2(input);
+        /// <summary>
+        /// Returns the earliest timestamp such that all of the listed bus IDs depart at offsets matching their positions in the list.
+        /// </summary>
+        protected override long? SolvePart2Impl(string input) => GetMatchingDepartureTimesEfficient(input);
 
-        public static long GetMatchingDepartureTimesEfficient2(string input)
+        public static long GetMatchingDepartureTimesEfficient(string input)
         {
             var inputLine = input.ReadLines().Last();
 
             var buses = inputLine.Split(",")
-                .Select((value, index) => new { value, index })
+                .Select((value, index) => new {value, index})
                 .Where(x => x.value != "x")
                 .Select(x => new
                 {
@@ -59,29 +66,26 @@ namespace AoC.Day13
                 var bigN = SolveBigN(coefficient, bus.busNum, bus.busNum - bus.offset);
                 return coefficient * bigN;
             }).Sum() % modsMultiplied;
-
-            static int SolveBigN(long a, int m, int n) => Enumerable.Range(0, m).First(i => Modulus(a * i, m) == Modulus(n, m));
         }
 
         /// <summary>
-        /// Returns the modulus that results from division with two specified integer values. https://stackoverflow.com/a/18106623
+        /// Emulate ModInverse, using ModPow, if n is a prime. https://stackoverflow.com/a/15768873
+        /// i.e. modinv(x,n) == pow(x,n-2,n) for prime n
         /// </summary>
-        /// <param name="dividend">The value to be divided.</param>
-        /// <param name="divisor">The value to divide by.</param>
-        private static long Modulus(long dividend, long divisor) => (dividend % divisor + divisor) % divisor;
+        private static long SolveBigN(long a, int m, int n) => (long) BigInteger.ModPow(a, m - 2, m) * n;
 
         public static long GetMatchingDepartureTimesBruteForce(string input)
         {
             var inputLine = input.ReadLines().Last();
 
             var buses = inputLine.Split(",")
-                .Select((value, index) => new { value, index })
+                .Select((value, index) => new {value, index})
                 .Where(x => x.value != "x")
                 .Select(x =>
                 {
                     var busNum = int.Parse(x.value);
                     var offset = x.index;
-                    return new { busNum, offset };
+                    return new {busNum, offset};
                 })
                 .ToArray();
 
@@ -90,7 +94,7 @@ namespace AoC.Day13
             var otherBuses = buses[1..];
 
             var matchingDepartureTime = Enumerable.Range(1, int.MaxValue)
-                .Select(departureNumber => new { departureNumber, departureTime = firstBus.busNum * departureNumber })
+                .Select(departureNumber => new {departureNumber, departureTime = firstBus.busNum * departureNumber})
                 .First(x =>
                 {
                     return otherBuses.All(otherBus =>

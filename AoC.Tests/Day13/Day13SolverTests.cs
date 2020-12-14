@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using AoC.Day13;
 using FluentAssertions;
 using NUnit.Framework;
@@ -40,20 +38,15 @@ namespace AoC.Tests.Day13
         [TestCase("1789,37,47,1889", 1202161486)]
         public void Part2Examples(string input, long expectedResult)
         {
-            // ACT
-            var part2ResultA = Day13Solver.GetMatchingDepartureTimesBruteForce(input);
-            var part2ResultB = Day13Solver.GetMatchingDepartureTimesEfficient2(input);
-
-            // ASSERT
-            part2ResultA.Should().Be(expectedResult);
-            part2ResultB.Should().Be(expectedResult);
+            Day13Solver.GetMatchingDepartureTimesBruteForce(input).Should().Be(expectedResult);
+            Day13Solver.GetMatchingDepartureTimesEfficient(input).Should().Be(expectedResult);
         }
 
         [Test]
         public void Part2SimpleExample()
         {
             // ACT
-            var part2Result = Day13Solver.GetMatchingDepartureTimesEfficient2("17,x,13,19");
+            var part2Result = Day13Solver.GetMatchingDepartureTimesEfficient("17,x,13,19");
 
             // ASSERT
             part2Result.Should().Be(3417);
