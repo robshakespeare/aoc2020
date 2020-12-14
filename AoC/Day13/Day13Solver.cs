@@ -32,14 +32,6 @@ namespace AoC.Day13
             return earliestBus.busNum * waitTime;
         }
 
-        private static long GetNextAvailableBusDepartTime(int busNum, long earliestDepartTime)
-        {
-            var busFrequency = busNum; // Note: busFrequency == busNum!
-            var intervals = earliestDepartTime / busFrequency + 1;
-            var nextAvailableBusDepartTime = busFrequency * intervals;
-            return nextAvailableBusDepartTime;
-        }
-
         /// <summary>
         /// Returns the earliest timestamp such that all of the listed bus IDs depart at offsets matching their positions in the list.
         /// </summary>
