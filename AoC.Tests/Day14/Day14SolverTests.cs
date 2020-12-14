@@ -9,13 +9,26 @@ namespace AoC.Tests.Day14
         private readonly Day14Solver _sut = new();
 
         [Test]
+        public void Part1Example()
+        {
+            // ACT
+            var part1Result = _sut.SolvePart1(@"mask = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X
+mem[8] = 11
+mem[7] = 101
+mem[8] = 0");
+
+            // ASSERT
+            part1Result.Should().Be(165);
+        }
+
+        [Test]
         public void Part1ReTest()
         {
             // ACT
             var part1Result = _sut.SolvePart1();
 
             // ASSERT
-            part1Result.Should().Be(null);
+            part1Result.Should().Be(11884151942312);
         }
 
         [Test]
