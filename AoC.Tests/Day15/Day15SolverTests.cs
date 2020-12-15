@@ -36,7 +36,7 @@ namespace AoC.Tests.Day15
 
         [TestCase("0,3,6", 175594)]
         [TestCase("1,3,2", 2578)]
-        [Ignore("Currently takes ~8 seconds per test case, there must be an efficient way to do it!")]
+        [Ignore("Currently takes 1.35 seconds per test case, there must be an efficient way to do it!")]
         public void Part2Examples(string input, int expectedResult)
         {
             // ACT
@@ -47,7 +47,7 @@ namespace AoC.Tests.Day15
         }
 
         [Test]
-        [Ignore("Currently takes ~8 seconds, there must be an efficient way to do it!")]
+        [Ignore("Currently takes 1.35 seconds, there must be an efficient way to do it!")]
         public void Part2ReTest()
         {
             // ACT
