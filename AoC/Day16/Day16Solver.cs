@@ -8,7 +8,7 @@ namespace AoC.Day16
 {
     public class Day16Solver : SolverBase
     {
-        public override string DayName => "";
+        public override string DayName => "Ticket Translation";
 
         protected override long? SolvePart1Impl(string input) => TrainServiceNotes.Parse(input).GetInvalidTicketValues().Sum();
 
@@ -39,9 +39,6 @@ namespace AoC.Day16
                 return OtherTickets.SelectMany(ticket => ticket.GetInvalidValues(Rules));
             }
 
-            // rs-todo: should it be new[] {YourTicket}.Concat(OtherTickets.Where(ticket => ticket.IsValid(Rules)));?
-            //public IEnumerable<Ticket> GetValidTickets() => OtherTickets.Where(ticket => ticket.IsValid(Rules));
-
             public IEnumerable<Ticket> GetValidTickets() => new[] { YourTicket }.Concat(OtherTickets.Where(ticket => ticket.IsValid(Rules)));
 
             public long DetermineOrderOfFields()
@@ -58,65 +55,28 @@ namespace AoC.Day16
                 var candidates = Enumerable.Range(0, numFields)
                     .Select(fieldIndex => GetCandidateRules(fieldIndex, validTickets).ToList())
                     .ToReadOnlyArray();
-                //var candidates = Enumerable.Range(0, numFields).Select(fieldIndex => GetCandidateRules(fieldIndex, new [] { YourTicket }).ToList()).ToReadOnlyArray();
-
-                //var knownFields = new (int fieldIndex, string fieldName, bool matched)[20];
-
-                // Eliminate any whose count is already one
-                //var logger = FileLogging.CreateLogger("day16");
-                //logger.Information($"{NewLine}{NewLine}{NewLine}********* DAY 16 RESULTS *********");
-
-                //void Eliminate()
-                //{
-                //    foreach (var knownField in candidates.Where(x => x.Count == 1).ToArray())
-                //    {
-                //        var knownFieldName = knownField.Single().FieldName;
-
-                //        foreach (var candidate in candidates.Where(x => x.Count > 1).ToArray())  //.Where(x => x != knownField))
-                //        {
-                //            candidate.RemoveAll(rule => rule.FieldName == knownFieldName);
-                //        }
-                //    }
-
-                //    logger.Information($"{NewLine}**** RESULTS:");
-                //    logger.Information(string.Join(NewLine, candidates.Select((x, i) => new { i, x.Count, rules = string.Join(", ", x.Select(r => r.FieldName)) })));
-                //}
-
-                //Eliminate();
-                //Eliminate();
-                //Eliminate();
-                //Eliminate();
-                //Eliminate();
-                //Eliminate();
-                //Eliminate();
-                //Eliminate();
-                //Eliminate();
-                //Eliminate();
 
                 // Use process of elimination, to whittle each subset down to just one rule, once reached, we know which field each rule refers to
-                while (candidates.Any(candidate => candidate.Count > 1))  //knownFields.Any(knownField => !knownField.matched))
+                while (candidates.Any(candidate => candidate.Count > 1))
                 {
                     // Eliminate any whose count is 1
-                    foreach (var knownField in candidates.Where(x => x.Count == 1)) //.ToArray())
+                    foreach (var knownField in candidates.Where(x => x.Count == 1))
                     {
                         var knownFieldName = knownField.Single().FieldName;
 
-                        foreach (var candidate in candidates.Where(x => x.Count > 1)) //.ToArray())  //.Where(x => x != knownField))
+                        foreach (var candidate in candidates.Where(x => x.Count > 1))
                         {
                             candidate.RemoveAll(rule => rule.FieldName == knownFieldName);
                         }
                     }
                 }
 
-                //logger.Information($"{NewLine}**** RESULTS:");
-                //logger.Information(string.Join(NewLine, candidates.Select((x, i) => new { i, x.Count, rules = string.Join(", ", x.Select(r => r.FieldName)) })));
-
                 var knownFields = candidates.Select((x, fieldIndex) => new {fieldIndex, fieldName = x.Single().FieldName}).ToArray();
 
                 Console.WriteLine(string.Join(NewLine, knownFields.Select(x => $"{x.fieldIndex}: {x.fieldName}")));
 
                 var duplicated = knownFields.GroupBy(x => x.fieldName).Where(grp => grp.Count() > 1).Select(x => x.Key).ToArray();
-                if (duplicated.Any()) //knownFields.Select(x => x.fieldName).Distinct().Count() != numFields)
+                if (duplicated.Any())
                 {
                     throw new InvalidOperationException($"Resolved all fields, but not all are distinct: {string.Join(", ", duplicated)}");
                 }
