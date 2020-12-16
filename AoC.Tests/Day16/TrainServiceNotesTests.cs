@@ -1,14 +1,14 @@
 using System;
+using AoC.Day16;
 using FluentAssertions;
 using FluentAssertions.Equivalency;
 using NUnit.Framework;
-using static AoC.Day16.Day16Solver;
 
 namespace AoC.Tests.Day16
 {
     public class TrainServiceNotesTests
     {
-        public static EquivalencyAssertionOptions<TExpectation> Equivalency<TExpectation>(EquivalencyAssertionOptions<TExpectation> options) =>
+        private static EquivalencyAssertionOptions<TExpectation> Equivalency<TExpectation>(EquivalencyAssertionOptions<TExpectation> options) =>
             options.WithStrictOrdering()
                 .ComparingByMembers<TrainServiceNotes>()
                 .ComparingByMembers<FieldRule>()
@@ -75,7 +75,8 @@ nearby tickets:
                 {
                     new Ticket(new[] {7, 1, 14}), // Your ticket is included
                     new Ticket(new[] {7, 3, 47})
-                }, Equivalency);
+                },
+                Equivalency);
         }
     }
 }
