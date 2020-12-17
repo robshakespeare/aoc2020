@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace AoC.Day17
@@ -7,20 +9,17 @@ namespace AoC.Day17
     {
         private const char Active = '#';
 
-        public IReadOnlyList<IReadOnlyList<IReadOnlyList<bool>>> Cubes { get; }
+        public IReadOnlySet<Coords3d> ActiveCubes { get; }
 
         public PocketDimension3d(string input) =>
-            Cubes = new[]
-            {
-                input.ReadLines().Select(
-                        line => line
-                            .Select(cube => cube == Active)
-                            .ToArray())
-                    .ToArray()
-            };
+            ActiveCubes = input.ReadLines().SelectMany(
+                    (line, y) => line.Select((chr, x) => (chr, x))
+                        .Where(cube => cube.chr == Active)
+                        .Select(cube => new Coords3d(cube.x, y, 0)))
+                .ToImmutableHashSet();
 
-        private PocketDimension3d(IReadOnlyList<IReadOnlyList<IReadOnlyList<bool>>> cubes) =>
-            Cubes = cubes;
+        private PocketDimension3d(IReadOnlySet<Coords3d> activeCubes) =>
+            ActiveCubes = activeCubes;
 
         public static PocketDimension3d Run(PocketDimension3d pocketDimension, int numGenerations)
         {
@@ -32,59 +31,62 @@ namespace AoC.Day17
             return pocketDimension;
         }
 
-        public long CountActiveCubes() => Cubes.SelectMany(layer => layer.SelectMany(row => row)).Count(active => active);
-
         public PocketDimension3d NextGeneration()
         {
             const int expand = 1;
+            var bounds = CalculateBounds();
+            List<Coords3d> newActiveCubes = new();
 
-            var newZLength = Cubes.Count + expand * 2;
-            var newYLength = Cubes[0].Count + expand * 2;
-            var newXLength = Cubes[0][0].Count + expand * 2;
-
-            var layers = new bool[newZLength][][];
-
-            for (var z = 0; z < newZLength; z++)
+            for (var z = bounds.Z.Min - expand; z <= bounds.Z.Max + expand; z++)
             {
-                var rows = new bool[newYLength][];
-                layers[z] = rows;
-
-                for (var y = 0; y < newYLength; y++)
+                for (var x = bounds.X.Min - expand; x <= bounds.X.Max + expand; x++)
                 {
-                    var cols = new bool[newXLength];
-                    rows[y] = cols;
-
-                    for (var x = 0; x < newXLength; x++)
+                    for (var y = bounds.Y.Min - expand; y <= bounds.Y.Max + expand; y++)
                     {
-                        var oldCoords = new Coords3d(x - 1, y - 1, z - 1);
-
-                        var isActive = IsCubeActive(oldCoords);
-                        var activeNeighbors = GetActiveNeighbors(oldCoords).Count();
+                        var cubeCoords = new Coords3d(x, y, z);
+                        var isActive = ActiveCubes.Contains(cubeCoords);
+                        var activeNeighbors = GetActiveNeighbors(cubeCoords).Count();
 
                         var newActiveState = isActive
                             ? activeNeighbors == 2 || activeNeighbors == 3
                             : activeNeighbors == 3;
 
-                        cols[x] = newActiveState;
+                        if (newActiveState)
+                        {
+                            newActiveCubes.Add(cubeCoords);
+                        }
                     }
                 }
             }
 
-            return new PocketDimension3d(layers);
+            return new PocketDimension3d(newActiveCubes.ToImmutableHashSet());
         }
 
-        private bool IsCubeActive(Coords3d coords)
+        private Bounds3d CalculateBounds()
         {
-            var (x, y, z) = coords;
+            var xMin = 0;
+            var xMax = 0;
+            var yMin = 0;
+            var yMax = 0;
+            var zMin = 0;
+            var zMax = 0;
 
-            if ((z < 0 || z >= Cubes.Count) ||
-                (y < 0 || y >= Cubes[z].Count) ||
-                (x < 0 || x >= Cubes[z][y].Count))
+            foreach (var (x, y, z) in ActiveCubes)
             {
-                return false;
+                xMin = Math.Min(xMin, x);
+                xMax = Math.Max(xMax, x);
+
+                yMin = Math.Min(yMin, y);
+                yMax = Math.Max(yMax, y);
+
+                zMin = Math.Min(zMin, z);
+                zMax = Math.Max(zMax, z);
             }
 
-            return Cubes[z][y][x];
+            return new Bounds3d(
+                (xMin, xMax),
+                (yMin, yMax),
+                (zMin, zMax));
         }
 
         private static IEnumerable<Coords3d> GetAllDirections() =>
@@ -103,9 +105,13 @@ namespace AoC.Day17
                     coords.X + dir.X,
                     coords.Y + dir.Y,
                     coords.Z + dir.Z))
-                .Where(IsCubeActive);
+                .Where(position => ActiveCubes.Contains(position));
 
         public record Coords3d(int X, int Y, int Z)
+        {
+        }
+
+        public record Bounds3d((int Min, int Max) X, (int Min, int Max) Y, (int Min, int Max) Z)
         {
         }
     }
