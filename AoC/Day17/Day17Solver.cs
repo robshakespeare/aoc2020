@@ -5,7 +5,7 @@ namespace AoC.Day17
         public override string DayName => "";
 
         protected override long? SolvePart1Impl(string input) =>
-            PocketDimension.Run(new PocketDimension(input), 6).ActiveCubes.Count;
+            PocketDimension3d.Run(new PocketDimension3d(input), 6).ActiveCubes.Count;
 
         protected override long? SolvePart2Impl(string input)
         {
