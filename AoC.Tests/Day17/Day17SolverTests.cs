@@ -9,6 +9,18 @@ namespace AoC.Tests.Day17
         private readonly Day17Solver _sut = new();
 
         [Test]
+        public void Part1Example()
+        {
+            // ACT
+            var part1Result = _sut.SolvePart1(@".#.
+..#
+###");
+
+            // ASSERT
+            part1Result.Should().Be(112);
+        }
+
+        [Test]
         public void Part1ReTest()
         {
             // ACT
