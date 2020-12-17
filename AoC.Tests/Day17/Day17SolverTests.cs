@@ -31,13 +31,34 @@ namespace AoC.Tests.Day17
         }
 
         [Test]
+        [Ignore("Takes ~600ms")]
+        public void Part2Example()
+        {
+            // ACT
+            var part2Result = _sut.SolvePart2(@".#.
+..#
+###");
+
+            // ASSERT
+            part2Result.Should().Be(848);
+        }
+
+        [Test]
+        [Ignore("Takes ~1sec")]
         public void Part2ReTest()
         {
             // ACT
             var part2Result = _sut.SolvePart2();
 
             // ASSERT
-            part2Result.Should().Be(null);
+            part2Result.Should().Be(1884);
+        }
+
+        [Test]
+        public void DirectionsCountsAreAsExpected()
+        {
+            PocketDimension3d.Directions.Count.Should().Be(26);
+            PocketDimension4d.Directions.Count.Should().Be(80);
         }
     }
 }

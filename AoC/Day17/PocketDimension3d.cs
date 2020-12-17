@@ -95,7 +95,7 @@ namespace AoC.Day17
                     .SelectMany(y => Enumerable.Range(-1, 3)
                         .Select(z => new Coords3d(x, y, z))));
 
-        private static readonly IReadOnlyCollection<Coords3d> Directions = GetAllDirections()
+        public static readonly IReadOnlyCollection<Coords3d> Directions = GetAllDirections()
             .Where(dir => !(dir.X == 0 && dir.Y == 0 && dir.Z == 0))
             .ToArray();
 
@@ -106,13 +106,13 @@ namespace AoC.Day17
                     coords.Y + dir.Y,
                     coords.Z + dir.Z))
                 .Where(position => ActiveCubes.Contains(position));
-    }
 
-    public record Coords3d(int X, int Y, int Z)
-    {
-    }
+        public record Coords3d(int X, int Y, int Z)
+        {
+        }
 
-    public record Bounds3d((int Min, int Max) X, (int Min, int Max) Y, (int Min, int Max) Z)
-    {
+        public record Bounds3d((int Min, int Max) X, (int Min, int Max) Y, (int Min, int Max) Z)
+        {
+        }
     }
 }
