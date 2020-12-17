@@ -51,16 +51,18 @@ namespace AoC.Day17
 
         public static PocketDimension Run(PocketDimension pocketDimension, int numGenerations)
         {
-            for (var gen = 0; gen < numGenerations; gen++)
+            for (var genIndex = 0; genIndex < numGenerations; genIndex++)
             {
-                pocketDimension = pocketDimension.NextGeneration();
+                pocketDimension = pocketDimension.NextGeneration(genIndex);
             }
 
             return pocketDimension;
         }
 
-        public PocketDimension NextGeneration()
+        public PocketDimension NextGeneration(int genIndex)
         {
+            var expand = genIndex + 1;
+
             var xMin = 0;
             var xMax = 0;
             var yMin = 0;
@@ -70,15 +72,15 @@ namespace AoC.Day17
 
             List<CubeCoords> newActiveCubes = new();
 
-            for (var z = Bounds.Z.Min - 1; z <= Bounds.Z.Max + 1; z++)
+            for (var z = Bounds.Z.Min - expand; z <= Bounds.Z.Max + expand; z++)
             {
-                for (var x = Bounds.X.Min - 1; x <= Bounds.X.Max + 1; x++)
+                for (var x = Bounds.X.Min - expand; x <= Bounds.X.Max + expand; x++)
                 {
-                    for (var y = Bounds.Y.Min - 1; y <= Bounds.Y.Max + 1; y++)
+                    for (var y = Bounds.Y.Min - expand; y <= Bounds.Y.Max + expand; y++)
                     {
                         var cubeCoords = new CubeCoords(x, y, z);
                         var isActive = ActiveCubes.Contains(cubeCoords);
-                        var activeNeighbors = CountActiveNeighbors(cubeCoords);
+                        var activeNeighbors = GetActiveNeighbors(cubeCoords).Count();
 
                         var newActiveState = isActive
                             ? activeNeighbors == 2 || activeNeighbors == 3
@@ -113,14 +115,13 @@ namespace AoC.Day17
             .Where(dir => !(dir.X == 0 && dir.Y == 0 && dir.Z == 0))
             .ToArray();
 
-        private int CountActiveNeighbors(CubeCoords cubeCoords) =>
+        private IEnumerable<CubeCoords> GetActiveNeighbors(CubeCoords cubeCoords) =>
             Directions
                 .Select(dir => new CubeCoords(
                     cubeCoords.X + dir.X,
                     cubeCoords.Y + dir.Y,
                     cubeCoords.Z + dir.Z))
-                .Select(position => ActiveCubes.Contains(position) ? 1 : 0)
-                .Sum();
+                .Where(position => ActiveCubes.Contains(position));
 
         //private static IEnumerable<Vector3> GetAllDirections()
         //{
@@ -132,7 +133,7 @@ namespace AoC.Day17
 
         //private static readonly IReadOnlyCollection<Vector3> Directions = GetAllDirections().Where(dir => dir != new Vector3(0, 0, 0)).ToArray();
 
-        //private int CountActiveNeighbors(CubeCoords cubeCoords)
+        //private int GetActiveNeighbors(CubeCoords cubeCoords)
         //{
         //    var center = new Vector3(cubeCoords.X, cubeCoords.Y, cubeCoords.Z);
         //    return Directions
