@@ -14,7 +14,7 @@ namespace AoC.Tests.Day18
         [TestCase("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2", 13632)]
         public void Evaluate_Expression_Part1TestCases(string expression, long expectedResult)
         {
-            ExpressionEvaluator sut = new();
+            ExpressionEvaluator3 sut = ExpressionEvaluator3.Part1Evaluator;
 
             // ACT
             var result = sut.Evaluate(expression);
@@ -31,7 +31,7 @@ namespace AoC.Tests.Day18
         [TestCase("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2", 23340)]
         public void Evaluate_Expression_Part2TestCases(string expression, long expectedResult)
         {
-            ExpressionEvaluator2 sut2 = new();
+            ExpressionEvaluator3 sut2 = ExpressionEvaluator3.Part2Evaluator;
 
             // ACT
             var result = sut2.Evaluate(expression);
