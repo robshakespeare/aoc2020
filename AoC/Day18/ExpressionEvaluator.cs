@@ -8,12 +8,12 @@ namespace AoC.Day18
         long Evaluate();
     }
 
-    public record LiteralExpr(long Value) : IExpression
+    public record LiteralExpression(long Value) : IExpression
     {
         public long Evaluate() => Value;
     }
 
-    public record BinaryExpr(char Op, IExpression Left, IExpression Right) : IExpression
+    public record BinaryExpression(char Op, IExpression Left, IExpression Right) : IExpression
     {
         public long Evaluate() => Op switch
         {
@@ -29,7 +29,7 @@ namespace AoC.Day18
 
         protected static readonly Parser<IExpression> Literal =
             from literal in Parse.Digit.AtLeastOnce().Token().Text()
-            select new LiteralExpr(long.Parse(literal));
+            select new LiteralExpression(long.Parse(literal));
 
         protected static readonly Parser<char> Add = Parse.Char('+').Token();
 
@@ -45,7 +45,7 @@ namespace AoC.Day18
             SubExpression.XOr(Literal);
 
         private static readonly Parser<IExpression> Expression =
-            Parse.ChainOperator(Add.Or(Multiply), Term, (op, left, right) => new BinaryExpr(op, left, right));
+            Parse.ChainOperator(Add.Or(Multiply), Term, (op, left, right) => new BinaryExpression(op, left, right));
     }
 
     public class ExpressionEvaluator2 : ExpressionEvaluator
@@ -62,9 +62,9 @@ namespace AoC.Day18
             SubExpression.XOr(Literal);
 
         private static readonly Parser<IExpression> InnerTerm =
-            Parse.ChainOperator(Add, Term, (op, left, right) => new BinaryExpr(op, left, right));
+            Parse.ChainOperator(Add, Term, (op, left, right) => new BinaryExpression(op, left, right));
 
         public static readonly Parser<IExpression> Expression =
-            Parse.ChainOperator(Multiply, InnerTerm, (op, left, right) => new BinaryExpr(op, left, right));
+            Parse.ChainOperator(Multiply, InnerTerm, (op, left, right) => new BinaryExpression(op, left, right));
     }
 }
