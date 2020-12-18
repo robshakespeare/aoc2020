@@ -15,7 +15,7 @@ namespace AoC.Tests.Day18
             var part1Result = _sut.SolvePart1();
 
             // ASSERT
-            part1Result.Should().Be(null);
+            part1Result.Should().Be(8298263963837);
         }
 
         [Test]
@@ -25,7 +25,7 @@ namespace AoC.Tests.Day18
             var part2Result = _sut.SolvePart2();
 
             // ASSERT
-            part2Result.Should().Be(null);
+            part2Result.Should().Be(145575710203332);
         }
     }
 }

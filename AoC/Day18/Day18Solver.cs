@@ -4,19 +4,13 @@ namespace AoC.Day18
 {
     public class Day18Solver : SolverBase
     {
-        public override string DayName => "";
+        public override string DayName => "Operation Order";
 
-        protected override long? SolvePart1Impl(string input)
-        {
-            var expressionEvaluator = new ExpressionEvaluator();
-            return input.ReadLines()
-                .Select(line => expressionEvaluator.Evaluate(line))
-                .Sum();
-        }
+        private static long Solve(string input, ExpressionEvaluator expressionEvaluator) =>
+            input.ReadLines().Select(expressionEvaluator.Evaluate).Sum();
 
-        protected override long? SolvePart2Impl(string input)
-        {
-            return base.SolvePart2Impl(input);
-        }
+        protected override long? SolvePart1Impl(string input) => Solve(input, new ExpressionEvaluator());
+
+        protected override long? SolvePart2Impl(string input) => Solve(input, new ExpressionEvaluator2());
     }
 }
