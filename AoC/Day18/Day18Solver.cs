@@ -1,3 +1,5 @@
+using System.Linq;
+
 namespace AoC.Day18
 {
     public class Day18Solver : SolverBase
@@ -6,7 +8,10 @@ namespace AoC.Day18
 
         protected override long? SolvePart1Impl(string input)
         {
-            return base.SolvePart1Impl(input);
+            var expressionEvaluator = new ExpressionEvaluator();
+            return input.ReadLines()
+                .Select(line => expressionEvaluator.Evaluate(line))
+                .Sum();
         }
 
         protected override long? SolvePart2Impl(string input)
