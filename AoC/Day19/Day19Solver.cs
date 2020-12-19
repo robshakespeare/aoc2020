@@ -60,12 +60,14 @@ namespace AoC.Day19
                 Rule8.Then(_ => Rule11).End();
 
             private Parser<string> Rule8 =>
-                Rule42.Or(
-                    Rule42.Then(_ => Rule8));
+                Rule42
+                    .Or(Rule42.Then(_ => Parse.Ref(() => Rule8)));
+                //Rule42.Then(_ => Rule8.Optional());
+                //    //.Or(Rule42);
 
             private Parser<string> Rule11 =>
-                Rule42.Then(_ => Rule31).Or(
-                    Rule42.Then(_ => Rule11).Then(_ => Rule31));
+                Rule42.Then(_ => Rule31)
+                    .Or(Rule42.Then(_ => Parse.Ref(() => Rule11)).Then(_ => Parse.Ref(() => Rule31)));
         }
 
         private static readonly Regex ParseRawLine = new(
