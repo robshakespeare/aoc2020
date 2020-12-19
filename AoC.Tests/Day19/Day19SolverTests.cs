@@ -109,6 +109,22 @@ aaaabbb");
         }
 
         [Test]
+        public void Part2MyTest1()
+        {
+            // ACT
+            var part2Result = _sut.SolvePart2(@"0: 8 11
+8: 42 | 42 8
+11: 42 31 | 42 11 31
+42: ""a""
+31: ""b""
+
+aaab");
+
+            // ASSERT
+            part2Result.Should().Be(1);
+        }
+
+        [Test]
         public void Part2ReTest()
         {
             // ACT
