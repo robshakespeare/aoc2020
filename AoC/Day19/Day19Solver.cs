@@ -1,42 +1,70 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
-using Sprache;
 
 namespace AoC.Day19
 {
     public class Day19Solver : SolverBase
     {
-        public override string DayName => "";
+        public override string DayName => "Monster Messages";
+
+        private static (Dictionary<int, RuleDefinition> ruleDefinitions, string receivedMessages) ParsePuzzleInput(string input)
+        {
+            var sections = input.NormalizeLineEndings().Split($"{Environment.NewLine}{Environment.NewLine}");
+            return (ResolveToRuleDefinitions(sections[0]), sections[1]);
+        }
 
         protected override long? SolvePart1Impl(string input)
         {
-            var sections = input.NormalizeLineEndings().Split($"{Environment.NewLine}{Environment.NewLine}");
+            var (ruleDefinitions, receivedMessages) = ParsePuzzleInput(input);
 
-            var rulesParser = ResolveFirstRuleToParser(sections[0]);
+            var ruleZeroRegex = new Regex($"^{ResolveRegex(ruleIdToResolve: 0, ruleDefinitions)}$", RegexOptions.Compiled);
 
-            var receivedMessages = sections[1];
-
-            return receivedMessages.ReadLines().Count(receivedMessage => rulesParser.TryParse(receivedMessage).WasSuccessful);
+            return receivedMessages.ReadLines().Count(receivedMessage => ruleZeroRegex.IsMatch(receivedMessage));
         }
 
         protected override long? SolvePart2Impl(string input)
         {
-            return base.SolvePart2Impl(input);
+            var (ruleDefinitions, receivedMessages) = ParsePuzzleInput(input);
+
+            var ruleZeroRegex = BuildPart2RuleZeroRegex(ruleDefinitions);
+
+            return receivedMessages.ReadLines().Count(receivedMessage => ruleZeroRegex.IsMatch(receivedMessage));
+        }
+
+        public static Regex BuildPart2RuleZeroRegex(Dictionary<int, RuleDefinition> ruleDefinitions)
+        {
+            var rule42 = ResolveRegex(42, ruleDefinitions);
+            var rule31 = ResolveRegex(31, ruleDefinitions);
+
+            /*
+             *  .Replace("8: 42", "8: 42 | 42 8")
+             *  .Replace("11: 42 31", "11: 42 31 | 42 11 31");
+             *
+             * The Part 2 replacements result in the following Top level rules:
+             *     0:  8 11
+             *     8:  42 | 42 8  (essentially one or more rule 42s)
+             *     11: 42 31 | 42 11 31  (back inside itself, always with 42 at beginning, 31 at end)
+             */
+
+            var rule8 = $"({rule42})+";
+            var rule11 = string.Join("|", Enumerable.Range(1, 10).Select(repeat => $"(({rule42}){{{repeat}}}({rule31}){{{repeat}}})"));
+
+            return new Regex($"^({rule8})({rule11})$", RegexOptions.Compiled);
         }
 
         private static readonly Regex ParseRawLine = new(
             @"^(?<ruleId>\d+): ((""(?<chr>a|b)"")|(?<subRules>.+))$",
             RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
-        public record IntermediaryLine(int RuleId, Parser<string>? BaseRuleParser, int[][]? SubRules)
+        public record RuleDefinition(int RuleId, string? BaseRuleRegex, int[][]? SubRules)
         {
         }
 
-        public static Dictionary<int, IntermediaryLine> ResolveToIntermediaryLines(string input) =>
+        public static Dictionary<int, RuleDefinition> ResolveToRuleDefinitions(string input) =>
             input.ReadLines()
-                .TakeWhile(line => !string.IsNullOrWhiteSpace(line))
                 .Select(line =>
                 {
                     var match = ParseRawLine.Match(line);
@@ -49,7 +77,7 @@ namespace AoC.Day19
 
                     if (match.Groups["chr"].Success)
                     {
-                        return new IntermediaryLine(ruleId, Parse.Char(match.Groups["chr"].Value[0]).Once().Text(), null);
+                        return new RuleDefinition(ruleId, match.Groups["chr"].Value, null);
                     }
 
                     var subRules = match.Groups["subRules"].Value
@@ -58,57 +86,64 @@ namespace AoC.Day19
                         .Select(subRuleIds => subRuleIds.Select(int.Parse).ToArray())
                         .ToArray();
 
-                    return new IntermediaryLine(ruleId, null, subRules);
+                    return new RuleDefinition(ruleId, null, subRules);
                 })
                 .OrderBy(x => x.RuleId)
                 .ToDictionary(x => x.RuleId);
 
-        public Parser<string> ResolveFirstRuleToParser(string input)
+        public static string ResolveRegex(int ruleIdToResolve, Dictionary<int, RuleDefinition> ruleDefinitions)
         {
-            var intermediaryLines = ResolveToIntermediaryLines(input);
-            var parserCache = new Dictionary<int, Parser<string>>();
+            var regexs = new Dictionary<int, string>();
 
-            Parser<string> GetRuleParser(int ruleId)
+            return GetRegex(ruleIdToResolve);
+
+            string GetRegex(int ruleId)
             {
-                if (parserCache.TryGetValue(ruleId, out var existingRuleParser))
+                if (regexs.TryGetValue(ruleId, out var existingRegex))
                 {
-                    return existingRuleParser;
+                    return existingRegex;
                 }
 
-                var (_, baseRuleParser, subRules) = intermediaryLines[ruleId];
-                Parser<string>? parser = null;
+                var (_, baseRuleRegex, subRules) = ruleDefinitions[ruleId];
+                string? regex = null;
 
-                if (baseRuleParser != null)
+                if (baseRuleRegex != null)
                 {
-                    parser = baseRuleParser;
+                    regex = baseRuleRegex;
                 }
                 else if (subRules != null)
                 {
-                    parser = subRules
-                        .Select(subRule => subRule.Aggregate<int, Parser<string>?>(
-                            null,
-                            (subParser, subRuleId) => subParser == null
-                                ? subParser = GetRuleParser(subRuleId)
-                                : subParser.Then(_ => GetRuleParser(subRuleId))))
-                        .Aggregate(parser, (accParser, subParser) => accParser == null
-                            ? subParser
-                            : accParser.Or(subParser));
+                    // "Any" sub rule (i.e. OR)
+                    var builder = new StringBuilder();
 
-                    if (parser == null)
+                    builder.Append("(");
+                    var addSeparator = false;
+                    foreach (var subRule in subRules)
                     {
-                        throw new InvalidOperationException("Invalid rule with ID {ruleId} - empty sub rules?");
+                        // "All" ruleIds for the sub rule (i.e. AND)
+                        var subRegex = string.Join("", subRule.Select(GetRegex));
+
+                        if (addSeparator)
+                        {
+                            builder.Append("|");
+                        }
+
+                        builder.Append(subRegex);
+
+                        addSeparator = true;
                     }
+
+                    builder.Append(")");
+                    regex = builder.ToString();
                 }
                 else
                 {
                     throw new InvalidOperationException($"Invalid rule with ID {ruleId} - it has no base rule or sub rules.");
                 }
 
-                parserCache.Add(ruleId, parser);
-                return parser;
+                regexs.Add(ruleId, regex);
+                return regex;
             }
-
-            return GetRuleParser(0).End();
         }
     }
 }
