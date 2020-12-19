@@ -14,16 +14,58 @@ namespace AoC.Day19
         {
             var sections = input.NormalizeLineEndings().Split($"{Environment.NewLine}{Environment.NewLine}");
 
-            var rulesParser = ResolveFirstRuleToParser(sections[0]);
-
+            var rules = sections[0];
             var receivedMessages = sections[1];
+            var intermediaryLines = ResolveIntermediaryLines(rules);
 
-            return receivedMessages.ReadLines().Count(receivedMessage => rulesParser.TryParse(receivedMessage).WasSuccessful);
+            const int ruleId = 0;
+            var rule0 = ResolveRule(ruleId, intermediaryLines).End();
+
+            return receivedMessages.ReadLines().Count(receivedMessage => rule0.TryParse(receivedMessage).WasSuccessful);
         }
 
         protected override long? SolvePart2Impl(string input)
         {
-            return base.SolvePart2Impl(input);
+            var sections = input.NormalizeLineEndings().Split($"{Environment.NewLine}{Environment.NewLine}");
+
+            var rules = sections[0];
+            var receivedMessages = sections[1];
+            var intermediaryLines = ResolveIntermediaryLines(rules);
+
+            var part2Solver = new Part2Solver(intermediaryLines);
+
+            return receivedMessages.ReadLines().Count(receivedMessage => part2Solver.Rule0.TryParse(receivedMessage).WasSuccessful);
+        }
+
+        public class Part2Solver
+        {
+            private Parser<string> Rule42 { get; }
+            private Parser<string> Rule31 { get; }
+
+            public Part2Solver(Dictionary<int, IntermediaryLine> intermediaryLines)
+            {
+                Rule42 = ResolveRule(42, intermediaryLines);
+                Rule31 = ResolveRule(31, intermediaryLines);
+
+                /*
+                 * Top level rules:
+                 *
+                 * 0:  8 11
+                 * 8:  42 | 42 8
+                 * 11: 42 31 | 42 11 31
+                 */
+            }
+
+            public Parser<string> Rule0 =>
+                Rule8.Then(_ => Rule11).End();
+
+            private Parser<string> Rule8 =>
+                Rule42.Or(
+                    Rule42.Then(_ => Rule8));
+
+            private Parser<string> Rule11 =>
+                Rule42.Then(_ => Rule31).Or(
+                    Rule42.Then(_ => Rule11).Then(_ => Rule31));
         }
 
         private static readonly Regex ParseRawLine = new(
@@ -34,7 +76,7 @@ namespace AoC.Day19
         {
         }
 
-        public static Dictionary<int, IntermediaryLine> ResolveToIntermediaryLines(string input) =>
+        public static Dictionary<int, IntermediaryLine> ResolveIntermediaryLines(string input) =>
             input.ReadLines()
                 .TakeWhile(line => !string.IsNullOrWhiteSpace(line))
                 .Select(line =>
@@ -63,17 +105,18 @@ namespace AoC.Day19
                 .OrderBy(x => x.RuleId)
                 .ToDictionary(x => x.RuleId);
 
-        public Parser<string> ResolveFirstRuleToParser(string input)
+        public static Parser<string> ResolveRule(int ruleIdToResolve, Dictionary<int, IntermediaryLine> intermediaryLines)
         {
-            var intermediaryLines = ResolveToIntermediaryLines(input);
-            var parserCache = new Dictionary<int, Parser<string>>();
+            //var parserCache = new Dictionary<int, Parser<string>>();
 
-            Parser<string> GetRuleParser(int ruleId)
+            return GetRule(ruleIdToResolve);
+
+            Parser<string> GetRule(int ruleId)
             {
-                if (parserCache.TryGetValue(ruleId, out var existingRuleParser))
-                {
-                    return existingRuleParser;
-                }
+                //if (parserCache.TryGetValue(ruleId, out var existingRuleParser))
+                //{
+                //    return existingRuleParser;
+                //}
 
                 var (_, baseRuleParser, subRules) = intermediaryLines[ruleId];
                 Parser<string>? parser = null;
@@ -88,8 +131,8 @@ namespace AoC.Day19
                         .Select(subRule => subRule.Aggregate<int, Parser<string>?>(
                             null,
                             (subParser, subRuleId) => subParser == null
-                                ? subParser = GetRuleParser(subRuleId)
-                                : subParser.Then(_ => GetRuleParser(subRuleId))))
+                                ? subParser = GetRule(subRuleId)
+                                : subParser.Then(_ => GetRule(subRuleId))))
                         .Aggregate(parser, (accParser, subParser) => accParser == null
                             ? subParser
                             : accParser.Or(subParser));
@@ -104,11 +147,9 @@ namespace AoC.Day19
                     throw new InvalidOperationException($"Invalid rule with ID {ruleId} - it has no base rule or sub rules.");
                 }
 
-                parserCache.Add(ruleId, parser);
+                //parserCache.Add(ruleId, parser);
                 return parser;
             }
-
-            return GetRuleParser(0).End();
         }
     }
 }
