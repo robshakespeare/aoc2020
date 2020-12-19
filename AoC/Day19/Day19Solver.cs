@@ -15,8 +15,7 @@ namespace AoC.Day19
         {
             var sections = input.NormalizeLineEndings().Split($"{Environment.NewLine}{Environment.NewLine}");
 
-            var intermediaryLines = ResolveToIntermediaryLines(sections[0]);
-            var firstRule = ResolveRule(0, intermediaryLines);
+            var firstRule = ResolveFirstRule(sections[0]);
             Console.WriteLine($"firstRule.Matches.Count: {firstRule.Matches.Count}");
             var matches = firstRule.Matches.ToHashSet();
 
@@ -35,8 +34,7 @@ namespace AoC.Day19
 
             var sections = input.NormalizeLineEndings().Split($"{Environment.NewLine}{Environment.NewLine}");
 
-            var intermediaryLines = ResolveToIntermediaryLines(sections[0]);
-            var firstRule = ResolveRule(0, intermediaryLines);
+            var firstRule = ResolveFirstRule(sections[0]);
             Console.WriteLine($"firstRule.Matches.Count: {firstRule.Matches.Count}");
             var matches = firstRule.Matches.ToHashSet();
 
@@ -137,53 +135,42 @@ namespace AoC.Day19
                 .OrderBy(x => x.RuleId)
                 .ToDictionary(x => x.RuleId);
 
-        public static Rule ResolveRule(int ruleId, Dictionary<int, IntermediaryLine> intermediaryLines)
+        public static Rule ResolveFirstRule(string input)
         {
-            return ResolveRule(ruleId, intermediaryLines, new Dictionary<int, int>());
-        }
+            var intermediaryLines = ResolveToIntermediaryLines(input);
 
-        public static Rule ResolveRule(int ruleId, Dictionary<int, IntermediaryLine> intermediaryLines, Dictionary<int, int> recurseCount)
-        {
-            if (!recurseCount.ContainsKey(ruleId))
+            Rule ResolveRule(int ruleId)
             {
-                recurseCount[ruleId] = 0;
-            }
-            recurseCount[ruleId]++;
-            if (recurseCount[ruleId] > 3)
-            {
-                return new Rule(Array.Empty<string>());
-            }
+                var (_, baseRule, subRuleSections) = intermediaryLines[ruleId];
 
-            var (_, baseRule, subRuleSections) = intermediaryLines[ruleId];
+                if (baseRule != null)
+                {
+                    return baseRule;
+                }
 
-            if (baseRule != null)
-            {
-                return baseRule;
-            }
+                if (subRuleSections == null)
+                {
+                    throw new InvalidOperationException($"Invalid rule with ID {ruleId} - it has no base rule or sub rules.");
+                }
 
-            if (subRuleSections == null)
-            {
-                throw new InvalidOperationException($"Invalid rule with ID {ruleId} - it has no base rule or sub rules.");
-            }
+                var matches = new List<string>();
 
-            var matches = new List<string>();
-
-            // Each separate section should be put together by OR
-            foreach (var subRuleSection in subRuleSections)
-            {
-                // The IDs in a single section should be put together by AND
-                var sectionMatches = subRuleSection
-                    .Select(subRuleId => ResolveRule(subRuleId, intermediaryLines, recurseCount))
-                    .Aggregate((IReadOnlyCollection<string>) Array.Empty<string>(), (current, subRule) => current.Count == 0
-                        ? subRule.Matches
-                        : subRule.Matches.Count == 0
-                            ? current
+                // Each separate section should be put together by OR
+                foreach (var subRuleSection in subRuleSections)
+                {
+                    // The IDs in a single section should be put together by AND
+                    var sectionMatches = subRuleSection.Select(ResolveRule)
+                        .Aggregate((IReadOnlyCollection<string>) new string[0], (current, subRule) => current.Count == 0
+                            ? subRule.Matches
                             : current.SelectMany(x => subRule.Matches.Select(y => x + y)).ToArray());
 
-                matches.AddRange(sectionMatches);
+                    matches.AddRange(sectionMatches);
+                }
+
+                return new Rule(matches);
             }
 
-            return new Rule(matches);
+            return ResolveRule(0);
         }
 
         //public Parser<string> ResolveFirstRuleToParser(string input)
