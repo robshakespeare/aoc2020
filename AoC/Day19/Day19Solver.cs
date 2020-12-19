@@ -43,7 +43,9 @@ namespace AoC.Day19
         {
             int RuleId { get; }
 
-            bool IsMatch(string input, Dictionary<int, IRule> rules, out string remaining);
+            IEnumerable<string> Matches(string input, Dictionary<int, IRule> rules);
+
+            //bool IsMatch(string input, Dictionary<int, IRule> rules, out string remaining);
         }
 
         public class BaseRule : IRule
@@ -59,17 +61,25 @@ namespace AoC.Day19
 
             public override string ToString() => $"{RuleId}: \"{_c}\"";
 
-            public bool IsMatch(string input, Dictionary<int, IRule> _, out string remaining)
+            public IEnumerable<string> Matches(string input, Dictionary<int, IRule> _)
             {
                 if (input.StartsWith(_c))
                 {
-                    remaining = input[1..];
-                    return true;
+                    yield return input[1..];
                 }
-
-                remaining = input;
-                return false;
             }
+
+            //public bool IsMatch(string input, Dictionary<int, IRule> _, out string remaining)
+            //{
+            //    if (input.StartsWith(_c))
+            //    {
+            //        remaining = input[1..];
+            //        return true;
+            //    }
+
+            //    remaining = input;
+            //    return false;
+            //}
         }
 
         public class Rule : IRule
@@ -91,23 +101,22 @@ namespace AoC.Day19
 
             public override string ToString() => $"{RuleId}: {string.Join(" | ", _ruleSets.Select(ruleSet => string.Join(" ", ruleSet)))}";
 
-            public bool IsMatch(string input, Dictionary<int, IRule> rules, out string remaining)
+            public IEnumerable<string> Matches(string input, Dictionary<int, IRule> rules) //, out string remaining)
             {
                 // Any of the rule sets must match
                 foreach (var ruleSet in _ruleSets)
                 {
-                    var setRemaining = input;
+                    var remainers = new[] { input };
 
-                    // Every rule in the set must match
                     var setSuccess = ruleSet.Length > 0;
                     foreach (var ruleId in ruleSet)
                     {
-                        var setInput = setRemaining;
+                        //var setInput = setRemaining;
                         var rule = rules[ruleId];
 
-                        var isMatch = rule.IsMatch(setInput, rules, out setRemaining);
+                        var matches = rule.Matches(setInput, rules).ToArray();
 
-                        if (!isMatch)
+                        if (!matches.Any())
                         {
                             setSuccess = false;
                             break;
@@ -116,13 +125,12 @@ namespace AoC.Day19
 
                     if (setSuccess)
                     {
-                        remaining = setRemaining;
-                        return true;
+                        yield return setRemaining;
                     }
                 }
 
-                remaining = input;
-                return false;
+                //remaining = input;
+                //return false;
             }
         }
 
