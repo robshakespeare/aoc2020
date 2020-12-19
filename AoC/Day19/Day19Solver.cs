@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using Sprache;
 
@@ -14,11 +15,15 @@ namespace AoC.Day19
         {
             var sections = input.NormalizeLineEndings().Split($"{Environment.NewLine}{Environment.NewLine}");
 
-            var rulesParser = ResolveFirstRuleToParser(sections[0]);
+            var firstRule = ResolveFirstRule(sections[0]);
+            Console.WriteLine($"firstRule.Matches.Count: {firstRule.Matches.Count}");
+            var matches = firstRule.Matches.ToHashSet();
 
-            var receivedMessages = sections[1];
+            var receivedMessages = sections[1].ReadLines().ToHashSet();
 
-            return receivedMessages.ReadLines().Count(receivedMessage => rulesParser.TryParse(receivedMessage).WasSuccessful);
+            receivedMessages.IntersectWith(matches);
+
+            return receivedMessages.Count;
         }
 
         protected override long? SolvePart2Impl(string input)
@@ -29,11 +34,15 @@ namespace AoC.Day19
 
             var sections = input.NormalizeLineEndings().Split($"{Environment.NewLine}{Environment.NewLine}");
 
-            var rulesParser = ResolveFirstRuleToParser(sections[0]);
+            var firstRule = ResolveFirstRule(sections[0]);
+            Console.WriteLine($"firstRule.Matches.Count: {firstRule.Matches.Count}");
+            var matches = firstRule.Matches.ToHashSet();
 
-            var receivedMessages = sections[1];
+            var receivedMessages = sections[1].ReadLines().ToHashSet();
 
-            return receivedMessages.ReadLines().Count(receivedMessage => rulesParser.TryParse(receivedMessage).WasSuccessful);
+            receivedMessages.IntersectWith(matches);
+
+            return receivedMessages.Count;
         }
 
         ///// <summary>
@@ -77,9 +86,9 @@ namespace AoC.Day19
 
         public class Rule
         {
-            public string[] Matches { get; }
+            public IReadOnlyCollection<string> Matches { get; }
 
-            public Rule(params string[] matches)
+            public Rule(IReadOnlyCollection<string> matches)
             {
                 Matches = matches;
             }
@@ -87,8 +96,8 @@ namespace AoC.Day19
             public bool IsMatch(string line) => Matches.Any(match => line == match);
         }
 
-        //public record IntermediaryLine(int RuleId, Rule? BaseRule, int[][]? SubRuleSections)
-        public record IntermediaryLine(int RuleId, Parser<string>? BaseRuleParser, int[][]? SubRules)
+        public record IntermediaryLine(int RuleId, Rule? BaseRule, int[][]? SubRuleSections)
+        //public record IntermediaryLine(int RuleId, Parser<string>? BaseRuleParser, int[][]? SubRules)
         {
         }
 
@@ -111,8 +120,8 @@ namespace AoC.Day19
 
                     if (match.Groups["chr"].Success)
                     {
-                        //return new IntermediaryLine(ruleId, new Rule(match.Groups["chr"].Value), null);
-                        return new IntermediaryLine(ruleId, Parse.Char(match.Groups["chr"].Value[0]).Once().Text(), null);
+                        return new IntermediaryLine(ruleId, new Rule(new[] {match.Groups["chr"].Value}), null);
+                        //return new IntermediaryLine(ruleId, Parse.Char(match.Groups["chr"].Value[0]).Once().Text(), null);
                     }
 
                     var subRuleSections = match.Groups["subRules"].Value
@@ -126,91 +135,90 @@ namespace AoC.Day19
                 .OrderBy(x => x.RuleId)
                 .ToDictionary(x => x.RuleId);
 
-        //public static Rule ResolveFirstRule(string input)
-        //{
-        //    var intermediaryLines = ResolveToIntermediaryLines(input);
-
-        //    var parserCache = new Dictionary<int, Parser<string>>();
-
-        //    Rule ResolveRule(int ruleId)
-        //    {
-        //        var (_, baseRule, subRuleSections) = intermediaryLines[ruleId];
-
-        //        if (baseRule != null)
-        //        {
-        //            return baseRule;
-        //        }
-
-        //        if (subRuleSections != null)
-        //        {
-        //            //var match1Builder =
-        //            // Each separate section should be put together by OR
-        //            foreach (var subRuleSection in subRuleSections)
-        //            {
-        //                var hmms = new List<string>();
-
-        //                // The IDs in a single section should be put together by AND
-
-        //                foreach (var subRuleId in subRuleSection)
-        //                {
-        //                    var subRule = ResolveRule(subRuleId);
-        //                }
-        //            }
-        //            return new Rule();
-        //        }
-
-        //        throw new InvalidOperationException($"Invalid rule with ID {ruleId} - it has no base rule or sub rules.");
-        //    }
-
-        //    return ResolveRule(0);
-        //}
-
-        public Parser<string> ResolveFirstRuleToParser(string input)
+        public static Rule ResolveFirstRule(string input)
         {
             var intermediaryLines = ResolveToIntermediaryLines(input);
-            //var parserCache = new Dictionary<int, Parser<string>>();
 
-            Parser<string> GetRuleParser(int ruleId)
+            Rule ResolveRule(int ruleId)
             {
-                //if (parserCache.TryGetValue(ruleId, out var existingRuleParser))
-                //{
-                //    return existingRuleParser;
-                //}
+                var (_, baseRule, subRuleSections) = intermediaryLines[ruleId];
 
-                var (_, baseRuleParser, subRules) = intermediaryLines[ruleId];
-                Parser<string>? parser = null;
-
-                if (baseRuleParser != null)
+                if (baseRule != null)
                 {
-                    parser = baseRuleParser;
+                    return baseRule;
                 }
-                else if (subRules != null)
-                {
-                    parser = subRules
-                        .Select(subRule => subRule.Aggregate<int, Parser<string>?>(
-                            null,
-                            (subParser, subRuleId) => subParser == null
-                                ? subParser = GetRuleParser(subRuleId)
-                                : subParser.Then(_ => GetRuleParser(subRuleId))))
-                        .Aggregate(parser, (accParser, subParser) => accParser == null
-                            ? subParser
-                            : accParser.Or(subParser));
 
-                    if (parser == null)
-                    {
-                        throw new InvalidOperationException("Invalid rule with ID {ruleId} - empty sub rules?");
-                    }
-                }
-                else
+                if (subRuleSections == null)
                 {
                     throw new InvalidOperationException($"Invalid rule with ID {ruleId} - it has no base rule or sub rules.");
                 }
 
-                //parserCache.Add(ruleId, parser);
-                return parser;
+                var matches = new List<string>();
+
+                // Each separate section should be put together by OR
+                foreach (var subRuleSection in subRuleSections)
+                {
+                    // The IDs in a single section should be put together by AND
+                    var sectionMatches = subRuleSection.Select(ResolveRule)
+                        .Aggregate((IReadOnlyCollection<string>) new string[0], (current, subRule) => current.Count == 0
+                            ? subRule.Matches
+                            : current.SelectMany(x => subRule.Matches.Select(y => x + y)).ToArray());
+
+                    matches.AddRange(sectionMatches);
+                }
+
+                return new Rule(matches);
             }
 
-            return GetRuleParser(0).End();
+            return ResolveRule(0);
         }
+
+        //public Parser<string> ResolveFirstRuleToParser(string input)
+        //{
+        //    var intermediaryLines = ResolveToIntermediaryLines(input);
+        //    //var parserCache = new Dictionary<int, Parser<string>>();
+
+        //    Parser<string> GetRuleParser(int ruleId)
+        //    {
+        //        //if (parserCache.TryGetValue(ruleId, out var existingRuleParser))
+        //        //{
+        //        //    return existingRuleParser;
+        //        //}
+
+        //        var (_, baseRuleParser, subRules) = intermediaryLines[ruleId];
+        //        Parser<string>? parser = null;
+
+        //        if (baseRuleParser != null)
+        //        {
+        //            parser = baseRuleParser;
+        //        }
+        //        else if (subRules != null)
+        //        {
+        //            parser = subRules
+        //                .Select(subRule => subRule.Aggregate<int, Parser<string>?>(
+        //                    null,
+        //                    (subParser, subRuleId) => subParser == null
+        //                        ? subParser = GetRuleParser(subRuleId)
+        //                        : subParser.Then(_ => GetRuleParser(subRuleId))))
+        //                .Aggregate(parser, (accParser, subParser) => accParser == null
+        //                    ? subParser
+        //                    : accParser.Or(subParser));
+
+        //            if (parser == null)
+        //            {
+        //                throw new InvalidOperationException("Invalid rule with ID {ruleId} - empty sub rules?");
+        //            }
+        //        }
+        //        else
+        //        {
+        //            throw new InvalidOperationException($"Invalid rule with ID {ruleId} - it has no base rule or sub rules.");
+        //        }
+
+        //        //parserCache.Add(ruleId, parser);
+        //        return parser;
+        //    }
+
+        //    return GetRuleParser(0).End();
+        //}
     }
 }
