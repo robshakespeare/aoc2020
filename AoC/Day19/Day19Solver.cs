@@ -8,7 +8,7 @@ namespace AoC.Day19
 {
     public class Day19Solver : SolverBase
     {
-        public override string DayName => "";
+        public override string DayName => "Monster Messages";
 
         private static (Dictionary<int, RuleDefinition> ruleDefinitions, string receivedMessages) ParsePuzzleInput(string input)
         {
@@ -27,23 +27,11 @@ namespace AoC.Day19
 
         protected override long? SolvePart2Impl(string input)
         {
-            //input = input
-            //    .Replace("8: 42", "8: 42 | 42 8")
-            //    .Replace("11: 42 31", "11: 42 31 | 42 11 31");
-
             var (ruleDefinitions, receivedMessages) = ParsePuzzleInput(input);
 
             var ruleZeroRegex = BuildPart2RuleZeroRegex(ruleDefinitions);
 
             return receivedMessages.ReadLines().Count(receivedMessage => ruleZeroRegex.IsMatch(receivedMessage));
-
-            //var sections = input.NormalizeLineEndings().Split($"{Environment.NewLine}{Environment.NewLine}");
-
-            //var rulesParser = ResolveFirstRuleToParser(sections[0]);
-
-            //var receivedMessages = sections[1];
-
-            //return receivedMessages.ReadLines().Count(receivedMessage => rulesParser.TryParse(receivedMessage).WasSuccessful);
         }
 
         public static Regex BuildPart2RuleZeroRegex(Dictionary<int, RuleDefinition> ruleDefinitions)
@@ -52,6 +40,9 @@ namespace AoC.Day19
             var rule31 = ResolveRegex(31, ruleDefinitions);
 
             /*
+             *  .Replace("8: 42", "8: 42 | 42 8")
+             *  .Replace("11: 42 31", "11: 42 31 | 42 11 31");
+             *
              * The Part 2 replacements result in the following Top level rules:
              *     0:  8 11
              *     8:  42 | 42 8  (essentially one or more rule 42s)
@@ -63,15 +54,6 @@ namespace AoC.Day19
 
             return new Regex($"^({rule8})({rule11})$", RegexOptions.Compiled);
         }
-
-        //public class Part2Solver
-        //{
-        //    private readonly Regex _ruleZeroRegex;
-
-
-
-        //    public bool IsMatch(string receivedMessage) => _ruleZeroRegex.IsMatch(receivedMessage);
-        //}
 
         private static readonly Regex ParseRawLine = new(
             @"^(?<ruleId>\d+): ((""(?<chr>a|b)"")|(?<subRules>.+))$",
@@ -133,10 +115,6 @@ namespace AoC.Day19
                 {
                     // "Any" sub rule (i.e. OR)
                     var builder = new StringBuilder();
-                    //if (ruleId == 0)
-                    //{
-                    //    builder.Append("^");
-                    //}
 
                     builder.Append("(");
                     var addSeparator = false;
@@ -156,11 +134,6 @@ namespace AoC.Day19
                     }
 
                     builder.Append(")");
-                    //if (ruleId == 0)
-                    //{
-                    //    builder.Append("$");
-                    //}
-
                     regex = builder.ToString();
                 }
                 else
