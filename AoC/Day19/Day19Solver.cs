@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+using MoreLinq;
 
 namespace AoC.Day19
 {
@@ -22,8 +24,67 @@ namespace AoC.Day19
             var ruleZero = rules[ruleZeroId];
 
             return receivedMessages.ReadLines()
-                .Count(receivedMessage => ruleZero.IsMatch(receivedMessage, rules, out var remaining) && remaining.Length == 0);
+                .Count(receivedMessage => );
+
+            //return receivedMessages.ReadLines()
+            //    .Count(receivedMessage => ruleZero.IsMatch(receivedMessage, rules, out var remaining) && remaining.Length == 0);
         }
+
+        private static bool IsMatch(IRule rootRule, Dictionary<int, IRule> rules, string receivedMessage)
+        {
+            var matches = MoreEnumerable.TraverseBreadthFirst(
+                (rule: rootRule, remainers: new[] { receivedMessage }),
+                node => Matches(node, rules));
+
+            return matches?.Any(m => m.remainers);
+        }
+
+        //private static bool IsMatch(IRule rootRule, Dictionary<int, IRule> rules, string receivedMessage)
+        //{
+        //    var matches = MoreEnumerable.TraverseBreadthFirst(
+        //        (rule: rootRule, remainers: new[] { receivedMessage }),
+        //        node => Matches(node, rules));
+
+        //    return matches?.Any(m => m.remainers);
+        //}
+
+        private static IEnumerable<(IRule rule, string remaining)> Matches((IRule rule, string remaining) node, Dictionary<int, IRule> rules)
+        {
+            foreach (var ruleSet in node.rule.ChildRuleSets)
+            {
+                // Every rule in the set must match
+                foreach (var ruleId in ruleSet)
+                {
+                    var rule = rules[ruleId];
+                    if (rule.IsMatch(node.remaining, out var newRemaining))
+                    {
+                        yield return (rule, newRemaining);
+                    }
+                }
+            }
+
+            //node.rule
+        }
+
+        //private static IEnumerable<(IRule rule, string[] remainers)> Matches((IRule rule, string[] remainers) node, Dictionary<int, IRule> rules)
+        //{
+        //    foreach (var remaining in node.remainers)
+        //    {
+        //        foreach (var ruleSet in node.rule.ChildRuleSets)
+        //        {
+        //            foreach (var ruleId in ruleSet)
+        //            {
+        //                var rule = rules[ruleId];
+        //                if (rule.IsMatch(remaining, out var newRemaining))
+        //                {
+        //                    yield return (rule, new[] { newRemaining });
+        //                }
+        //            }
+        //        }
+        //    }
+
+        //    //node.rule
+        //}
 
         protected override long? SolvePart1Impl(string input) => Solve(input);
 
@@ -43,7 +104,11 @@ namespace AoC.Day19
         {
             int RuleId { get; }
 
-            bool IsMatch(string input, Dictionary<int, IRule> rules, out string remaining);
+            //bool IsMatch(string input, Dictionary<int, IRule> rules, out string remaining);
+
+            bool IsMatch(string input, out string remaining);
+
+            int[][] ChildRuleSets { get; }
         }
 
         public class BaseRule : IRule
@@ -59,7 +124,7 @@ namespace AoC.Day19
 
             public override string ToString() => $"{RuleId}: \"{_c}\"";
 
-            public bool IsMatch(string input, Dictionary<int, IRule> _, out string remaining)
+            public bool IsMatch(string input, out string remaining)
             {
                 if (input.StartsWith(_c))
                 {
@@ -70,6 +135,20 @@ namespace AoC.Day19
                 remaining = input;
                 return false;
             }
+
+            public int[][] ChildRuleSets => Array.Empty<int[]>();
+
+            //public bool IsMatch(string input, Dictionary<int, IRule> _, out string remaining)
+            //{
+            //    if (input.StartsWith(_c))
+            //    {
+            //        remaining = input[1..];
+            //        return true;
+            //    }
+
+            //    remaining = input;
+            //    return false;
+            //}
         }
 
         public class Rule : IRule
@@ -89,41 +168,52 @@ namespace AoC.Day19
                 }
             }
 
+            public bool IsMatch(string input, out string remaining)
+            {
+                throw new NotImplementedException();
+            }
+
+            public int[][] ChildRuleSets { get; }
+
             public override string ToString() => $"{RuleId}: {string.Join(" | ", _ruleSets.Select(ruleSet => string.Join(" ", ruleSet)))}";
 
-            public bool IsMatch(string input, Dictionary<int, IRule> rules, out string remaining)
-            {
-                // Any of the rule sets must match
-                foreach (var ruleSet in _ruleSets)
-                {
-                    var setRemaining = input;
+            //public bool IsMatch(string input, Dictionary<int, IRule> rules, out string remaining)
+            //{
+            //    var possibleBranches = new List<()>()
 
-                    // Every rule in the set must match
-                    var setSuccess = ruleSet.Length > 0;
-                    foreach (var ruleId in ruleSet)
-                    {
-                        var setInput = setRemaining;
-                        var rule = rules[ruleId];
+            //    // Any of the rule sets must match
+            //    foreach (var ruleSet in _ruleSets)
+            //    {
+            //        var setRemaining = input;
 
-                        var isMatch = rule.IsMatch(setInput, rules, out setRemaining);
+            //        // Every rule in the set must match
+            //        var setSuccess = ruleSet.Length > 0;
+            //        foreach (var ruleId in ruleSet)
+            //        {
+            //            var setInput = setRemaining;
+            //            var rule = rules[ruleId];
 
-                        if (!isMatch)
-                        {
-                            setSuccess = false;
-                            break;
-                        }
-                    }
+            //            var isMatch = rule.IsMatch(setInput, rules, out setRemaining);
 
-                    if (setSuccess)
-                    {
-                        remaining = setRemaining;
-                        return true;
-                    }
-                }
+            //            if (!isMatch)
+            //            {
+            //                Console.WriteLine($"No match: {new { setInput, setRemaining, rule }}");
+            //                setSuccess = false;
+            //                break;
+            //            }
+            //        }
 
-                remaining = input;
-                return false;
-            }
+            //        if (setSuccess)
+            //        {
+            //            remaining = setRemaining;
+            //            Console.WriteLine($"Set success: {new { ruleSet = string.Join(" ", ruleSet), input, remaining }}");
+            //            return true; // isntead of returning here, we want to make sure the entire branch would match
+            //        }
+            //    }
+
+            //    remaining = input;
+            //    return false;
+            //}
         }
 
         private static readonly Regex ParseRawLine = new(
