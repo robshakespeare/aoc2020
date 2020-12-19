@@ -23,17 +23,7 @@ namespace AoC.Day19
 
         protected override long? SolvePart2Impl(string input)
         {
-            input = input
-                .Replace("8: 42", "8: 42 | 42 8")
-                .Replace("11: 42 31", "11: 42 31 | 42 11 31");
-
-            var sections = input.NormalizeLineEndings().Split($"{Environment.NewLine}{Environment.NewLine}");
-
-            var rulesParser = ResolveFirstRuleToParser(sections[0]);
-
-            var receivedMessages = sections[1];
-
-            return receivedMessages.ReadLines().Count(receivedMessage => rulesParser.TryParse(receivedMessage).WasSuccessful);
+            return base.SolvePart2Impl(input);
         }
 
         private static readonly Regex ParseRawLine = new(
