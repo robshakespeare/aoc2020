@@ -29,9 +29,12 @@ namespace AoC.Day19
 
         protected override long? SolvePart2Impl(string input)
         {
-            input = input
-                .Replace("8: 42", "8: 42 | 42 8")
-                .Replace("11: 42 31", "11: 42 31 | 42 11 31");
+            input = new Regex("^8: 42$").Replace(input, "8: 42 | 42 8");
+            input = new Regex("^11: 42 31$").Replace(input, "11: 42 31 | 42 11 31");
+
+            ////input = input
+            ////    .Replace("8: 42", "8: 42 | 42 8")
+            ////    .Replace("11: 42 31", "11: 42 31 | 42 11 31");
 
             return Solve(input);
         }
@@ -53,6 +56,8 @@ namespace AoC.Day19
                 RuleId = ruleId;
                 _c = c;
             }
+
+            public override string ToString() => $"{RuleId}: \"{_c}\"";
 
             public bool IsMatch(string input, Dictionary<int, IRule> _, out string remaining)
             {
@@ -83,6 +88,8 @@ namespace AoC.Day19
                     throw new InvalidOperationException($"Rule Id {ruleId} is invalid - has one or more empty sets?");
                 }
             }
+
+            public override string ToString() => $"{RuleId}: {string.Join(" | ", _ruleSets.Select(ruleSet => string.Join(" ", ruleSet)))}";
 
             public bool IsMatch(string input, Dictionary<int, IRule> rules, out string remaining)
             {

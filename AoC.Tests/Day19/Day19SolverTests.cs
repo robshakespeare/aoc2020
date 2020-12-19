@@ -9,7 +9,7 @@ namespace AoC.Tests.Day19
     {
         private readonly Day19Solver _sut = new();
 
-        private const string Part2ExampleInput = @"42: 9 14 | 10 1
+        private const string Part2ExampleRules = @"42: 9 14 | 10 1
 9: 14 27 | 1 26
 10: 23 14 | 28 1
 1: ""a""
@@ -41,7 +41,9 @@ namespace AoC.Tests.Day19
 7: 14 5 | 1 21
 24: 14 1
 
-abbbbbabbbaaaababbaabbbbabababbbabbbbbbabaaaa
+";
+
+        private const string Part2ExampleInput = Part2ExampleRules + @"abbbbbabbbaaaababbaabbbbabababbbabbbbbbabaaaa
 bbabbbbaabaabba
 babbbbaabbbbbabbbbbbaabaaabaaa
 aaabbbbbbaaaabaababaabababbabaaabbababababaaa
@@ -106,6 +108,22 @@ aaaabbb");
 
             // ASSERT
             part2Result.Should().Be(12);
+        }
+
+        [Test]
+        public void Part2MyTest1()
+        {
+            // ACT
+            var part2Result = _sut.SolvePart2(@"0: 8 11
+8: 42 | 42 8
+11: 42 31 | 42 11 31
+42: ""a""
+31: ""b""
+
+aaab");
+
+            // ASSERT
+            part2Result.Should().Be(1);
         }
 
         [Test]
