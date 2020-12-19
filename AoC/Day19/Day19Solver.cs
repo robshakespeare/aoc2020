@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
-using Sprache;
 
 namespace AoC.Day19
 {
@@ -14,11 +14,13 @@ namespace AoC.Day19
         {
             var sections = input.NormalizeLineEndings().Split($"{Environment.NewLine}{Environment.NewLine}");
 
-            var rulesParser = ResolveFirstRuleToParser(sections[0]);
-
+            var ruleDefinitions = sections[0];
             var receivedMessages = sections[1];
 
-            return receivedMessages.ReadLines().Count(receivedMessage => rulesParser.TryParse(receivedMessage).WasSuccessful);
+            var intermediaryLines = ResolveToIntermediaryLines(ruleDefinitions);
+            var ruleZeroRegex = new Regex(ResolveToRegex(ruleIdToResolve: 0, intermediaryLines), RegexOptions.Compiled);
+
+            return receivedMessages.ReadLines().Count(receivedMessage => ruleZeroRegex.IsMatch(receivedMessage));
         }
 
         protected override long? SolvePart2Impl(string input)
@@ -27,20 +29,22 @@ namespace AoC.Day19
                 .Replace("8: 42", "8: 42 | 42 8")
                 .Replace("11: 42 31", "11: 42 31 | 42 11 31");
 
-            var sections = input.NormalizeLineEndings().Split($"{Environment.NewLine}{Environment.NewLine}");
+            throw new NotImplementedException("rs-todo!");
 
-            var rulesParser = ResolveFirstRuleToParser(sections[0]);
+            //var sections = input.NormalizeLineEndings().Split($"{Environment.NewLine}{Environment.NewLine}");
 
-            var receivedMessages = sections[1];
+            //var rulesParser = ResolveFirstRuleToParser(sections[0]);
 
-            return receivedMessages.ReadLines().Count(receivedMessage => rulesParser.TryParse(receivedMessage).WasSuccessful);
+            //var receivedMessages = sections[1];
+
+            //return receivedMessages.ReadLines().Count(receivedMessage => rulesParser.TryParse(receivedMessage).WasSuccessful);
         }
 
         private static readonly Regex ParseRawLine = new(
             @"^(?<ruleId>\d+): ((""(?<chr>a|b)"")|(?<subRules>.+))$",
             RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
-        public record IntermediaryLine(int RuleId, Parser<string>? BaseRuleParser, int[][]? SubRules)
+        public record IntermediaryLine(int RuleId, string? BaseRuleRegex, int[][]? SubRules)
         {
         }
 
@@ -59,7 +63,7 @@ namespace AoC.Day19
 
                     if (match.Groups["chr"].Success)
                     {
-                        return new IntermediaryLine(ruleId, Parse.Char(match.Groups["chr"].Value[0]).Once().Text(), null);
+                        return new IntermediaryLine(ruleId, match.Groups["chr"].Value, null);
                     }
 
                     var subRules = match.Groups["subRules"].Value
@@ -73,52 +77,67 @@ namespace AoC.Day19
                 .OrderBy(x => x.RuleId)
                 .ToDictionary(x => x.RuleId);
 
-        public Parser<string> ResolveFirstRuleToParser(string input)
+        public string ResolveToRegex(int ruleIdToResolve, Dictionary<int, IntermediaryLine> intermediaryLines)
         {
-            var intermediaryLines = ResolveToIntermediaryLines(input);
-            var parserCache = new Dictionary<int, Parser<string>>();
+            var regexs = new Dictionary<int, string>();
 
-            Parser<string> GetRuleParser(int ruleId)
+            return GetRegex(0);
+
+            string GetRegex(int ruleId)
             {
-                if (parserCache.TryGetValue(ruleId, out var existingRuleParser))
+                if (regexs.TryGetValue(ruleId, out var existingRegex))
                 {
-                    return existingRuleParser;
+                    return existingRegex;
                 }
 
-                var (_, baseRuleParser, subRules) = intermediaryLines[ruleId];
-                Parser<string>? parser = null;
+                var (_, baseRuleRegex, subRules) = intermediaryLines[ruleId];
+                string? regex = null;
 
-                if (baseRuleParser != null)
+                if (baseRuleRegex != null)
                 {
-                    parser = baseRuleParser;
+                    regex = baseRuleRegex;
                 }
                 else if (subRules != null)
                 {
-                    parser = subRules
-                        .Select(subRule => subRule.Aggregate<int, Parser<string>?>(
-                            null,
-                            (subParser, subRuleId) => subParser == null
-                                ? subParser = GetRuleParser(subRuleId)
-                                : subParser.Then(_ => GetRuleParser(subRuleId))))
-                        .Aggregate(parser, (accParser, subParser) => accParser == null
-                            ? subParser
-                            : accParser.Or(subParser));
-
-                    if (parser == null)
+                    // "Any" sub rule (i.e. OR)
+                    var builder = new StringBuilder();
+                    if (ruleId == 0)
                     {
-                        throw new InvalidOperationException("Invalid rule with ID {ruleId} - empty sub rules?");
+                        builder.Append("^");
                     }
+                    builder.Append("(");
+                    var addSeparator = false;
+                    foreach (var subRule in subRules)
+                    {
+                        // "All" ruleIds for the sub rule (i.e. AND)
+                        var subRegex = string.Join("", subRule.Select(GetRegex));
+
+                        if (addSeparator)
+                        {
+                            builder.Append("|");
+                        }
+
+                        builder.Append(subRegex);
+
+                        addSeparator = true;
+                    }
+
+                    builder.Append(")");
+                    if (ruleId == 0)
+                    {
+                        builder.Append("$");
+                    }
+
+                    regex = builder.ToString();
                 }
                 else
                 {
                     throw new InvalidOperationException($"Invalid rule with ID {ruleId} - it has no base rule or sub rules.");
                 }
 
-                parserCache.Add(ruleId, parser);
-                return parser;
+                regexs.Add(ruleId, regex);
+                return regex;
             }
-
-            return GetRuleParser(0).End();
         }
     }
 }
