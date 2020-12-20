@@ -16,14 +16,16 @@ namespace AoC.Day20
 
         public int TileId { get; }
         public IReadOnlyList<string> Pixels { get; }
+        public Grid Grid { get; }
         public IReadOnlyList<TileEdgePerm> TileEdgePerms { get; }
 
         private readonly TileEdges _edges;
 
-        public Tile(int tileId, IReadOnlyList<string> pixels)
+        public Tile(int tileId, IReadOnlyList<string> pixels, Grid grid)
         {
             TileId = tileId;
             Pixels = pixels;
+            Grid = grid;
             _edges = new TileEdges(
                 Top: pixels[0],
                 Bottom: pixels[^1],
@@ -37,7 +39,7 @@ namespace AoC.Day20
 
         private static readonly Regex TileIdRegex = new(@"Tile (?<tileId>\d+):", RegexOptions.Compiled);
 
-        public static Tile ParseTile(string tileString)
+        public static Tile ParseTile(string tileString, Grid grid)
         {
             var match = TileIdRegex.Match(tileString);
             if (!match.Success)
@@ -58,19 +60,7 @@ namespace AoC.Day20
                 throw new InvalidOperationException($"Tile width must be {ExpectedTileSize}");
             }
 
-            return new Tile(tileId, pixels);
-        }
-
-        public static (IReadOnlyList<Tile> tiles, int gridSize) ParsePuzzleInput(string input)
-        {
-            var tiles = input.NormalizeLineEndings()
-                .Split($"{Environment.NewLine}{Environment.NewLine}")
-                .Select(ParseTile)
-                .ToArray();
-
-            var gridSize = (int)Math.Sqrt(tiles.Length);
-
-            return (tiles, gridSize);
+            return new Tile(tileId, pixels, grid);
         }
     }
 }

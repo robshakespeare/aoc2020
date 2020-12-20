@@ -12,7 +12,7 @@ namespace AoC.Day20
 
         protected override long? SolvePart1Impl(string input)
         {
-            var (tiles, gridSize) = Tile.ParsePuzzleInput(input);
+            var grid = Grid.ParsePuzzleInput(input);
 
             // For each tile perm, get all the other tile perms
             // Lay them out in the grid
@@ -29,7 +29,7 @@ namespace AoC.Day20
 
             // Or, can we do a process of elimination to reduce the sets?
 
-            var counts = tiles.SelectMany(tile => tile.GetEdges().GetAll().Select(edge => edge.Count(c => c == '#')))
+            var counts = grid.Tiles.SelectMany(tile => tile.GetEdges().GetAll().Select(edge => edge.Count(c => c == '#')))
                     .GroupBy(x => x)
                     .Select(grp => new { numOfPaintedPixels = grp.Key, countOfEdges = grp.Count() });
 
