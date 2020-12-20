@@ -1,12 +1,14 @@
 using System;
 using System.Linq;
-using MoreLinq;
+using Serilog;
 
 namespace AoC.Day20
 {
     public class Day20Solver : SolverBase
     {
         public override string DayName => "Jurassic Jigsaw";
+
+        private static readonly ILogger Logger = FileLogging.CreateLogger("day20-c");
 
         protected override long? SolvePart1Impl(string input)
         {
@@ -22,6 +24,18 @@ namespace AoC.Day20
             //return tileIds.Permutations().First().Count(); //tiles.Select(x => x.TileId).Permutations().Count();
             // HMMMMM, this just isn't going to work, there's far too many permutations
             // it is factorial!
+
+            // Idea though, have we really just got a tree, which we can do a BFS on?
+
+            // Or, can we do a process of elimination to reduce the sets?
+
+            var counts = tiles.SelectMany(tile => tile.GetEdges().GetAll().Select(edge => edge.Count(c => c == '#')))
+                    .GroupBy(x => x)
+                    .Select(grp => new { numOfPaintedPixels = grp.Key, countOfEdges = grp.Count() });
+
+            Logger.Information($"Group counts:{Environment.NewLine}{string.Join(Environment.NewLine, counts)}");
+
+            // rs-todo: resume here!!
 
             return null;
         }
