@@ -61,10 +61,16 @@ namespace AoC.Day20
             return new Tile(tileId, pixels);
         }
 
-        public static IReadOnlyList<Tile> ParsePuzzleInput(string input) =>
-            input.NormalizeLineEndings()
+        public static (IReadOnlyList<Tile> tiles, int gridSize) ParsePuzzleInput(string input)
+        {
+            var tiles = input.NormalizeLineEndings()
                 .Split($"{Environment.NewLine}{Environment.NewLine}")
                 .Select(ParseTile)
                 .ToArray();
+
+            var gridSize = (int)Math.Sqrt(tiles.Length);
+
+            return (tiles, gridSize);
+        }
     }
 }

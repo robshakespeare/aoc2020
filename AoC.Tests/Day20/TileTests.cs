@@ -14,15 +14,17 @@ namespace AoC.Tests.Day20
             var puzzleInput = new InputLoader(20).PuzzleInputPart1;
 
             // ACT
-            var result = Tile.ParsePuzzleInput(puzzleInput);
+            var (resultTiles, resultGridSize) = Tile.ParsePuzzleInput(puzzleInput);
 
             // ASSERT
-            result.Count.Should().Be(144); // i.e. we have 144 tiles in total
-            Math.Sqrt(result.Count).Should().Be(12); // i.e. we're looking for a 12 x 12 grid
+            resultTiles.Count.Should().Be(144); // i.e. we have 144 tiles in total
+            Math.Sqrt(resultTiles.Count).Should().Be(12); // i.e. we're looking for a 12 x 12 grid
+            resultGridSize.Should().Be(12); // i.e. same as above, we're looking for a 12 x 12 grid
+            (resultGridSize * resultGridSize).Should().Be(resultTiles.Count);
 
-            result.First().TileEdgePerms.Count.Should().Be(4 * 3); // numberOfRotations * numberOfScales
+            resultTiles.First().TileEdgePerms.Count.Should().Be(4 * 3); // numberOfRotations * numberOfScales
 
-            Console.WriteLine(ObjectDumper.Dump(result.First()));
+            Console.WriteLine(ObjectDumper.Dump(resultTiles.First()));
         }
 
         [Test]

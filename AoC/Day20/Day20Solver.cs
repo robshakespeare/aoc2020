@@ -6,7 +6,11 @@ namespace AoC.Day20
 
         protected override long? SolvePart1Impl(string input)
         {
-            return base.SolvePart1Impl(input);
+            var (tiles, gridSize) = Tile.ParsePuzzleInput(input);
+
+            // 
+
+            return null;
         }
 
         protected override long? SolvePart2Impl(string input)
