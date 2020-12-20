@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using AoC.Day20;
 using FluentAssertions;
+using MoreLinq;
 using NUnit.Framework;
 
 namespace AoC.Tests.Day20
@@ -28,7 +29,7 @@ namespace AoC.Tests.Day20
         }
 
         [Test]
-        public void PermsTest()
+        public void TilePermsTest()
         {
             Tile.Perms.Count.Should().Be(4 * 3); // numberOfRotations * numberOfScales
         }
