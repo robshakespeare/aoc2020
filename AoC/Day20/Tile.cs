@@ -37,6 +37,10 @@ namespace AoC.Day20
 
         public TileEdges GetEdges() => _edges;
 
+        public IEnumerable<string> GetAllPermsOfEdges() => TileEdgePerms.SelectMany(p => p.Edges.GetAll()).Distinct();
+
+        public int NumOuterEdges => _edges.GetAll().Count(Grid.OuterEdges.Contains);
+
         private static readonly Regex TileIdRegex = new(@"Tile (?<tileId>\d+):", RegexOptions.Compiled);
 
         public static Tile ParseTile(string tileString, Grid grid)

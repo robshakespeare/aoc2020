@@ -15,7 +15,7 @@ namespace AoC.Tests.Day20
             var part1Result = _sut.SolvePart1(Part1ExampleInput);
 
             // ASSERT
-            //part1Result.Should().Be(20899048083289); // rs-todo: fix!
+            part1Result.Should().Be(20899048083289);
         }
 
         [Test]
@@ -25,7 +25,7 @@ namespace AoC.Tests.Day20
             var part1Result = _sut.SolvePart1();
 
             // ASSERT
-            part1Result.Should().Be(null);
+            part1Result.Should().Be(51214443014783);
         }
 
         [Test]

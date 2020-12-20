@@ -8,9 +8,22 @@ namespace AoC.Day20
     {
         public IReadOnlyList<Tile> Tiles { get; private set; } = Array.Empty<Tile>();
         public int GridSize { get; private set; }
+        public HashSet<string> OuterEdges { get; private set; } = new();
 
         private Grid()
         {
+        }
+
+        private void RebuildOuterEdges()
+        {
+            var allEdges = Tiles.SelectMany(tile => tile.GetAllPermsOfEdges());
+
+            var unpairedEdges = allEdges.GroupBy(edge => edge)
+                .Where(grp => grp.Count() == 1)
+                .Select(grp => grp.Single())
+                .ToHashSet();
+
+            OuterEdges = unpairedEdges;
         }
 
         public static Grid ParsePuzzleInput(string input)
@@ -24,6 +37,7 @@ namespace AoC.Day20
 
             grid.GridSize = (int)Math.Sqrt(tiles.Length);
             grid.Tiles = tiles;
+            grid.RebuildOuterEdges();
 
             return grid;
         }

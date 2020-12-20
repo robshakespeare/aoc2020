@@ -6,7 +6,7 @@ using NUnit.Framework;
 
 namespace AoC.Tests.Day20
 {
-    public class TileTests
+    public class GridAndTileTests
     {
         [Test]
         public void ParsePuzzleInputTest()
