@@ -42,5 +42,13 @@ namespace AoC.Tests.Day20
         {
             Orientation.Permutations.Count.Should().Be(4 * 3); // numberOfRotations * numberOfScales
         }
+
+        [Test]
+        public void Corner_All_Order_Tests()
+        {
+            string.Join(", ", Corner.All).Should().Be("TopRight, BottomRight, BottomLeft, TopLeft");
+            string.Join(", ", Corner.All.OrderBy(x => x.CornerIndex)).Should().Be("TopRight, BottomRight, BottomLeft, TopLeft");
+            Corner.Indexes.Should().BeEquivalentTo(new[] { 0, 1, 2, 3 }, options => options.WithStrictOrdering());
+        }
     }
 }

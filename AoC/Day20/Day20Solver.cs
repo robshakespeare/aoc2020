@@ -1,7 +1,5 @@
 using System;
 using System.Linq;
-using MoreLinq;
-using static System.Environment;
 
 namespace AoC.Day20
 {
@@ -27,52 +25,8 @@ namespace AoC.Day20
         {
             var grid = Grid.ParsePuzzleInput(input);
 
-            foreach (var cornerTile in grid.OuterEdgeCornerTiles)
-            {
-                Console.WriteLine($"{NewLine}Corner tile {cornerTile.TileId}");
-
-                foreach (var corner in Corner.All)
-                {
-                    Console.WriteLine($"Num perms for Corner {corner}: {cornerTile.GetPermsForCorner(corner).Count()}");
-                }
-            }
-
-            Console.WriteLine($"{NewLine}cornerTilePerms:");
-            var cornerTilePerms = grid.OuterEdgeCornerTiles.Permutations().ToArray();
-
-            Console.WriteLine(string.Join(
-                NewLine,
-                cornerTilePerms
-                    .Select(cornerTilePerm =>
-                        new
-                        {
-                            id = string.Join(", ", cornerTilePerm.Select(tile => tile.TileId)),
-                            permsPerCorner = string.Join(", ",
-                                cornerTilePerm.Select((tile, cornerIndex) => tile.GetPermsForCorner(Corner.All[cornerIndex]).Count())),
-                            totalPerms = cornerTilePerm.Select((tile, cornerIndex) => tile.GetPermsForCorner(Corner.All[cornerIndex]).Count())
-                                .Aggregate(1, (agg, cur) => agg * cur)
-                        })
-                    .OrderBy(x => x.totalPerms)));
-
-            ////foreach (var cornerTilePerm in cornerTilePerms)
-            ////{
-            ////    var id = string.Join(", ", cornerTilePerm.Select(tile => tile.TileId));
-
-            ////    var perms = cornerTilePerm.Select((tile, cornerIndex) => tile.GetPermsForCorner(Corner.All[cornerIndex]).Count())
-            ////        .Aggregate(1, (agg, cur) => agg * cur);
-
-            ////    Console.WriteLine($"{id}: {perms}");
-            ////}
-
-
-            ////cornerTileIndexPerms.ForEach(
-            ////    cornerTileIndexes =>
-            ////    {
-            ////        var tileIds = string.Join(", ", cornerTileIndexes.Select(i => grid.OuterEdgeCornerTiles[i].TileId));
-            ////        var totalPerms = 
-            ////        Console.WriteLine(
-            ////            $"{tileIds}: ");
-            ////    });
+            grid.LogNumPermsForEachCornerTile();
+            grid.LogCornerTilePerms();
 
             // Work out the arrangement of the edge of the proper reassembled grid
 

@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using MoreLinq;
+using static System.Environment;
 
 namespace AoC.Day20
 {
+    using System.Linq;
+
     public class Grid
     {
         private HashSet<string>? _outerEdges;
@@ -44,17 +47,100 @@ namespace AoC.Day20
             var grid = new Grid();
 
             var tiles = input.NormalizeLineEndings()
-                .Split($"{Environment.NewLine}{Environment.NewLine}")
+                .Split($"{NewLine}{NewLine}")
                 .Select(tileString => Tile.ParseTile(tileString, grid))
                 .ToArray();
 
-            grid.GridSize = (int)Math.Sqrt(tiles.Length);
+            grid.GridSize = (int) Math.Sqrt(tiles.Length);
             grid.Tiles = tiles;
             grid.RebuildOuterEdges();
             grid.OuterEdgeCornerTiles = grid.Tiles.Where(tile => tile.IsOuterEdgeCornerTile).ToArray();
             grid.OuterEdgeNonCornerTiles = grid.Tiles.Where(tile => tile.IsOuterEdgeNonCornerTile).ToArray();
 
             return grid;
+        }
+
+        public void LogNumPermsForEachCornerTile()
+        {
+            foreach (var cornerTile in OuterEdgeCornerTiles)
+            {
+                Console.WriteLine($"{NewLine}Corner tile {cornerTile.TileId}");
+
+                foreach (var corner in Corner.All)
+                {
+                    Console.WriteLine($"Num perms for Corner {corner}: {cornerTile.GetPermsForCorner(corner).Count()}");
+                }
+            }
+        }
+
+        public void LogCornerTilePerms()
+        {
+            Console.WriteLine($"{NewLine}cornerTilePerms:");
+            var cornerTilesPerms = OuterEdgeCornerTiles.Permutations().ToArray();
+
+            Console.WriteLine(string.Join(
+                NewLine,
+                cornerTilesPerms
+                    .Select(cornerTilePerm =>
+                        new
+                        {
+                            id = string.Join(", ", cornerTilePerm.Select(tile => tile.TileId)),
+                            permsPerCorner = string.Join(", ",
+                                cornerTilePerm.Select((tile, cornerIndex) => tile.GetPermsForCorner(Corner.All[cornerIndex]).Count())),
+                            totalPerms = cornerTilePerm.Select((tile, cornerIndex) => tile.GetPermsForCorner(Corner.All[cornerIndex]).Count())
+                                .Aggregate(1, (agg, cur) => agg * cur)
+                        })
+                    .OrderBy(x => x.totalPerms)));
+        }
+
+        ////public record FullGridBorderState()
+        ////{
+        ////}
+
+        public void ReassembleFullGridBorder()
+        {
+            var cornerTilesPerms = OuterEdgeCornerTiles.Permutations().ToArray();
+
+            // rs-todo: resume here????!!!!!
+
+            //// Start in the top right, and try and build out the border
+            //// One of the OuterEdgeCornerTiles MUST be in the top right, so just try each
+            //foreach (var outerEdgeCornerTile in OuterEdgeCornerTiles)
+            //{
+            //    foreach (var topRightTilePerm in outerEdgeCornerTile.GetPermsForCorner(Corner.TopRight))
+            //    {
+            //    }
+            //}
+
+            var cornerTilePermsOrdered = cornerTilesPerms
+                .Select(cornerTilePerm =>
+                    new
+                    {
+                        cornerTilePerm,
+                        totalPerms = cornerTilePerm.Select((tile, cornerIndex) => tile.GetPermsForCorner(Corner.All[cornerIndex]).Count())
+                            .Aggregate(1, (agg, cur) => agg * cur)
+                    })
+                .OrderBy(x => x.totalPerms)
+                .Select(x => x.cornerTilePerm);
+
+            // For each permutation of corner tiles, try each permutation of orientations
+            // And build out, until we reach a point where's there's no match
+            // When there's no match, step back until there is a match, and try that again
+            foreach (var cornerTilesPerm in cornerTilePermsOrdered)
+            {
+                // Put each possible perm of each tile in to its corner
+
+                foreach (var corner in Corner.All)
+                {
+                    var tile = cornerTilesPerm[corner.CornerIndex];
+                }
+
+
+
+                // .Select((cornerTilePerm, cornerIndex) => (cornerTilePerm, cornerIndex)
+
+                //cornerTilePerm[cornerIndex]
+            }
         }
     }
 }
