@@ -5,17 +5,15 @@ namespace AoC.Day20
     public class TileEdgePerm
     {
         public Tile Tile { get; }
-        public Rotation Rotation { get; }
-        public Scale Scale { get; }
+        public Orientation Orientation { get; }
         public TileEdges Edges { get; }
 
-        public TileEdgePerm(Tile tile, Rotation rotation, Scale scale)
+        public TileEdgePerm(Tile tile, Orientation orientation)
         {
             Tile = tile;
-            Rotation = rotation;
-            Scale = scale;
+            Orientation = orientation;
 
-            Edges = BuildEdges(tile, rotation, scale);
+            Edges = BuildEdges(tile, orientation.Rotation, orientation.Scale);
         }
 
         private static TileEdges BuildEdges(Tile tile, Rotation rotation, Scale scale)

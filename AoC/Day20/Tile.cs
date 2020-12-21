@@ -9,11 +9,6 @@ namespace AoC.Day20
     {
         private const int ExpectedTileSize = 10;
 
-        public static readonly IReadOnlyList<(Rotation rotation, Scale scale)> Perms =
-            Enum.GetValues(typeof(Rotation)).Cast<Rotation>()
-                .SelectMany(rotation => Enum.GetValues(typeof(Scale)).Cast<Scale>().Select(scale => (rotation, scale)))
-                .ToArray();
-
         public int TileId { get; }
         public IReadOnlyList<string> Pixels { get; }
         public Grid Grid { get; }
@@ -33,7 +28,7 @@ namespace AoC.Day20
                 Bottom: pixels[^1],
                 Left: string.Join("", pixels.Select(line => line[0])));
 
-            TileEdgePerms = Perms.Select(perm => new TileEdgePerm(this, perm.rotation, perm.scale)).ToArray();
+            TileEdgePerms = Orientation.Permutations.Select(orientation => new TileEdgePerm(this, orientation)).ToArray();
 
             _outerEdges = new Lazy<IReadOnlyList<string>>(() => _edges.All.Where(Grid.OuterEdges.Contains).ToArray());
         }
