@@ -9,14 +9,16 @@ namespace AoC.Tests.Day21
     {
         private readonly Day21Solver _sut = new();
 
+        private const string ExampleInput = @"mxmxvkd kfcds sqjhc nhms (contains dairy, fish)
+trh fvjkl sbzzf mxmxvkd (contains dairy)
+sqjhc fvjkl (contains soy)
+sqjhc mxmxvkd sbzzf (contains fish)";
+
         [Test]
         public void Part1Example()
         {
             // ACT
-            var part1Result = _sut.SolvePart1(@"mxmxvkd kfcds sqjhc nhms (contains dairy, fish)
-trh fvjkl sbzzf mxmxvkd (contains dairy)
-sqjhc fvjkl (contains soy)
-sqjhc mxmxvkd sbzzf (contains fish)");
+            var part1Result = _sut.SolvePart1(ExampleInput);
 
             // ASSERT
             part1Result.Should().Be(5);
@@ -33,13 +35,23 @@ sqjhc mxmxvkd sbzzf (contains fish)");
         }
 
         [Test]
+        public void Part2Example()
+        {
+            // ACT
+            var part2Result = _sut.SolvePart2(ExampleInput);
+
+            // ASSERT
+            part2Result.Should().Be("mxmxvkd,sqjhc,fvjkl");
+        }
+
+        [Test]
         public void Part2ReTest()
         {
             // ACT
             var part2Result = _sut.SolvePart2();
 
             // ASSERT
-            part2Result.Should().Be(null); // kbdgs,sqvv,slkfgq,vgnj,brdd,tpd,csfmb,lrnz
+            part2Result.Should().Be("kbdgs,sqvv,slkfgq,vgnj,brdd,tpd,csfmb,lrnz");
         }
     }
 }
