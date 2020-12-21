@@ -2,12 +2,15 @@ using System;
 using System.Linq;
 using System.Numerics;
 using FluentAssertions;
+using FluentAssertions.Equivalency;
 using NUnit.Framework;
 
 namespace AoC.Tests
 {
     public class MathUtilsTests
     {
+        private static EquivalencyAssertionOptions<T> WithStrictOrdering<T>(EquivalencyAssertionOptions<T> options) => options.WithStrictOrdering();
+
         public class TheAngleBetweenMethod
         {
             [TestCase(0, 1, 0)]
@@ -207,6 +210,313 @@ namespace AoC.Tests
 
                 // ASSERT
                 result.Should().Be(expectedResult);
+            }
+        }
+
+        public class TheRotateGridMethod
+        {
+            [Test]
+            public void RotateGrid_SimpleTest()
+            {
+                var input = new[]
+                {
+                    "12",
+                    "34"
+                };
+
+                // ACT
+                var result = MathUtils.RotateGrid(input, 90);
+
+                // ASSERT
+                result.Should().BeEquivalentTo(
+                    new[]
+                    {
+                        "31",
+                        "42"
+                    },
+                    WithStrictOrdering);
+            }
+
+            [Test]
+            public void RotateGrid_3x3_0deg()
+            {
+                var input = new[]
+                {
+                    "123",
+                    "456",
+                    "789"
+                };
+
+                // ACT
+                var result = MathUtils.RotateGrid(input, 0);
+
+                // ASSERT
+                result.Should().BeEquivalentTo(
+                    new[]
+                    {
+                        "123",
+                        "456",
+                        "789"
+                    },
+                    WithStrictOrdering);
+            }
+
+            [Test]
+            public void RotateGrid_3x3_90deg()
+            {
+                var input = new[]
+                {
+                    "123",
+                    "456",
+                    "789"
+                };
+
+                // ACT
+                var result = MathUtils.RotateGrid(input, 90);
+
+                // ASSERT
+                result.Should().BeEquivalentTo(
+                    new[]
+                    {
+                        "741",
+                        "852",
+                        "963"
+                    },
+                    WithStrictOrdering);
+            }
+
+            [Test]
+            public void RotateGrid_3x3_180deg()
+            {
+                var input = new[]
+                {
+                    "123",
+                    "456",
+                    "789"
+                };
+
+                // ACT
+                var result = MathUtils.RotateGrid(input, 180);
+
+                // ASSERT
+                result.Should().BeEquivalentTo(
+                    new[]
+                    {
+                        "987",
+                        "654",
+                        "321"
+                    },
+                    WithStrictOrdering);
+            }
+
+            [Test]
+            public void RotateGrid_3x3_270deg()
+            {
+                var input = new[]
+                {
+                    "123",
+                    "456",
+                    "789"
+                };
+
+                // ACT
+                var result = MathUtils.RotateGrid(input, 270);
+
+                // ASSERT
+                result.Should().BeEquivalentTo(
+                    new[]
+                    {
+                        "369",
+                        "258",
+                        "147"
+                    },
+                    WithStrictOrdering);
+            }
+
+            [Test]
+            public void RotateGrid_4x4_90deg()
+            {
+                var input = new[]
+                {
+                    "   •",
+                    "  • ",
+                    " •• ",
+                    "••••"
+                };
+
+                // ACT
+                var result = MathUtils.RotateGrid(input, 90);
+
+                // ASSERT
+                result.Should().BeEquivalentTo(
+                    new[]
+                    {
+                        "•   ",
+                        "••  ",
+                        "••• ",
+                        "•  •"
+                    },
+                    WithStrictOrdering);
+            }
+
+            [Test]
+            public void RotateGrid_SeaMonster_90deg()
+            {
+                var input = new[]
+                {
+                    "                  # ",
+                    "#    ##    ##    ###",
+                    " #  #  #  #  #  #   "
+                };
+
+                // ACT
+                var result = MathUtils.RotateGrid(input, 90);
+
+                // ASSERT
+                result.Should().BeEquivalentTo(
+                    new[]
+                    {
+                        " # ",
+                        "#  ",
+                        "   ",
+                        "   ",
+                        "#  ",
+                        " # ",
+                        " # ",
+                        "#  ",
+                        "   ",
+                        "   ",
+                        "#  ",
+                        " # ",
+                        " # ",
+                        "#  ",
+                        "   ",
+                        "   ",
+                        "#  ",
+                        " # ",
+                        " ##",
+                        " # "
+                    },
+                    WithStrictOrdering);
+            }
+        }
+
+        public class TheScaleGridMethod
+        {
+            [Test]
+            public void ScaleGrid_SimpleTest()
+            {
+                var input = new[]
+                {
+                    "12",
+                    "34"
+                };
+
+                // ACT
+                var result = MathUtils.ScaleGrid(input, new Vector2(-1, 1));
+
+                // ASSERT
+                result.Should().BeEquivalentTo(
+                    new[]
+                    {
+                        "21",
+                        "43"
+                    },
+                    WithStrictOrdering);
+            }
+
+            [Test]
+            public void ScaleGrid_NoScaleTest()
+            {
+                var input = new[]
+                {
+                    "12",
+                    "34"
+                };
+
+                // ACT
+                var result = MathUtils.ScaleGrid(input, new Vector2(1, 1));
+
+                // ASSERT
+                result.Should().BeEquivalentTo(
+                    new[]
+                    {
+                        "12",
+                        "34"
+                    },
+                    WithStrictOrdering);
+            }
+
+            [Test]
+            public void ScaleGrid_SeaMonster_FlipY()
+            {
+                var input = new[]
+                {
+                    "                  # ",
+                    "#    ##    ##    ###",
+                    " #  #  #  #  #  #   "
+                };
+
+                // ACT
+                var result = MathUtils.ScaleGrid(input, new Vector2(1, -1));
+
+                // ASSERT
+                result.Should().BeEquivalentTo(
+                    new[]
+                    {
+                        " #  #  #  #  #  #   ",
+                        "#    ##    ##    ###",
+                        "                  # "
+                    },
+                    WithStrictOrdering);
+            }
+
+            [Test]
+            public void ScaleGrid_SeaMonster_FlipX()
+            {
+                var input = new[]
+                {
+                    "                  # ",
+                    "#    ##    ##    ###",
+                    " #  #  #  #  #  #   "
+                };
+
+                // ACT
+                var result = MathUtils.ScaleGrid(input, new Vector2(-1, 1));
+
+                // ASSERT
+                result.Should().BeEquivalentTo(
+                    new[]
+                    {
+                        " #                  ",
+                        "###    ##    ##    #",
+                        "   #  #  #  #  #  # "
+                    },
+                    WithStrictOrdering);
+            }
+
+            [Test]
+            public void ScaleGrid_SeaMonster_FlipXAndY()
+            {
+                var input = new[]
+                {
+                    "                  # ",
+                    "#    ##    ##    ###",
+                    " #  #  #  #  #  #   "
+                };
+
+                // ACT
+                var result = MathUtils.ScaleGrid(input, new Vector2(-1, -1));
+
+                // ASSERT
+                result.Should().BeEquivalentTo(
+                    new[]
+                    {
+                        "   #  #  #  #  #  # ",
+                        "###    ##    ##    #",
+                        " #                  "
+                    },
+                    WithStrictOrdering);
             }
         }
     }

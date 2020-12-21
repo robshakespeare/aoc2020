@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 
 namespace AoC
@@ -37,7 +39,12 @@ namespace AoC
         public static readonly Vector2 South = new(0, 1);
         public static readonly Vector2 West = new(-1, 0);
 
-        private const double DegreesToRadians = Math.PI / 180;
+        private const double DegreesToRadiansFactor = Math.PI / 180;
+
+        /// <summary>
+        /// Converts the specified degrees in to radians.
+        /// </summary>
+        public static float DegreesToRadians(this int degrees) => Convert.ToSingle(degrees * DegreesToRadiansFactor);
 
         /// <summary>
         /// Rotates the specified direction vector, around the zero vector (0,0) center point, by the specified number of degrees.
@@ -49,10 +56,8 @@ namespace AoC
         /// </remarks>
         public static Vector2 RotateDirection(Vector2 direction, int degrees)
         {
-            var radians = Convert.ToSingle(degrees * DegreesToRadians);
-
+            var radians = degrees.DegreesToRadians();
             var rotationMatrix = Matrix3x2.CreateRotation(radians);
-
             return Vector2.Transform(direction, rotationMatrix);
         }
 
@@ -74,5 +79,62 @@ namespace AoC
         /// and will be rounded to the nearest integer before calculating the the Manhattan Distance calculation.
         /// </summary>
         public static int ManhattanDistanceFromZero(this Vector2 vector) => ManhattanDistance(vector, Vector2.Zero);
+
+        /// <summary>
+        /// Rotates the specified grid around its middle point.
+        /// Expects the length of each line (width of the grid) to be equal all the way down.
+        /// </summary>
+        public static IReadOnlyList<string> RotateGrid(IReadOnlyList<string> pixels, int degrees)
+        {
+            if (degrees % 90 != 0)
+            {
+                throw new InvalidOperationException($"Only right angle rotations are supported. Rotation of {degrees}° is invalid.");
+            }
+
+            return TransformGrid(pixels, Matrix3x2.CreateRotation(degrees.DegreesToRadians()));
+        }
+
+        /// <summary>
+        /// Scales the specified grid around its middle point.
+        /// Expects the length of each line (width of the grid) to be equal all the way down.
+        /// </summary>
+        public static IReadOnlyList<string> ScaleGrid(IReadOnlyList<string> pixels, Vector2 scales) =>
+            TransformGrid(pixels, Matrix3x2.CreateScale(scales));
+
+        private static IReadOnlyList<string> TransformGrid(IReadOnlyList<string> pixels, Matrix3x2 matrix)
+        {
+            var newGrid = new Dictionary<Vector2, char>();
+
+            foreach (var (line, y) in pixels.Select((line, y) => (line, y)))
+            {
+                foreach (var (chr, x) in line.Select((chr, x) => (chr, x)))
+                {
+                    var newPoint = Vector2.Transform(new Vector2(x, y), matrix);
+                    newGrid.Add(newPoint, chr);
+                }
+            }
+
+            var min = new Vector2(float.MaxValue);
+            var max = new Vector2(float.MinValue);
+
+            foreach (var (p, _) in newGrid)
+            {
+                min = Vector2.Min(min, p);
+                max = Vector2.Max(max, p);
+            }
+
+            var newWidth = (max.X - min.X).Round() + 1;
+            var newHeight = (max.Y - min.Y).Round() + 1;
+            char[][] newPixels = Enumerable.Range(0, newHeight).Select(_ => new char[newWidth]).ToArray();
+
+            var offset = Vector2.Zero - min;
+            foreach (var (p, c) in newGrid)
+            {
+                var lp = p + offset;
+                newPixels[lp.Y.Round()][lp.X.Round()] = c;
+            }
+
+            return newPixels.Select(newLine => new string(newLine)).ToArray();
+        }
     }
 }
