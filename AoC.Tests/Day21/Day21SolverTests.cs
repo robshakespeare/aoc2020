@@ -39,7 +39,7 @@ sqjhc mxmxvkd sbzzf (contains fish)");
             var part2Result = _sut.SolvePart2();
 
             // ASSERT
-            part2Result.Should().Be(null);
+            part2Result.Should().Be(null); // kbdgs,sqvv,slkfgq,vgnj,brdd,tpd,csfmb,lrnz
         }
     }
 }

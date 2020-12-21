@@ -77,9 +77,48 @@ namespace AoC.Day21
             }
         }
 
+        /// <summary>
+        /// Arrange the ingredients alphabetically by their allergen and
+        /// separate them by commas to produce your canonical dangerous ingredient list.
+        /// </summary>
         protected override long? SolvePart2Impl(string input)
         {
-            return base.SolvePart2Impl(input);
+            var foodItems = FoodItem.ParsePuzzleInput(input);
+
+            var allAllergens = foodItems.SelectMany(x => x.Allergens).ToHashSet();
+            Console.WriteLine("allAllergens: " + string.Join(", ", allAllergens));
+
+            // For each known allergen, we can get all the sets of ingredients that they're known to be in
+            // The INTERSECTION of all of those sets MUST contain the allergen
+            var candidates = GetAllergensAndCandidateIngredients(allAllergens, foodItems).ToArray();
+            while (candidates.Any(candidate => candidate.ingredientSet.Count > 1))
+            {
+                // Eliminate any whose count is 1
+                foreach (var definite in candidates.Where(x => x.ingredientSet.Count == 1))
+                {
+                    var knownIngredient = definite.ingredientSet.Single();
+
+                    foreach (var candidate in candidates.Where(x => x.ingredientSet.Count > 1))
+                    {
+                        candidate.ingredientSet.Remove(knownIngredient);
+                    }
+                }
+            }
+
+            var definiteIngredientToAllergenList = candidates
+                .Select(x => new { x.allergen, ingredient = x.ingredientSet.Single() })
+                .ToDictionary(x => x.ingredient, x => x.allergen);
+            Console.WriteLine(
+                $"{NewLine}definiteIngredientToAllergenList:{NewLine}{string.Join(NewLine, definiteIngredientToAllergenList.Select(x => $"{x.Key}: {x.Value}"))}");
+
+            // Remove the definite allergenic ingredients from all our food items, and count the remaining ingredients
+            var definiteAllergenicIngredients = definiteIngredientToAllergenList.Keys;
+
+            var part2Answer = string.Join(",", definiteIngredientToAllergenList.OrderBy(x => x.Value).Select(x => x.Key));
+            Console.WriteLine(part2Answer);
+
+            return null;
+
         }
     }
 }
