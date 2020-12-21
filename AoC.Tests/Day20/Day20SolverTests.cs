@@ -12,7 +12,7 @@ namespace AoC.Tests.Day20
         public void Part1Example()
         {
             // ACT
-            var part1Result = _sut.SolvePart1(Part1ExampleInput);
+            var part1Result = _sut.SolvePart1(ExampleInput);
 
             // ASSERT
             part1Result.Should().Be(20899048083289);
@@ -29,6 +29,16 @@ namespace AoC.Tests.Day20
         }
 
         [Test]
+        public void Part2Example()
+        {
+            // ACT
+            var part2Result = _sut.SolvePart2(ExampleInput);
+
+            // ASSERT
+            part2Result.Should().Be(null);
+        }
+
+        [Test]
         public void Part2ReTest()
         {
             // ACT
@@ -38,7 +48,7 @@ namespace AoC.Tests.Day20
             part2Result.Should().Be(null);
         }
 
-        private const string Part1ExampleInput = @"Tile 2311:
+        private const string ExampleInput = @"Tile 2311:
 ..##.#..#.
 ##..#.....
 #...##..#.
