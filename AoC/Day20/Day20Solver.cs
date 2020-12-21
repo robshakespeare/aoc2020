@@ -13,11 +13,9 @@ namespace AoC.Day20
 
             Console.WriteLine($"grid.OuterEdges.Count: {grid.OuterEdges.Count}");
 
-            var cornerTiles = grid.Tiles
-                .Where(tile => tile.IsOuterEdgeCornerTile)
-                .ToArray();
+            var cornerTiles = grid.OuterEdgeCornerTiles;
 
-            Console.WriteLine($"cornerTilesCount: {cornerTiles.Length}");
+            Console.WriteLine($"cornerTilesCount: {cornerTiles.Count}");
             Console.WriteLine($"cornerTileIds: {string.Join(", ", cornerTiles.Select(x => x.TileId))}");
 
             return cornerTiles.Aggregate(1L, (agg, tile) => agg * tile.TileId);

@@ -24,10 +24,10 @@ namespace AoC.Tests.Day20
 
             grid.Tiles.First().TileEdgePerms.Count.Should().Be(4 * 3); // numberOfRotations * numberOfScales
 
-            var numCornerTiles = grid.Tiles.Count(tile => tile.IsOuterEdgeCornerTile);
+            var numCornerTiles = grid.OuterEdgeCornerTiles.Count;
             numCornerTiles.Should().Be(4);
 
-            var numOuterEdgeNonCornerTiles = grid.Tiles.Count(tile => tile.IsOuterEdgeNonCornerTile);
+            var numOuterEdgeNonCornerTiles = grid.OuterEdgeNonCornerTiles.Count;
 
             var gridSize = grid.GridSize;
             var expectedNumOfOuterEdgeTiles = gridSize * 2 + (gridSize - 2) * 2; // Formula for getting expected number of edge tiles including corners
@@ -35,7 +35,6 @@ namespace AoC.Tests.Day20
             (numCornerTiles + numOuterEdgeNonCornerTiles).Should().Be(expectedNumOfOuterEdgeTiles);
 
             Console.WriteLine(new {gridSize, numCornerTiles, numOuterEdgeNonCornerTiles, total = expectedNumOfOuterEdgeTiles});
-            Console.WriteLine(ObjectDumper.Dump(grid.Tiles.First()));
         }
 
         [Test]

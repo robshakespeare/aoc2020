@@ -14,6 +14,10 @@ namespace AoC.Day20
 
         public HashSet<string> OuterEdges => _outerEdges ?? throw new InvalidOperationException($"{nameof(RebuildOuterEdges)} must be called first");
 
+        public IReadOnlyList<Tile> OuterEdgeCornerTiles { get; private set; } = Array.Empty<Tile>();
+
+        public IReadOnlyList<Tile> OuterEdgeNonCornerTiles { get; private set; } = Array.Empty<Tile>();
+
         private Grid()
         {
         }
@@ -47,6 +51,8 @@ namespace AoC.Day20
             grid.GridSize = (int)Math.Sqrt(tiles.Length);
             grid.Tiles = tiles;
             grid.RebuildOuterEdges();
+            grid.OuterEdgeCornerTiles = grid.Tiles.Where(tile => tile.IsOuterEdgeCornerTile).ToArray();
+            grid.OuterEdgeNonCornerTiles = grid.Tiles.Where(tile => tile.IsOuterEdgeNonCornerTile).ToArray();
 
             return grid;
         }
