@@ -27,7 +27,7 @@ namespace AoC.Day20
 
         private void RebuildOuterEdges()
         {
-            static IEnumerable<string> GetAllPermsOfEdges(Tile tile) => tile.TileEdgePerms.SelectMany(p => p.Edges.All).Distinct();
+            static IEnumerable<string> GetAllPermsOfEdges(Tile tile) => tile.TilePerms.SelectMany(p => p.Edges.All()).Distinct(); // rs-todo: is this distinct the possible issue???
 
             if (_outerEdges != null)
             {

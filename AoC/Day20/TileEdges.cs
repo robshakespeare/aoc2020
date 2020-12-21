@@ -1,30 +1,44 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AoC.Day20
 {
     public record TileEdges(string Top, string Right, string Bottom, string Left)
     {
+        public TileEdges(IReadOnlyList<string> pixels) : this(
+            Top: pixels[0],
+            Right: string.Join("", pixels.Select(line => line[^1])),
+            Bottom: pixels[^1],
+            Left: string.Join("", pixels.Select(line => line[0])))
+        {
+        }
+
         /// <summary>
         /// Returns all of the 4 edges.
         /// The order matches the <see cref="TileEdgeLocation"/> enum.
         /// </summary>
-        public IReadOnlyList<string> All { get; } = new []
+        public IEnumerable<string> All()
         {
-            Top,
-            Right,
-            Bottom,
-            Left
-        };
+            yield return Top;
+            yield return Right;
+            yield return Bottom;
+            yield return Left;
+        }
 
         /// <summary>
         /// Returns the edge at the specified location (top/right/bottom/left).
         /// </summary>
-        public string this[TileEdgeLocation location] => All[(int) location];
+        public string this[TileEdgeLocation location] => location switch
+        {
+            TileEdgeLocation.Top => Top,
+            TileEdgeLocation.Right => Right,
+            TileEdgeLocation.Bottom => Bottom,
+            TileEdgeLocation.Left => Left,
+            _ => throw new InvalidOperationException("Invalid location: " + location)
+        };
     }
 
-    /// <summary>
-    /// Defines the order of the Tile Edge locations when returned by the <see cref="TileEdges.All"/> method.
-    /// </summary>
     public enum TileEdgeLocation
     {
         Top = 0,

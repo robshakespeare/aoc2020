@@ -22,7 +22,7 @@ namespace AoC.Tests.Day20
             grid.GridSize.Should().Be(12); // i.e. same as above, we're looking for a 12 x 12 grid
             (grid.GridSize * grid.GridSize).Should().Be(grid.Tiles.Count);
 
-            grid.Tiles.First().TileEdgePerms.Count.Should().Be(4 * 3); // numberOfRotations * numberOfScales
+            grid.Tiles.First().TilePerms.Count.Should().Be(4 * 3); // numberOfRotations * numberOfScales
 
             var numCornerTiles = grid.OuterEdgeCornerTiles.Count;
             numCornerTiles.Should().Be(4);
