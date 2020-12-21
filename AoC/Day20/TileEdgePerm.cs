@@ -63,8 +63,19 @@ namespace AoC.Day20
 
             return new TileEdges(Top: top, Right: right, Bottom: bottom, Left: left);
         }
+
+        /// <summary>
+        /// Returns true if this permutation could fit in the specified corner.
+        /// </summary>
+        public bool IsPermForCorner(Corner corner)
+        {
+            var grid = Tile.Grid;
+            return grid.OuterEdges.Contains(Edges[corner.Horizontal]) &&
+                   grid.OuterEdges.Contains(Edges[corner.Vertical]);
+        }
     }
 
+    // ReSharper disable UnusedMember.Global
     public enum Rotation
     {
         Zero = 0,
@@ -73,6 +84,7 @@ namespace AoC.Day20
         Right270 = 3
     }
 
+    // ReSharper disable UnusedMember.Global
     public enum Scale
     {
         None = 0,

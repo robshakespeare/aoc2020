@@ -74,5 +74,10 @@ namespace AoC.Day20
 
             return new Tile(tileId, pixels, grid);
         }
+
+        /// <summary>
+        /// Returns the permutations that could fit in the specified corner.
+        /// </summary>
+        public IEnumerable<TileEdgePerm> GetPermsForCorner(Corner corner) => TileEdgePerms.Where(perm => perm.IsPermForCorner(corner));
     }
 }

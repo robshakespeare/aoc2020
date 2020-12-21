@@ -15,6 +15,11 @@ namespace AoC.Day20
             Bottom,
             Left
         };
+
+        /// <summary>
+        /// Returns the edge at the specified location (top/right/bottom/left).
+        /// </summary>
+        public string this[TileEdgeLocation location] => All[(int) location];
     }
 
     /// <summary>

@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using static System.Environment;
 
 namespace AoC.Day20
 {
@@ -23,7 +24,25 @@ namespace AoC.Day20
 
         protected override long? SolvePart2Impl(string input)
         {
-            return base.SolvePart2Impl(input);
+            var grid = Grid.ParsePuzzleInput(input);
+
+            foreach (var cornerTile in grid.OuterEdgeCornerTiles)
+            {
+                Console.WriteLine($"{NewLine}Corner tile {cornerTile.TileId}");
+
+                foreach (var corner in Corner.All)
+                {
+                    Console.WriteLine($"Num perms for Corner {corner}: {cornerTile.GetPermsForCorner(corner).Count()}");
+                }
+            }
+
+            // Work out the arrangement of the edge of the proper reassembled grid
+
+            // Once have edges, use a search to find the full arrangement of the proper reassembled grid
+
+            // Once have the reassembled grid, look for monsters!
+
+            return null;
         }
     }
 }
