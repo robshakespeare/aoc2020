@@ -20,6 +20,7 @@ namespace AoC.Day20
         public IReadOnlyList<TileEdgePerm> TileEdgePerms { get; }
 
         private readonly TileEdges _edges;
+        private readonly Lazy<IReadOnlyList<string>> _outerEdges;
 
         public Tile(int tileId, IReadOnlyList<string> pixels, Grid grid)
         {
@@ -28,18 +29,30 @@ namespace AoC.Day20
             Grid = grid;
             _edges = new TileEdges(
                 Top: pixels[0],
+                Right: string.Join("", pixels.Select(line => line[^1])),
                 Bottom: pixels[^1],
-                Left: string.Join("", pixels.Select(line => line[0])),
-                Right: string.Join("", pixels.Select(line => line[^1])));
+                Left: string.Join("", pixels.Select(line => line[0])));
 
             TileEdgePerms = Perms.Select(perm => new TileEdgePerm(this, perm.rotation, perm.scale)).ToArray();
+
+            _outerEdges = new Lazy<IReadOnlyList<string>>(() => _edges.All.Where(Grid.OuterEdges.Contains).ToArray());
         }
 
+        /// <summary>
+        /// Returns the 4 original edges of this tile.
+        /// </summary>
         public TileEdges GetEdges() => _edges;
 
-        public IEnumerable<string> GetAllPermsOfEdges() => TileEdgePerms.SelectMany(p => p.Edges.GetAll()).Distinct();
+        /// <summary>
+        /// Returns the original edges of this tile which are outer edges to the whole Grid.
+        /// </summary>
+        public IReadOnlyList<string> OuterEdges => _outerEdges.Value;
 
-        public int NumOuterEdges => _edges.GetAll().Count(Grid.OuterEdges.Contains);
+        public int NumOuterEdges => OuterEdges.Count;
+
+        public bool IsOuterEdgeCornerTile => NumOuterEdges == 2;
+
+        public bool IsOuterEdgeNonCornerTile => NumOuterEdges == 1;
 
         private static readonly Regex TileIdRegex = new(@"Tile (?<tileId>\d+):", RegexOptions.Compiled);
 

@@ -2,14 +2,29 @@ using System.Collections.Generic;
 
 namespace AoC.Day20
 {
-    public record TileEdges(string Top, string Bottom, string Left, string Right)
+    public record TileEdges(string Top, string Right, string Bottom, string Left)
     {
-        public IEnumerable<string> GetAll()
+        /// <summary>
+        /// Returns all of the 4 edges.
+        /// The order matches the <see cref="TileEdgeLocation"/> enum.
+        /// </summary>
+        public IReadOnlyList<string> All { get; } = new []
         {
-            yield return Top;
-            yield return Bottom;
-            yield return Left;
-            yield return Right;
-        }
+            Top,
+            Right,
+            Bottom,
+            Left
+        };
+    }
+
+    /// <summary>
+    /// Defines the order of the Tile Edge locations when returned by the <see cref="TileEdges.All"/> method.
+    /// </summary>
+    public enum TileEdgeLocation
+    {
+        Top = 0,
+        Right = 1,
+        Bottom = 2,
+        Left = 3
     }
 }

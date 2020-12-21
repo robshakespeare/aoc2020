@@ -1,14 +1,11 @@
 using System;
 using System.Linq;
-using Serilog;
 
 namespace AoC.Day20
 {
     public class Day20Solver : SolverBase
     {
         public override string DayName => "Jurassic Jigsaw";
-
-        private static readonly ILogger Logger = FileLogging.CreateLogger("day20-c");
 
         protected override long? SolvePart1Impl(string input)
         {
@@ -17,7 +14,7 @@ namespace AoC.Day20
             Console.WriteLine($"grid.OuterEdges.Count: {grid.OuterEdges.Count}");
 
             var cornerTiles = grid.Tiles
-                .Where(tile => tile.NumOuterEdges == 2)
+                .Where(tile => tile.IsOuterEdgeCornerTile)
                 .ToArray();
 
             Console.WriteLine($"cornerTilesCount: {cornerTiles.Length}");

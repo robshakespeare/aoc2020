@@ -6,9 +6,13 @@ namespace AoC.Day20
 {
     public class Grid
     {
+        private HashSet<string>? _outerEdges;
+
         public IReadOnlyList<Tile> Tiles { get; private set; } = Array.Empty<Tile>();
+
         public int GridSize { get; private set; }
-        public HashSet<string> OuterEdges { get; private set; } = new();
+
+        public HashSet<string> OuterEdges => _outerEdges ?? throw new InvalidOperationException($"{nameof(RebuildOuterEdges)} must be called first");
 
         private Grid()
         {
@@ -16,14 +20,19 @@ namespace AoC.Day20
 
         private void RebuildOuterEdges()
         {
-            var allEdges = Tiles.SelectMany(tile => tile.GetAllPermsOfEdges());
+            static IEnumerable<string> GetAllPermsOfEdges(Tile tile) => tile.TileEdgePerms.SelectMany(p => p.Edges.All).Distinct();
 
+            if (_outerEdges != null)
+            {
+                throw new InvalidOperationException($"{nameof(RebuildOuterEdges)} can only be called once");
+            }
+
+            var allEdges = Tiles.SelectMany(GetAllPermsOfEdges);
             var unpairedEdges = allEdges.GroupBy(edge => edge)
                 .Where(grp => grp.Count() == 1)
                 .Select(grp => grp.Single())
                 .ToHashSet();
-
-            OuterEdges = unpairedEdges;
+            _outerEdges = unpairedEdges;
         }
 
         public static Grid ParsePuzzleInput(string input)

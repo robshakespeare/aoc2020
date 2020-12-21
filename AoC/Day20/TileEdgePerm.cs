@@ -43,7 +43,7 @@ namespace AoC.Day20
                 right = oldLeft;
             }
 
-            return new TileEdges(Top: top, Bottom: bottom, Left: left, Right: right);
+            return new TileEdges(Top: top, Right: right, Bottom: bottom, Left: left);
         }
 
         private static TileEdges RotateNumberOfTimes(int times, TileEdges edges)
@@ -63,7 +63,7 @@ namespace AoC.Day20
                 top = oldLeft; // Top = Left
             }
 
-            return new TileEdges(Top: top, Bottom: bottom, Left: left, Right: right);
+            return new TileEdges(Top: top, Right: right, Bottom: bottom, Left: left);
         }
     }
 
