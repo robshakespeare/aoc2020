@@ -25,7 +25,10 @@ namespace AoC.Day20
             Grid = grid;
             _edges = new TileEdges(pixels);
 
-            TilePerms = Orientation.Permutations.Select(orientation => new TilePerm(this, orientation)).ToArray();
+            TilePerms = Orientation.Permutations
+                .Select(orientation => new TilePerm(this, orientation))
+                .DistinctBy(perm => perm.Id)
+                .ToArray();
 
             _outerEdges = new Lazy<IReadOnlyList<string>>(() => _edges.All().Where(Grid.OuterEdges.Contains).ToArray());
         }
@@ -75,8 +78,6 @@ namespace AoC.Day20
         /// <summary>
         /// Returns the permutations that could fit in the specified corner.
         /// </summary>
-        public IEnumerable<TilePerm> GetPermsForCorner(Corner corner) => TilePerms
-            .Where(perm => perm.IsPermForCorner(corner))
-            .DistinctBy(perm => perm.Id);
+        public IEnumerable<TilePerm> GetPermsForCorner(Corner corner) => TilePerms.Where(perm => perm.IsPermForCorner(corner));
     }
 }

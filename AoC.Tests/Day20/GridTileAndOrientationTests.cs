@@ -22,7 +22,7 @@ namespace AoC.Tests.Day20
             grid.GridSize.Should().Be(12); // i.e. same as above, we're looking for a 12 x 12 grid
             (grid.GridSize * grid.GridSize).Should().Be(grid.Tiles.Count);
 
-            grid.Tiles.First().TilePerms.Count.Should().Be(4 * 3); // numberOfRotations * numberOfScales
+            grid.Tiles.First().TilePerms.Count.Should().Be(8); // numberOfRotations * numberOfScales - duplicates, always comes out as 8
 
             var numCornerTiles = grid.OuterEdgeCornerTiles.Count;
             numCornerTiles.Should().Be(4);
@@ -37,7 +37,8 @@ namespace AoC.Tests.Day20
             // We do actually have duplicated permutations, but only across the whole grid
             var totalTilePerms = grid.Tiles.Sum(tile => tile.TilePerms.Count);
             var distinctTilePerms = grid.Tiles.SelectMany(tile => tile.TilePerms.Select(tilePerm => tilePerm.Id)).Distinct().Count();
-            distinctTilePerms.Should().BeLessThan(totalTilePerms);
+            distinctTilePerms.Should().Be(totalTilePerms);
+            distinctTilePerms.Should().Be(8 * 144); // 8 perms per tile x 144 tiles
 
             Console.WriteLine(new {gridSize, numCornerTiles, numOuterEdgeNonCornerTiles, total = expectedNumOfOuterEdgeTiles, totalTilePerms, distinctTilePerms });
         }

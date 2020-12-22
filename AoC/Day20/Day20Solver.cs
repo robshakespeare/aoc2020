@@ -33,7 +33,7 @@ namespace AoC.Day20
             // Once have edges, use a search to find the full arrangement of the proper reassembled grid
 
             // Once have the reassembled grid, look for monsters!
-            // !! IMPORTANT: DON'T FORGET: remove the "border" first, i.e. the outside pixels from each edge of the reassembled grid
+            // !! IMPORTANT: DON'T FORGET: remove the "border" first, i.e. the outside pixels from EACH TILE of the reassembled grid
             // rs-todo: somewhere at this point, ave it in the method so it can be called, to verify that the example input produces the expected "reassembled grid"
 
             return null;
