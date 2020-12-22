@@ -8,7 +8,7 @@ namespace AoC.Day22
     {
         public override string DayName => "Crab Combat";
 
-        private static (Queue<int> player1Deck, Queue<int> player2Deck) InputToDecks(string input)
+        private static (Queue<int> player1Deck, Queue<int> player2Deck) ParseInputToDecks(string input)
         {
             IReadOnlyList<IReadOnlyList<int>> originalDecks = input
                 .NormalizeLineEndings()
@@ -22,12 +22,26 @@ namespace AoC.Day22
             return (player1Deck, player2Deck);
         }
 
+        private static void EndOfRound(bool player1Won, Queue<int> player1Deck, int player1Card, Queue<int> player2Deck, int player2Card)
+        {
+            if (player1Won)
+            {
+                player1Deck.Enqueue(player1Card);
+                player1Deck.Enqueue(player2Card);
+            }
+            else
+            {
+                player2Deck.Enqueue(player2Card);
+                player2Deck.Enqueue(player1Card);
+            }
+        }
+
         private static long CalculateScore(IEnumerable<int> winningDeck) =>
             winningDeck.Reverse().Select((card, i) => (card, n: i + 1)).Aggregate(0L, (agg, cur) => agg + cur.card * cur.n);
 
         protected override long? SolvePart1Impl(string input)
         {
-            var (player1Deck, player2Deck) = InputToDecks(input);
+            var (player1Deck, player2Deck) = ParseInputToDecks(input);
 
             var roundNumber = 0;
             while (player1Deck.Any() && player2Deck.Any())
@@ -38,21 +52,12 @@ namespace AoC.Day22
 
                 if (player1Card == player2Card)
                 {
-                    throw new InvalidOperationException($"Draw not supported! {new{ roundNumber, player1Card, player2Card }}");
+                    throw new InvalidOperationException($"Draw not supported! {new {roundNumber, player1Card, player2Card}}");
                 }
 
                 var player1Won = player1Card > player2Card;
 
-                if (player1Won)
-                {
-                    player1Deck.Enqueue(player1Card);
-                    player1Deck.Enqueue(player2Card);
-                }
-                else
-                {
-                    player2Deck.Enqueue(player2Card);
-                    player2Deck.Enqueue(player1Card);
-                }
+                EndOfRound(player1Won, player1Deck, player1Card, player2Deck, player2Card);
             }
 
             var winningDeck = player1Deck.Any() ? player1Deck : player2Deck;
@@ -62,7 +67,7 @@ namespace AoC.Day22
 
         protected override long? SolvePart2Impl(string input)
         {
-            var (player1Deck, player2Deck) = InputToDecks(input);
+            var (player1Deck, player2Deck) = ParseInputToDecks(input);
 
             var (_, winningDeck) = Part2Game(player1Deck, player2Deck);
 
@@ -79,10 +84,10 @@ namespace AoC.Day22
             while (player1Deck.Any() && player2Deck.Any())
             {
                 roundNumber++;
+
                 var gameId = $"{string.Join(",", player1Deck)}|{string.Join(",", player2Deck)}";
                 if (!gameHistory.Add(gameId))
                 {
-                    Console.WriteLine($"Infinite Game Detected: {new { roundNumber, gameId }}");
                     infiniteGameDetected = true;
                     break;
                 }
@@ -92,7 +97,7 @@ namespace AoC.Day22
 
                 if (player1Card == player2Card)
                 {
-                    throw new InvalidOperationException($"Draw not supported! {new { roundNumber, player1Card, player2Card }}");
+                    throw new InvalidOperationException($"Draw not supported! {new {roundNumber, player1Card, player2Card}}");
                 }
 
                 var recursiveCombatRequired = player1Deck.Count >= player1Card &&
@@ -102,16 +107,7 @@ namespace AoC.Day22
                     ? RecursiveCombat(player1Deck, player1Card, player2Deck, player2Card).player1WonSubGame
                     : player1Card > player2Card;
 
-                if (player1Won)
-                {
-                    player1Deck.Enqueue(player1Card);
-                    player1Deck.Enqueue(player2Card);
-                }
-                else
-                {
-                    player2Deck.Enqueue(player2Card);
-                    player2Deck.Enqueue(player1Card);
-                }
+                EndOfRound(player1Won, player1Deck, player1Card, player2Deck, player2Card);
             }
 
             var player1WonGame = infiniteGameDetected || player1Deck.Any();
