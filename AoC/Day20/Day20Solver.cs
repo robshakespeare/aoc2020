@@ -1,6 +1,6 @@
 using System;
 using System.Linq;
-using Serilog;
+using static System.Environment;
 
 namespace AoC.Day20
 {
@@ -8,19 +8,15 @@ namespace AoC.Day20
     {
         public override string DayName => "Jurassic Jigsaw";
 
-        private static readonly ILogger Logger = FileLogging.CreateLogger("day20-c");
-
         protected override long? SolvePart1Impl(string input)
         {
             var grid = Grid.ParsePuzzleInput(input);
 
             Console.WriteLine($"grid.OuterEdges.Count: {grid.OuterEdges.Count}");
 
-            var cornerTiles = grid.Tiles
-                .Where(tile => tile.NumOuterEdges == 2)
-                .ToArray();
+            var cornerTiles = grid.OuterEdgeCornerTiles;
 
-            Console.WriteLine($"cornerTilesCount: {cornerTiles.Length}");
+            Console.WriteLine($"cornerTilesCount: {cornerTiles.Count}");
             Console.WriteLine($"cornerTileIds: {string.Join(", ", cornerTiles.Select(x => x.TileId))}");
 
             return cornerTiles.Aggregate(1L, (agg, tile) => agg * tile.TileId);
@@ -28,7 +24,15 @@ namespace AoC.Day20
 
         protected override long? SolvePart2Impl(string input)
         {
-            return base.SolvePart2Impl(input);
+            var grid = Grid.ParsePuzzleInput(input);
+
+            // Work out the arrangement to form the proper reassembled grid
+            var reassembledGrid = grid.ReassembleFullGrid();
+
+            Console.WriteLine($"Reassembled Grid:{NewLine}{reassembledGrid}{NewLine}");
+
+            // Now we have the reassembled grid, look for marks that aren't sea monsters!
+            return reassembledGrid.CountMarksThatAreNotSeaMonsters();
         }
     }
 }

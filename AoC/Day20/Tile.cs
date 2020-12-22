@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using MoreLinq;
 
 namespace AoC.Day20
 {
@@ -9,37 +10,44 @@ namespace AoC.Day20
     {
         private const int ExpectedTileSize = 10;
 
-        public static readonly IReadOnlyList<(Rotation rotation, Scale scale)> Perms =
-            Enum.GetValues(typeof(Rotation)).Cast<Rotation>()
-                .SelectMany(rotation => Enum.GetValues(typeof(Scale)).Cast<Scale>().Select(scale => (rotation, scale)))
-                .ToArray();
-
         public int TileId { get; }
         public IReadOnlyList<string> Pixels { get; }
         public Grid Grid { get; }
-        public IReadOnlyList<TileEdgePerm> TileEdgePerms { get; }
+        public IReadOnlyList<TileOrientation> TileOrientations { get; }
 
         private readonly TileEdges _edges;
+        private readonly Lazy<IReadOnlyList<string>> _outerEdges;
 
         public Tile(int tileId, IReadOnlyList<string> pixels, Grid grid)
         {
             TileId = tileId;
             Pixels = pixels;
             Grid = grid;
-            _edges = new TileEdges(
-                Top: pixels[0],
-                Bottom: pixels[^1],
-                Left: string.Join("", pixels.Select(line => line[0])),
-                Right: string.Join("", pixels.Select(line => line[^1])));
+            _edges = new TileEdges(pixels);
 
-            TileEdgePerms = Perms.Select(perm => new TileEdgePerm(this, perm.rotation, perm.scale)).ToArray();
+            TileOrientations = Orientation.Permutations
+                .Select(orientation => new TileOrientation(this, orientation))
+                .DistinctBy(tileOrientation => tileOrientation.VisualString)
+                .ToArray();
+
+            _outerEdges = new Lazy<IReadOnlyList<string>>(() => _edges.All().Where(Grid.OuterEdges.Contains).ToArray());
         }
 
+        /// <summary>
+        /// Returns the 4 original edges of this tile.
+        /// </summary>
         public TileEdges GetEdges() => _edges;
 
-        public IEnumerable<string> GetAllPermsOfEdges() => TileEdgePerms.SelectMany(p => p.Edges.GetAll()).Distinct();
+        /// <summary>
+        /// Returns the original edges of this tile which are outer edges to the whole Grid.
+        /// </summary>
+        public IReadOnlyList<string> OuterEdges => _outerEdges.Value;
 
-        public int NumOuterEdges => _edges.GetAll().Count(Grid.OuterEdges.Contains);
+        public int NumOuterEdges => OuterEdges.Count;
+
+        public bool IsOuterEdgeCornerTile => NumOuterEdges == 2;
+
+        public bool IsOuterEdgeNonCornerTile => NumOuterEdges == 1;
 
         private static readonly Regex TileIdRegex = new(@"Tile (?<tileId>\d+):", RegexOptions.Compiled);
 
@@ -66,5 +74,11 @@ namespace AoC.Day20
 
             return new Tile(tileId, pixels, grid);
         }
+
+        /// <summary>
+        /// Returns the possible orientations that could fit in the specified corner.
+        /// </summary>
+        public IEnumerable<TileOrientation> GetOrientationsForCorner(Corner corner) =>
+            TileOrientations.Where(tileOrientation => tileOrientation.IsOrientationForCorner(corner));
     }
 }
