@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 
 namespace AoC.Day20
 {
@@ -16,7 +14,7 @@ namespace AoC.Day20
 
         public TileOrientation(Tile tile, Orientation orientation)
         {
-            Pixels = BuildPixels(tile, orientation.Rotation, orientation.Scale);
+            Pixels = orientation.Apply(tile.Pixels);
             Tile = tile;
             Orientation = orientation;
             VisualString = string.Join("\n", Pixels);
@@ -26,26 +24,6 @@ namespace AoC.Day20
         }
 
         public override string ToString() => Name;
-
-        private static IReadOnlyList<string> BuildPixels(Tile tile, Rotation rotation, Scale scale)
-        {
-            if (!(rotation is Rotation.Zero or Rotation.Right90 or Rotation.Right180 or Rotation.Right270))
-            {
-                throw new InvalidOperationException("Invalid rotation: " + rotation);
-            }
-
-            var rotated = MathUtils.RotateGrid(tile.Pixels, 90 * (int) rotation);
-
-            var scaleBy = scale switch
-            {
-                Scale.None => new Vector2(1, 1),
-                Scale.FlipHorizontal => new Vector2(1, -1),
-                Scale.FlipVertical => new Vector2(-1, 1),
-                _ => throw new InvalidOperationException("Invalid scale: " + scale)
-            };
-
-            return MathUtils.ScaleGrid(rotated, scaleBy);
-        }
 
         /// <summary>
         /// Returns true if this Orientation could fit in the specified corner.
@@ -82,20 +60,5 @@ namespace AoC.Day20
                 }
             }
         }
-    }
-
-    public enum Rotation
-    {
-        Zero = 0,
-        Right90 = 1,
-        Right180 = 2,
-        Right270 = 3
-    }
-
-    public enum Scale
-    {
-        None = 0,
-        FlipHorizontal = 1,
-        FlipVertical = 2
     }
 }

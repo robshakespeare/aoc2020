@@ -35,7 +35,7 @@ namespace AoC.Tests.Day20
             var part2Result = _sut.SolvePart2(ExampleInput);
 
             // ASSERT
-            part2Result.Should().Be(null);
+            part2Result.Should().Be(273);
         }
 
         [Test]
@@ -45,7 +45,7 @@ namespace AoC.Tests.Day20
             var part2Result = _sut.SolvePart2();
 
             // ASSERT
-            part2Result.Should().Be(null);
+            part2Result.Should().Be(2065);
         }
 
         public const string ExampleInput = @"Tile 2311:

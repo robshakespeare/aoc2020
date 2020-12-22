@@ -82,7 +82,7 @@ namespace AoC.Day20
             new Tile(int.MinValue, new[] {"UninitializedTile"}, new Grid()),
             new Orientation(default, default));
 
-        public string ReassembleFullGrid()
+        public ReassembledGrid ReassembleFullGrid()
         {
             TileOrientation[][] newGrid = Enumerable.Range(0, GridSize)
                 .Select(_ => Enumerable.Repeat(UninitializedTileOrientation, GridSize).ToArray()).ToArray();
@@ -151,7 +151,7 @@ namespace AoC.Day20
                 }
             }
 
-            return reassembledGrid.ToString().TrimEnd();
+            return new ReassembledGrid(reassembledGrid.ToString().TrimEnd());
         }
     }
 }

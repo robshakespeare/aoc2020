@@ -66,7 +66,7 @@ namespace AoC.Tests.Day20
             var result = grid.ReassembleFullGrid();
 
             // ASSERT
-            result.NormalizeLineEndings().Should().Be(
+            result.ToString().NormalizeLineEndings().Should().Be(
                 @".#.#..#.##...#.##..#####
 ###....#.#....#..#......
 ##.##.###.#.#..######...

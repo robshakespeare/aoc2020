@@ -31,9 +31,8 @@ namespace AoC.Day20
 
             Console.WriteLine($"Reassembled Grid:{NewLine}{reassembledGrid}{NewLine}");
 
-            // Now we have the reassembled grid, look for sea monsters!
-
-            return null;
+            // Now we have the reassembled grid, look for marks that aren't sea monsters!
+            return reassembledGrid.CountMarksThatAreNotSeaMonsters();
         }
     }
 }
