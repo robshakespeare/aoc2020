@@ -62,6 +62,8 @@ namespace AoC.Day20
 
         public void LogNumPermsForEachCornerTile()
         {
+            var displayExtra = true;
+
             foreach (var cornerTile in OuterEdgeCornerTiles)
             {
                 Console.WriteLine($"{NewLine}Corner tile {cornerTile.TileId}");
@@ -69,6 +71,12 @@ namespace AoC.Day20
                 foreach (var corner in Corner.All)
                 {
                     Console.WriteLine($"Num perms for Corner {corner}: {cornerTile.GetPermsForCorner(corner).Count()}");
+
+                    if (displayExtra)
+                    {
+                        Console.WriteLine($"{string.Join(NewLine + NewLine, cornerTile.GetPermsForCorner(corner).Select(x => x.Id))}");
+                        displayExtra = false;
+                    }
                 }
             }
         }

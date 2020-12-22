@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using MoreLinq;
 
 namespace AoC.Day20
 {
@@ -74,6 +75,8 @@ namespace AoC.Day20
         /// <summary>
         /// Returns the permutations that could fit in the specified corner.
         /// </summary>
-        public IEnumerable<TilePerm> GetPermsForCorner(Corner corner) => TilePerms.Where(perm => perm.IsPermForCorner(corner));
+        public IEnumerable<TilePerm> GetPermsForCorner(Corner corner) => TilePerms
+            .Where(perm => perm.IsPermForCorner(corner))
+            .DistinctBy(perm => perm.Id);
     }
 }

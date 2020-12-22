@@ -34,7 +34,12 @@ namespace AoC.Tests.Day20
 
             (numCornerTiles + numOuterEdgeNonCornerTiles).Should().Be(expectedNumOfOuterEdgeTiles);
 
-            Console.WriteLine(new {gridSize, numCornerTiles, numOuterEdgeNonCornerTiles, total = expectedNumOfOuterEdgeTiles});
+            // We do actually have duplicated permutations, but only across the whole grid
+            var totalTilePerms = grid.Tiles.Sum(tile => tile.TilePerms.Count);
+            var distinctTilePerms = grid.Tiles.SelectMany(tile => tile.TilePerms.Select(tilePerm => tilePerm.Id)).Distinct().Count();
+            distinctTilePerms.Should().BeLessThan(totalTilePerms);
+
+            Console.WriteLine(new {gridSize, numCornerTiles, numOuterEdgeNonCornerTiles, total = expectedNumOfOuterEdgeTiles, totalTilePerms, distinctTilePerms });
         }
 
         [Test]
