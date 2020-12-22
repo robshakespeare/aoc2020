@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 
 namespace AoC.Day20
 {
-    public class TilePerm
+    public class TileOrientation
     {
         public IReadOnlyList<string> Pixels { get; }
         public Tile Tile { get; }
@@ -13,7 +14,7 @@ namespace AoC.Day20
         public string Name { get; }
         public TileEdges Edges { get; }
 
-        public TilePerm(Tile tile, Orientation orientation)
+        public TileOrientation(Tile tile, Orientation orientation)
         {
             Pixels = BuildPixels(tile, orientation.Rotation, orientation.Scale);
             Tile = tile;
@@ -28,6 +29,11 @@ namespace AoC.Day20
 
         private static IReadOnlyList<string> BuildPixels(Tile tile, Rotation rotation, Scale scale)
         {
+            if (!(rotation is Rotation.Zero or Rotation.Right90 or Rotation.Right180 or Rotation.Right270))
+            {
+                throw new InvalidOperationException("Invalid rotation: " + rotation);
+            }
+
             var rotated = MathUtils.RotateGrid(tile.Pixels, 90 * (int) rotation);
 
             var scaleBy = scale switch
@@ -50,9 +56,20 @@ namespace AoC.Day20
             return grid.OuterEdges.Contains(Edges[corner.Horizontal]) &&
                    grid.OuterEdges.Contains(Edges[corner.Vertical]);
         }
+
+        public TileOrientation GetUniquePairToRight() =>
+            Tile.Grid.Tiles
+                .Where(tile => tile != Tile)
+                .SelectMany(tile => tile.TileOrientations)
+                .Single(otherTilePerm => Edges[TileEdgeLocation.Right] == otherTilePerm.Edges[TileEdgeLocation.Left]);
+
+        public TileOrientation GetUniquePairToBelow() =>
+            Tile.Grid.Tiles
+                .Where(tile => tile != Tile)
+                .SelectMany(tile => tile.TileOrientations)
+                .Single(otherTilePerm => Edges[TileEdgeLocation.Bottom] == otherTilePerm.Edges[TileEdgeLocation.Top]);
     }
 
-    // ReSharper disable UnusedMember.Global
     public enum Rotation
     {
         Zero = 0,
@@ -61,7 +78,6 @@ namespace AoC.Day20
         Right270 = 3
     }
 
-    // ReSharper disable UnusedMember.Global
     public enum Scale
     {
         None = 0,

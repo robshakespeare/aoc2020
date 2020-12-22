@@ -25,7 +25,7 @@ namespace AoC.Day20
         {
             var grid = Grid.ParsePuzzleInput(input);
 
-            grid.ReassembleFullGridBorder();
+            grid.ReassembleFullGrid();
 
             grid.LogNumPermsForEachCornerTile();
             grid.LogCornerTilePerms();
