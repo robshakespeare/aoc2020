@@ -8,11 +8,7 @@ namespace AoC.Tests.Day22
     {
         private readonly Day22Solver _sut = new();
 
-        [Test]
-        public void Part1Example()
-        {
-            // ACT
-            var part1Result = _sut.SolvePart1(@"Player 1:
+        private const string ExampleInput = @"Player 1:
 9
 2
 6
@@ -24,7 +20,13 @@ Player 2:
 8
 4
 7
-10");
+10";
+
+        [Test]
+        public void Part1Example()
+        {
+            // ACT
+            var part1Result = _sut.SolvePart1(ExampleInput);
 
             // ASSERT
             part1Result.Should().Be(306);
@@ -41,13 +43,23 @@ Player 2:
         }
 
         [Test]
+        public void Part2Example()
+        {
+            // ACT
+            var part2Result = _sut.SolvePart2(ExampleInput);
+
+            // ASSERT
+            part2Result.Should().Be(291);
+        }
+
+        [Test]
         public void Part2ReTest()
         {
             // ACT
             var part2Result = _sut.SolvePart2();
 
             // ASSERT
-            part2Result.Should().Be(null);
+            part2Result.Should().Be(33651);
         }
     }
 }
