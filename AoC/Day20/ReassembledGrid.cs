@@ -12,6 +12,7 @@ namespace AoC.Day20
 
         private readonly IReadOnlyList<char[]> _rows;
         private readonly string _grid;
+        private IReadOnlyList<Vector2[]> _searchSeaMonsterOrientationsCoords;
 
         public ReassembledGrid(string grid)
         {
@@ -20,6 +21,7 @@ namespace AoC.Day20
                 .ReadLines()
                 .Select(line => line.ToCharArray())
                 .ToArray();
+            _searchSeaMonsterOrientationsCoords = SeaMonsterOrientationsCoords;
         }
 
         public override string ToString() => _grid;
@@ -33,11 +35,12 @@ namespace AoC.Day20
                 {
                     var offset = new Vector2(x, y);
 
-                    foreach (var seaMonsterCoords in SeaMonsterOrientationsCoords)
+                    foreach (var seaMonsterCoords in _searchSeaMonsterOrientationsCoords)
                     {
                         if (IsSeaMonster(seaMonsterCoords, offset))
                         {
                             MarkSeaMonster(seaMonsterCoords, offset);
+                            _searchSeaMonsterOrientationsCoords = new[] {seaMonsterCoords};
                         }
                     }
                 }
