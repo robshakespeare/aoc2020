@@ -40,6 +40,11 @@ namespace AoC.Day20
                 .Select(grp => grp.Single())
                 .ToHashSet();
             _outerEdges = unpairedEdges;
+
+            var distinctGroupCounts = allEdges.GroupBy(edge => edge)
+                .Select(grp => grp.Count())
+                .Distinct();
+            Console.WriteLine($"distinctGroupCounts: {string.Join(", ", distinctGroupCounts)}");
         }
 
         public static Grid ParsePuzzleInput(string input)
@@ -108,6 +113,19 @@ namespace AoC.Day20
         public void ReassembleFullGridBorder()
         {
             var cornerTilesPerms = OuterEdgeCornerTiles.Permutations().ToArray();
+
+            Console.WriteLine("cornerTilesPerms count: " + cornerTilesPerms.Length);
+
+            foreach (var (corner, tilePerm) in Corner.All.SelectMany(
+                corner => OuterEdgeCornerTiles.SelectMany(
+                    cornerTile => cornerTile.TilePerms.Select(
+                        cornerTilePerm => (corner, cornerTilePerm)))))
+            {
+                
+            }
+            
+
+            //cornerTilesPerms.Select(tile => tile)
 
             // rs-todo: resume here????!!!!!
 
