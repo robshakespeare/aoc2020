@@ -48,7 +48,7 @@ namespace AoC.Tests.Day20
             part2Result.Should().Be(null);
         }
 
-        private const string ExampleInput = @"Tile 2311:
+        public const string ExampleInput = @"Tile 2311:
 ..##.#..#.
 ##..#.....
 #...##..#.

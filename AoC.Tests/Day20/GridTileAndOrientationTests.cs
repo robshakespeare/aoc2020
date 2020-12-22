@@ -35,11 +35,12 @@ namespace AoC.Tests.Day20
             (numCornerTiles + numOuterEdgeNonCornerTiles).Should().Be(expectedNumOfOuterEdgeTiles);
 
             var totalTilePerms = grid.Tiles.Sum(tile => tile.TileOrientations.Count);
-            var distinctTilePerms = grid.Tiles.SelectMany(tile => tile.TileOrientations.Select(tilePerm => tilePerm.Id)).Distinct().Count();
+            var distinctTilePerms = grid.Tiles.SelectMany(tile => tile.TileOrientations.Select(tilePerm => tilePerm.VisualString)).Distinct().Count();
             distinctTilePerms.Should().Be(totalTilePerms);
             distinctTilePerms.Should().Be(8 * 144); // 8 perms per tile x 144 tiles
 
-            Console.WriteLine(new {gridSize, numCornerTiles, numOuterEdgeNonCornerTiles, total = expectedNumOfOuterEdgeTiles, totalTilePerms, distinctTilePerms });
+            Console.WriteLine(
+                new {gridSize, numCornerTiles, numOuterEdgeNonCornerTiles, total = expectedNumOfOuterEdgeTiles, totalTilePerms, distinctTilePerms});
         }
 
         [Test]
@@ -54,6 +55,42 @@ namespace AoC.Tests.Day20
             string.Join(", ", Corner.All).Should().Be("TopRight, BottomRight, BottomLeft, TopLeft");
             string.Join(", ", Corner.All.OrderBy(x => x.CornerIndex)).Should().Be("TopRight, BottomRight, BottomLeft, TopLeft");
             Corner.Indexes.Should().BeEquivalentTo(new[] { 0, 1, 2, 3 }, options => options.WithStrictOrdering());
+        }
+
+        [Test]
+        public void Grid_ReassembleFullGrid_ExampleTest()
+        {
+            var grid = Grid.ParsePuzzleInput(Day20SolverTests.ExampleInput);
+
+            // ACT
+            var result = grid.ReassembleFullGrid();
+
+            // ASSERT
+            result.NormalizeLineEndings().Should().Be(
+                @".#.#..#.##...#.##..#####
+###....#.#....#..#......
+##.##.###.#.#..######...
+###.#####...#.#####.#..#
+##.#....#.##.####...#.##
+...########.#....#####.#
+....#..#...##..#.#.###..
+.####...#..#.....#......
+#..#.##..#..###.#.##....
+#.####..#.####.#.#.###..
+###.#.#...#.######.#..##
+#.####....##..########.#
+##..##.#...#...#.#.#.#..
+...#..#..#.#.##..###.###
+.#.#....#.##.#...###.##.
+###.#...#..#.##.######..
+.#.#.###.##.##.#..#.##..
+.####.###.#...###.#..#.#
+..#.#..#..#.#.#.####.###
+#..####...#.#.#.###.###.
+#####..#####...###....##
+#.##..#..#...#..####...#
+.#.###..##..##..####.##.
+...###...##...#...#..###".NormalizeLineEndings());
         }
     }
 }

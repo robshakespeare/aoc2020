@@ -10,7 +10,7 @@ namespace AoC.Day20
         public IReadOnlyList<string> Pixels { get; }
         public Tile Tile { get; }
         public Orientation Orientation { get; }
-        public string Id { get; }
+        public string VisualString { get; }
         public string Name { get; }
         public TileEdges Edges { get; }
 
@@ -19,7 +19,7 @@ namespace AoC.Day20
             Pixels = BuildPixels(tile, orientation.Rotation, orientation.Scale);
             Tile = tile;
             Orientation = orientation;
-            Id = string.Join("\n", Pixels);
+            VisualString = string.Join("\n", Pixels);
             Name = $"{tile.TileId}+{orientation}";
 
             Edges = new TileEdges(Pixels);
@@ -48,9 +48,9 @@ namespace AoC.Day20
         }
 
         /// <summary>
-        /// Returns true if this permutation could fit in the specified corner.
+        /// Returns true if this Orientation could fit in the specified corner.
         /// </summary>
-        public bool IsPermForCorner(Corner corner)
+        public bool IsOrientationForCorner(Corner corner)
         {
             var grid = Tile.Grid;
             return grid.OuterEdges.Contains(Edges[corner.Horizontal]) &&
@@ -68,6 +68,20 @@ namespace AoC.Day20
                 .Where(tile => tile != Tile)
                 .SelectMany(tile => tile.TileOrientations)
                 .Single(otherTilePerm => Edges[TileEdgeLocation.Bottom] == otherTilePerm.Edges[TileEdgeLocation.Top]);
+
+        public string[] GetPixelsWithoutBorder()
+        {
+            return Enumerate().ToArray();
+
+            IEnumerable<string> Enumerate()
+            {
+                var rows = Pixels.ToArray()[1..^1];
+                foreach (var row in rows)
+                {
+                    yield return row[1..^1];
+                }
+            }
+        }
     }
 
     public enum Rotation

@@ -27,7 +27,7 @@ namespace AoC.Day20
 
             TileOrientations = Orientation.Permutations
                 .Select(orientation => new TileOrientation(this, orientation))
-                .DistinctBy(perm => perm.Id)
+                .DistinctBy(tileOrientation => tileOrientation.VisualString)
                 .ToArray();
 
             _outerEdges = new Lazy<IReadOnlyList<string>>(() => _edges.All().Where(Grid.OuterEdges.Contains).ToArray());
@@ -78,6 +78,7 @@ namespace AoC.Day20
         /// <summary>
         /// Returns the possible orientations that could fit in the specified corner.
         /// </summary>
-        public IEnumerable<TileOrientation> GetOrientationsForCorner(Corner corner) => TileOrientations.Where(perm => perm.IsPermForCorner(corner));
+        public IEnumerable<TileOrientation> GetOrientationsForCorner(Corner corner) =>
+            TileOrientations.Where(tileOrientation => tileOrientation.IsOrientationForCorner(corner));
     }
 }
