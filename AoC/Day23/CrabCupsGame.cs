@@ -17,11 +17,18 @@ namespace AoC.Day23
         private LinkedListNode<int> _pickedCup2;
         private LinkedListNode<int> _pickedCup3;
 
-        public CrabCupsGame(string puzzleInput)
+        public CrabCupsGame(string puzzleInput, bool isPart2)
         {
             var cupValues = puzzleInput
                 .Select(chr => int.Parse(chr.ToString()))
                 .ToArray();
+
+            if (isPart2)
+            {
+                var extraCount = 1000000 - cupValues.Length;
+
+                cupValues = cupValues.Concat(Enumerable.Range(cupValues.Max() + 1, extraCount)).ToArray();
+            }
 
             _cupsList = new LinkedList<int>(cupValues);
             _minCup = _cupsList.Min();
@@ -43,6 +50,11 @@ namespace AoC.Day23
             }
         }
 
+        private static LinkedListNode<int> GetNextOrFirst(LinkedListNode<int> node) => node.Next ?? node.List?.First ?? throw new InvalidOperationException();
+
+        /// <summary>
+        /// Simulates the specified next number of moves.
+        /// </summary>
         public void Play(int numOfMoves)
         {
             for (var moveNum = 1; moveNum <= numOfMoves; moveNum++)
@@ -65,32 +77,54 @@ namespace AoC.Day23
             }
         }
 
+        private LinkedListNode<int> PickUpNext()
+        {
+            var next = GetNextOrFirst(_currentCup);
+            _cupsList.Remove(next);
+            return next;
+        }
+
+        private bool IsPickedCup(int cupValue) =>
+            _pickedCup1.Value == cupValue ||
+            _pickedCup2.Value == cupValue ||
+            _pickedCup3.Value == cupValue;
+
         private LinkedListNode<int> GetDestinationCup()
         {
-            var searchFor = _currentCup.Value - 1;
+            var destinationCupValue = _currentCup.Value - 1;
             LinkedListNode<int>? found = null;
-                
+
             do
             {
-                if (searchFor < _minCup)
+                if (destinationCupValue < _minCup)
                 {
-                    searchFor = _maxCup;
+                    destinationCupValue = _maxCup;
                 }
 
-                if (!IsPickedCup(searchFor))
+                if (!IsPickedCup(destinationCupValue))
                 {
-                    var cupIndex = searchFor - 1;
-                    found = _cupsLookup[cupIndex];
+                    found = LookupCup(destinationCupValue);
                 }
                 else
                 {
-                    searchFor--;
+                    destinationCupValue--;
                 }
             } while (found == null);
 
             return found;
         }
 
+        private LinkedListNode<int> LookupCup(int cupValue)
+        {
+            var cupIndex = cupValue - 1;
+            return _cupsLookup[cupIndex];
+        }
+
+        /// <summary>
+        /// After the crab is done, what order will the cups be in?
+        /// Starting after the cup labeled 1, collect the other cups' labels clockwise into a single
+        /// string with no extra characters; each number except 1 should appear exactly once.
+        /// </summary>
         public long GetCupOrder()
         {
             var result = new StringBuilder();
@@ -110,23 +144,18 @@ namespace AoC.Day23
             return long.Parse(result.ToString());
         }
 
-        private LinkedListNode<int> PickUpNext()
+        /// <summary>
+        /// Determine which two cups will end up immediately clockwise of cup 1.
+        /// What do you get if you multiply their labels together?
+        /// </summary>
+        public long GetPart2Result()
         {
-            var next = GetNextOrFirst(_currentCup);
-            _cupsList.Remove(next);
-            return next;
-        }
+            var cup1 = LookupCup(1);
 
-        private static LinkedListNode<int> GetNextOrFirst(LinkedListNode<int> node) => node.Next ?? node.List?.First ?? throw new InvalidOperationException();
+            var nextNode1 = GetNextOrFirst(cup1);
+            var nextNode2 = GetNextOrFirst(nextNode1);
 
-        private bool IsPickedCup(int cupValue) =>
-            _pickedCup1.Value == cupValue ||
-            _pickedCup2.Value == cupValue ||
-            _pickedCup3.Value == cupValue;
-
-        private struct PickedCups
-        {
-            
+            return nextNode1.Value * (long) nextNode2.Value;
         }
     }
 }

@@ -11,7 +11,7 @@ namespace AoC.Tests.Day23
         [Test]
         public void Part1Example_10Moves()
         {
-            var crabCupsGame = new CrabCupsGame("389125467");
+            var crabCupsGame = new CrabCupsGame("389125467", false);
 
             // ACT
             crabCupsGame.Play(10);
@@ -42,13 +42,25 @@ namespace AoC.Tests.Day23
         }
 
         [Test]
+        [Ignore("Takes ~2.8 seconds")]
+        public void Part2Example()
+        {
+            // ACT
+            var part2Result = _sut.SolvePart2("389125467");
+
+            // ASSERT
+            part2Result.Should().Be(149245887792);
+        }
+
+        [Test]
+        [Ignore("Takes ~3 seconds")]
         public void Part2ReTest()
         {
             // ACT
             var part2Result = _sut.SolvePart2();
 
             // ASSERT
-            part2Result.Should().Be(null);
+            part2Result.Should().Be(192515314252);
         }
     }
 }
