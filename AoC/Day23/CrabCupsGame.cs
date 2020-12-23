@@ -10,9 +10,12 @@ namespace AoC.Day23
         private readonly LinkedList<int> _cupsList;
         private readonly int _minCup;
         private readonly int _maxCup;
+        private readonly IReadOnlyList<LinkedListNode<int>> _cupsLookup;
+
         private LinkedListNode<int> _currentCup;
-        private bool _hasPickedCups;
-        private PickedCups _pickedCups;
+        private LinkedListNode<int> _pickedCup1;
+        private LinkedListNode<int> _pickedCup2;
+        private LinkedListNode<int> _pickedCup3;
 
         public CrabCupsGame(string puzzleInput)
         {
@@ -23,7 +26,21 @@ namespace AoC.Day23
             _cupsList = new LinkedList<int>(cupValues);
             _minCup = _cupsList.Min();
             _maxCup = _cupsList.Max();
+            _cupsLookup = EnumerateNodes(_cupsList.First).OrderBy(cupNode => cupNode.Value).ToArray();
+
             _currentCup = _cupsList.First ?? throw new InvalidOperationException("Could not get first cup, is puzzle input empty?");
+            _pickedCup1 = new LinkedListNode<int>(-1);
+            _pickedCup2 = new LinkedListNode<int>(-1);
+            _pickedCup3 = new LinkedListNode<int>(-1);
+
+            static IEnumerable<LinkedListNode<int>> EnumerateNodes(LinkedListNode<int>? current)
+            {
+                while (current != null)
+                {
+                    yield return current;
+                    current = current.Next;
+                }
+            }
         }
 
         public void Play(int numOfMoves)
@@ -31,19 +48,17 @@ namespace AoC.Day23
             for (var moveNum = 1; moveNum <= numOfMoves; moveNum++)
             {
                 // Pick up cups
-                _hasPickedCups = true;
-                _pickedCups.Picked1 = PickUpNext();
-                _pickedCups.Picked2 = PickUpNext();
-                _pickedCups.Picked3 = PickUpNext();
+                _pickedCup1 = PickUpNext();
+                _pickedCup2 = PickUpNext();
+                _pickedCup3 = PickUpNext();
 
                 // Assign next current cup
                 var destinationCup = GetDestinationCup();
 
                 // Place cups
-                _cupsList.AddAfter(destinationCup, _pickedCups.Picked3);
-                _cupsList.AddAfter(destinationCup, _pickedCups.Picked2);
-                _cupsList.AddAfter(destinationCup, _pickedCups.Picked1);
-                _hasPickedCups = false;
+                _cupsList.AddAfter(destinationCup, _pickedCup3);
+                _cupsList.AddAfter(destinationCup, _pickedCup2);
+                _cupsList.AddAfter(destinationCup, _pickedCup1);
 
                 // Select new current cup
                 _currentCup = GetNextOrFirst(_currentCup);
@@ -64,7 +79,8 @@ namespace AoC.Day23
 
                 if (!IsPickedCup(searchFor))
                 {
-                    found = _cupsList.Find(searchFor) ?? throw new InvalidOperationException("Unable to find cup with value: " + searchFor);
+                    var cupIndex = searchFor - 1;
+                    found = _cupsLookup[cupIndex];
                 }
                 else
                 {
@@ -101,19 +117,16 @@ namespace AoC.Day23
             return next;
         }
 
-        private LinkedListNode<int> GetNextOrFirst(LinkedListNode<int> node) => node.Next ?? node.List?.First ?? throw new InvalidOperationException();
+        private static LinkedListNode<int> GetNextOrFirst(LinkedListNode<int> node) => node.Next ?? node.List?.First ?? throw new InvalidOperationException();
 
         private bool IsPickedCup(int cupValue) =>
-            _hasPickedCups &&
-            _pickedCups.Picked1.Value == cupValue ||
-            _pickedCups.Picked2.Value == cupValue ||
-            _pickedCups.Picked3.Value == cupValue;
+            _pickedCup1.Value == cupValue ||
+            _pickedCup2.Value == cupValue ||
+            _pickedCup3.Value == cupValue;
 
         private struct PickedCups
         {
-            public LinkedListNode<int> Picked1;
-            public LinkedListNode<int> Picked2;
-            public LinkedListNode<int> Picked3;
+            
         }
     }
 }
