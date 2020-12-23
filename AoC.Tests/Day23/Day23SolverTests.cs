@@ -42,7 +42,7 @@ namespace AoC.Tests.Day23
         }
 
         [Test]
-        [Ignore("Takes ~2.8 seconds")]
+        [LongRunningTest("~2.8 seconds")]
         public void Part2Example()
         {
             // ACT
@@ -53,7 +53,7 @@ namespace AoC.Tests.Day23
         }
 
         [Test]
-        [Ignore("Takes ~3 seconds")]
+        [LongRunningTest("~3 seconds")]
         public void Part2ReTest()
         {
             // ACT

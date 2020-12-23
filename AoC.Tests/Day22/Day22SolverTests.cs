@@ -53,7 +53,7 @@ Player 2:
         }
 
         [Test]
-        [Ignore("Crab Combat Part 2 with real input takes ~1.8 seconds to complete")]
+        [LongRunningTest("Crab Combat Part 2 with real input takes ~1.8 seconds to complete")]
         public void Part2ReTest()
         {
             // ACT

@@ -125,6 +125,7 @@ aaab");
         }
 
         [Test]
+        [LongRunningTest("~400 ms")]
         public void Part2ReTest()
         {
             // ACT
