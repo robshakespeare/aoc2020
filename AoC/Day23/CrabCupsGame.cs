@@ -23,16 +23,19 @@ namespace AoC.Day23
                 .Select(chr => int.Parse(chr.ToString()))
                 .ToArray();
 
+            _minCup = cupValues.Min();
+            _maxCup = cupValues.Max();
+
             if (isPart2)
             {
-                var extraCount = 1000000 - cupValues.Length;
+                const int oneMillion = 1000000;
+                var extraCount = oneMillion - cupValues.Length;
 
-                cupValues = cupValues.Concat(Enumerable.Range(cupValues.Max() + 1, extraCount)).ToArray();
+                cupValues = cupValues.Concat(Enumerable.Range(_maxCup + 1, extraCount)).ToArray();
+                _maxCup = oneMillion;
             }
 
             _cupsList = new LinkedList<int>(cupValues);
-            _minCup = _cupsList.Min();
-            _maxCup = _cupsList.Max();
             _cupsLookup = EnumerateNodes(_cupsList.First).OrderBy(cupNode => cupNode.Value).ToArray();
 
             _currentCup = _cupsList.First ?? throw new InvalidOperationException("Could not get first cup, is puzzle input empty?");
