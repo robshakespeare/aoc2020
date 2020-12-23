@@ -6,7 +6,9 @@ namespace AoC.Day23
 
         protected override long? SolvePart1Impl(string input)
         {
-            return base.SolvePart1Impl(input);
+            var crabCupsGame = new CrabCupsGame(input);
+            crabCupsGame.Play(100);
+            return crabCupsGame.GetCupOrder();
         }
 
         protected override long? SolvePart2Impl(string input)
