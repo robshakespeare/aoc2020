@@ -20,7 +20,7 @@ namespace AoC
             RollingInterval rollingInterval = RollingInterval.Infinite,
             Action<LoggerConfiguration>? customise = null)
         {
-            var logFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".logs", "aoc2020");
+            var logFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".aoc", "logs");
             Directory.CreateDirectory(logFolderPath);
             var logFilePath = Path.ChangeExtension(Path.Combine(logFolderPath, logFileName), ".txt");
 
