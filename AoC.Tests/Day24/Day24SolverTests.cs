@@ -29,6 +29,7 @@ namespace AoC.Tests.Day24
         }
 
         [Test]
+        [LongRunningTest("~1 sec")]
         public void Part2Example()
         {
             // ACT
@@ -39,13 +40,14 @@ namespace AoC.Tests.Day24
         }
 
         [Test]
+        [LongRunningTest("~1.3 secs")]
         public void Part2ReTest()
         {
             // ACT
             var part2Result = _sut.SolvePart2();
 
             // ASSERT
-            part2Result.Should().Be(null);
+            part2Result.Should().Be(3649);
         }
 
         private const string ExampleInput = @"sesenwnenenewseeswwswswwnenewsewsw
