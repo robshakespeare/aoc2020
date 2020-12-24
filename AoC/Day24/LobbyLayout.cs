@@ -3,30 +3,33 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Text.RegularExpressions;
-using static AoC.Day24.LobbyLayout.TileColorFacingUp;
 
 namespace AoC.Day24
 {
     public class LobbyLayout
     {
-        public enum TileColorFacingUp
-        {
-            White,
-            Black, // Note: the first 'flip' is actually 'to black', because tiles "start with the white side facing up"
-            OutOfBounds
-        }
+        private const bool Black = false; // Note: the first 'flip' is actually 'to black', because tiles "start with the white side facing up"
+        // ReSharper disable once UnusedMember.Local
+        private const bool White = true;
+
+        //public enum TileColorFacingUp
+        //{
+        //    White,
+        //    Black, // Note: the first 'flip' is actually 'to black', because tiles "start with the white side facing up"
+        //    OutOfBounds
+        //}
 
         private static readonly Vector2 ReferenceTile = new(0, 0);
 
-        private readonly Dictionary<Vector2, TileColorFacingUp> _tiles;
+        private readonly Dictionary<Vector2, bool> _tiles;
 
-        public LobbyLayout(Dictionary<Vector2, TileColorFacingUp> tiles) => _tiles = tiles;
+        public LobbyLayout(Dictionary<Vector2, bool> tiles) => _tiles = tiles;
 
-        public IEnumerable<KeyValuePair<Vector2, TileColorFacingUp>> Tiles => _tiles;
+        ////public IEnumerable<KeyValuePair<Vector2, bool>> Tiles => _tiles;
 
         public long CountTilesBlackSideUp() => _tiles.Count(x => x.Value == Black);
 
-        private TileColorFacingUp GetTile(Vector2 position) => _tiles.TryGetValue(position, out var tile) ? tile : OutOfBounds;
+        private bool? GetTile(Vector2 position) => _tiles.TryGetValue(position, out var tile) ? tile : null;
 
         private static IEnumerable<Vector2> GetAdjacentPositions(Vector2 currentPosition) => Directions.Select(dir => currentPosition + dir);
 
@@ -58,7 +61,7 @@ namespace AoC.Day24
         {
             var directionsList = puzzleInput.ReadLines().ToArray();
 
-            Dictionary<Vector2, TileColorFacingUp> tiles = new();
+            Dictionary<Vector2, bool> tiles = new();
 
             foreach (var directions in directionsList)
             {
@@ -68,7 +71,7 @@ namespace AoC.Day24
 
                 if (tiles.TryGetValue(position, out var existing))
                 {
-                    tiles[position] = existing == Black ? White : Black; // Flip it
+                    tiles[position] = !existing; // == Black ? White : Black; // Flip it
                 }
                 else
                 {
@@ -81,36 +84,61 @@ namespace AoC.Day24
 
         public static LobbyLayout SimulateLivingArtExhibit(string puzzleInput, int numberOfDays)
         {
-            var applyGrowth = false;
+            Console.WriteLine(string.Join(" | ", Directions));
+            
+            ////var applyGrowth = false;
             
             var lobbyLayout = ParsePuzzleInput(puzzleInput);
 
             for (var dayNum = 1; dayNum <= numberOfDays; dayNum++)
             {
-                Dictionary<Vector2, TileColorFacingUp> newTiles = new();
+                Dictionary<Vector2, bool> newTiles = new();
 
-                var growth = new List<Vector2>();
-
-                // Update existing tiles
-                foreach (var (tilePosition, existingTileColor) in lobbyLayout.Tiles)
+                foreach (var tilePosition in lobbyLayout._tiles.Keys)
                 {
-                    var (newTileColor, adjacentTiles) = GetNewTileColor(tilePosition, lobbyLayout, existingTileColor);
-
-                    newTiles.Add(tilePosition, newTileColor);
-
-                    growth.AddRange(adjacentTiles.Where(x => x.color == OutOfBounds).Select(x => x.position));
-                }
-
-                // Apply growth
-                if (applyGrowth)
-                {
-                    foreach (var growthPosition in growth.Distinct())
+                    foreach (var position in new[] { tilePosition }.Concat(GetAdjacentPositions(tilePosition)))
                     {
-                        //var (newTileColor, _) = GetNewTileColor(growthPosition, lobbyLayout, existingTileColor: Black);
+                        var adjacentTiles = GetAdjacentPositions(position)
+                            .Select(pos => (pos, color: lobbyLayout.GetTile(pos)))
+                            .ToArray();
 
-                        newTiles.Add(growthPosition, Black); //newTileColor);
+                        var existingTileColor = lobbyLayout.GetTile(position) ?? White; // rs-todo: rename GetTile to include color!!
+
+                        var countOfBlackAdjacentTiles = adjacentTiles.Count(x => x.color == Black); //adjacentPositions.Select(lobbyLayout.GetTile).Count(color => color == Black);
+
+                        var newTileColor = existingTileColor switch
+                        {
+                            Black when countOfBlackAdjacentTiles is 0 or > 2 => White,
+                            White when countOfBlackAdjacentTiles is 2 => Black,
+                            _ => existingTileColor
+                        };
+
+                        newTiles[position] = newTileColor;
                     }
                 }
+
+                //var growth = new List<Vector2>();
+
+                //// Update existing tiles
+                //foreach (var (tilePosition, existingTileColor) in lobbyLayout.Tiles)
+                //{
+                //    var (newTileColor, adjacentTiles) = GetNewTileColor(tilePosition, lobbyLayout, existingTileColor);
+
+                //    newTiles.Add(tilePosition, newTileColor);
+
+                //    growth.AddRange(adjacentTiles.Where(x => x.color == OutOfBounds).Select(x => x.position));
+                //}
+
+                //// Apply growth
+                //if (applyGrowth)
+                //{
+                //    foreach (var growthPosition in growth.Distinct())
+                //    {
+                //        //var (newTileColor, _) = GetNewTileColor(growthPosition, lobbyLayout, existingTileColor: Black);
+
+                //        newTiles.Add(growthPosition, Black); //newTileColor);
+                //    }
+                //}
 
                 lobbyLayout = new LobbyLayout(newTiles);
             }
@@ -118,25 +146,25 @@ namespace AoC.Day24
             return lobbyLayout;
         }
 
-        private static (TileColorFacingUp newTileColor, IReadOnlyList<(Vector2 position, TileColorFacingUp color)> adjacentTiles) GetNewTileColor(
-            Vector2 tilePosition,
-            LobbyLayout lobbyLayout,
-            TileColorFacingUp existingTileColor)
-        {
-            var adjacentTiles = GetAdjacentPositions(tilePosition)
-                .Select(position => (position, color: lobbyLayout.GetTile(position)))
-                .ToArray();
+        //private static (TileColorFacingUp newTileColor, IReadOnlyList<(Vector2 position, TileColorFacingUp color)> adjacentTiles) GetNewTileColor(
+        //    Vector2 tilePosition,
+        //    LobbyLayout lobbyLayout,
+        //    TileColorFacingUp existingTileColor)
+        //{
+        //    var adjacentTiles = GetAdjacentPositions(tilePosition)
+        //        .Select(position => (position, color: lobbyLayout.GetTile(position)))
+        //        .ToArray();
 
-            //var adjacentPositions = GetAdjacentPositions(tilePosition).ToArray();
+        //    //var adjacentPositions = GetAdjacentPositions(tilePosition).ToArray();
 
-            var countOfBlackAdjacentTiles = adjacentTiles.Count(x => x.color == Black); //adjacentPositions.Select(lobbyLayout.GetTile).Count(color => color == Black);
-            var newTileColor = existingTileColor switch
-            {
-                Black when countOfBlackAdjacentTiles is 0 or > 2 => White,
-                White when countOfBlackAdjacentTiles is 2 => Black,
-                _ => existingTileColor
-            };
-            return (newTileColor, adjacentTiles);
-        }
+        //    var countOfBlackAdjacentTiles = adjacentTiles.Count(x => x.color == Black); //adjacentPositions.Select(lobbyLayout.GetTile).Count(color => color == Black);
+        //    var newTileColor = existingTileColor switch
+        //    {
+        //        Black when countOfBlackAdjacentTiles is 0 or > 2 => White,
+        //        White when countOfBlackAdjacentTiles is 2 => Black,
+        //        _ => existingTileColor
+        //    };
+        //    return (newTileColor, adjacentTiles);
+        //}
     }
 }
