@@ -9,6 +9,16 @@ namespace AoC.Tests.Day24
         private readonly Day24Solver _sut = new();
 
         [Test]
+        public void Part1Example()
+        {
+            // ACT
+            var part1Result = _sut.SolvePart1(ExampleInput);
+
+            // ASSERT
+            part1Result.Should().Be(10);
+        }
+
+        [Test]
         public void Part1ReTest()
         {
             // ACT
@@ -16,6 +26,16 @@ namespace AoC.Tests.Day24
 
             // ASSERT
             part1Result.Should().Be(263);
+        }
+
+        [Test]
+        public void Part2Example()
+        {
+            // ACT
+            var part2Result = _sut.SolvePart2(ExampleInput);
+
+            // ASSERT
+            part2Result.Should().Be(2208);
         }
 
         [Test]
@@ -27,5 +47,26 @@ namespace AoC.Tests.Day24
             // ASSERT
             part2Result.Should().Be(null);
         }
+
+        private const string ExampleInput = @"sesenwnenenewseeswwswswwnenewsewsw
+neeenesenwnwwswnenewnwwsewnenwseswesw
+seswneswswsenwwnwse
+nwnwneseeswswnenewneswwnewseswneseene
+swweswneswnenwsewnwneneseenw
+eesenwseswswnenwswnwnwsewwnwsene
+sewnenenenesenwsewnenwwwse
+wenwwweseeeweswwwnwwe
+wsweesenenewnwwnwsenewsenwwsesesenwne
+neeswseenwwswnwswswnw
+nenwswwsewswnenenewsenwsenwnesesenew
+enewnwewneswsewnwswenweswnenwsenwsw
+sweneswneswneneenwnewenewwneswswnese
+swwesenesewenwneswnwwneseswwne
+enesenwswwswneneswsenwnewswseenwsese
+wnwnesenesenenwwnenwsewesewsesesew
+nenewswnwewswnenesenwnesewesw
+eneswnwswnwsenenwnwnwwseeswneewsenese
+neswnwewnwnwseenwseesewsenwsweewe
+wseweeenwnesenwwwswnew";
     }
 }
