@@ -9,18 +9,14 @@ namespace AoC.Day24
     public class LobbyLayout
     {
         private const bool Black = false; // Note: the first 'flip' is actually 'to black', because tiles "start with the white side facing up"
+        // ReSharper disable once UnusedMember.Local
         private const bool White = true;
 
         private static readonly Vector2 ReferenceTile = new(0, 0);
 
         private readonly Dictionary<Vector2, bool> _tiles;
-        private IReadOnlyList<string> _directionsList;
 
-        public LobbyLayout(Dictionary<Vector2, bool> tiles, IReadOnlyList<string> directionsList)
-        {
-            _tiles = tiles;
-            _directionsList = directionsList;
-        }
+        public LobbyLayout(Dictionary<Vector2, bool> tiles) => _tiles = tiles;
 
         public long CountTilesBlackSideUp() => _tiles.Count(x => x.Value == Black);
 
@@ -60,7 +56,7 @@ namespace AoC.Day24
                 }
             }
 
-            return new LobbyLayout(tiles, directionsList);
+            return new LobbyLayout(tiles);
         }
     }
 }
