@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using AoC.BootCode;
 
 namespace AoC.Day8
 {

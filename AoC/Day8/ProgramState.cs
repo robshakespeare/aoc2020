@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace AoC.BootCode
+namespace AoC.Day8
 {
     public class ProgramState
     {

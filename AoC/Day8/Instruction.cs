@@ -1,6 +1,6 @@
 using System;
 
-namespace AoC.BootCode
+namespace AoC.Day8
 {
     public record Instruction(
         string Operation,
